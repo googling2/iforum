@@ -1,0 +1,270 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+
+  <title>A아이포럼</title>
+  <style>
+
+
+    body{
+      font-family: 'Montserrat', sans-serif;
+      background:white;
+    }
+
+    .container{
+      display:block;
+      max-width:680px;
+      width:80%;
+      margin:120px auto;
+    }
+
+    h1{
+      color:#51e351;
+      font-size:48px;
+      letter-spacing:-3px;
+      text-align:center;
+      margin:120px 0 80px 0 ;
+      transition:.2s linear;
+    }
+
+    .links{
+      list-style-type:none;
+      li{
+        display:inline-block;
+        margin:0 20px 0 0;
+        transition:.2s linear;
+        &:nth-child(2){
+          opacity : .6;
+          &:hover{
+            opacity : 1;
+          }
+        }
+        &:nth-child(3){
+          opacity : .6;
+          float:right;
+          &:hover{
+            opacity : 1;
+          }
+        }
+        a{
+          text-decoration:none;
+          color:#0f132a;
+          font-weight:bolder;
+          text-align:center;
+          cursor : pointer;
+        }
+      }
+    }
+
+
+    form{
+      width:100%;
+      max-width:680px;
+      margin:40px auto 10px;
+      .input__block{
+        margin:20px auto;
+        display:block;
+        position:relative;
+
+        &.signup-input__block{
+
+        }
+        input{
+          display:block;
+          width:90%;
+          max-width:680px;
+          height:50px;
+          margin:0 auto;
+          border-radius:8px;
+          border:none;
+
+          color : black;
+          padding:0 0 0 15px;
+          font-size:14px;
+          font-family: 'Montserrat', sans-serif;
+          &:focus,
+          &:active{
+            outline:none;
+            border:black;
+            color :black;
+          }
+          &.repeat__password{
+            opacity : 0;
+            display : none;
+            transition:.2s linear;
+          }
+        }
+      }
+
+      .signin__btn{
+        background: #51e351;
+        color:white;
+        display:block;
+        width:90%;
+        max-width:680px;
+        height:50px;
+        border-radius:8px;
+        margin:0 auto;
+        border:none;
+        cursor:pointer;
+        font-size:14px;
+        font-family: 'Montserrat', sans-serif;
+
+        transition:.2s linear;
+        &:hover{
+
+        }
+      }
+    }
+
+
+    &::after{
+      content:"";
+      position:absolute;
+      top:8px;
+      right:0;
+
+      height:1px;
+      width:45%;
+    }
+
+
+    .google__btn
+   {
+      display:block;
+      width:90%;
+      max-width:680px;
+      margin:20px auto;
+      height:50px;
+      cursor:pointer;
+      font-size:14px;
+      font-family: 'Montserrat', sans-serif;
+      border-radius:8px;
+      border:none;
+      line-height:40px;
+      &.google__btn{
+        background:#5b90f0;
+        color:white;
+
+        transition:.2s linear;
+
+        &:hover{
+
+        }
+      }
+
+    }
+
+    footer{
+      p{
+        text-align:center;
+        .fa{
+          color: #e91e63;
+        }
+        a{
+          text-decoration:none;
+          font-size:17px;
+          margin:0 5px;
+
+
+
+
+        }
+
+      }
+    }
+
+
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <!-- Heading -->
+  <h1>SIGN IN</h1>
+
+  <!-- Links -->
+  <ul class="links">
+    <li>
+      <a href="#" id="signin">SIGN IN</a>
+    </li>
+    <li>
+      <a href="#" id="signup">SIGN UP</a>
+    </li>
+
+  </ul>
+
+  <!-- Form -->
+  <form action="#" method="post"> <!-- 액션 추가 -->
+    <!-- email input -->
+    <div class="first-input input__block first-input__block">
+      <input type="email" placeholder="Email" class="input" id="email" />
+    </div>
+    <!-- password input -->
+    <div class="input__block">
+      <input type="password" placeholder="Password" class="input" id="password" />
+    </div>
+    <!-- repeat password input -->
+    <div class="input__block">
+      <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password" />
+    </div>
+    <!-- sign in button -->
+    <a href="index.html"> <button class="signin__btn">
+      Sign in
+    </button></a>
+  </form>
+
+  <button class="google__btn">
+    <i class="fab fa-google"></i> <!-- 구글 아이콘 클래스 수정 -->
+    Sign in with Google
+  </button>
+  <!-- google button -->
+
+</div>
+
+<script>
+  $(document).ready(function(){
+    let signup = $(".links").find("li").find("#signup");
+    let signin = $(".links").find("li").find("#signin");
+    let first_input = $("form").find(".first-input");
+    let hidden_input = $("form").find(".input__block").find("#repeat__password");
+    let signin_btn  = $("form").find(".signin__btn");
+
+    //----------- sign up ---------------------
+    signup.on("click",function(e){
+      e.preventDefault();
+      $(this).parent().parent().siblings("h1").text("SIGN UP");
+      $(this).parent().css("opacity","1");
+      $(this).parent().siblings().css("opacity",".6");
+      first_input.removeClass("first-input__block").addClass("signup-input__block");
+      hidden_input.css({
+        "opacity" : "1",
+        "display" : "block"
+      });
+      signin_btn.text("Sign up");
+    });
+
+
+    //----------- sign in ---------------------
+    signin.on("click",function(e){
+      e.preventDefault();
+      $(this).parent().parent().siblings("h1").text("SIGN IN");
+      $(this).parent().css("opacity","1");
+      $(this).parent().siblings().css("opacity",".6");
+      first_input.addClass("first-input__block")
+              .removeClass("signup-input__block");
+      hidden_input.css({
+        "opacity" : "0",
+        "display" : "none"
+      });
+      signin_btn.text("Sign in");
+    });
+  });
+</script> <!-- 스크립트 태그 닫기 -->
+
+</body>
+
+</html>

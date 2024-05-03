@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>동화 결과</title>
+  </head>
+  <body>
+    <h1>생성된 동화</h1>
+    <div>
+      <p>{{ story_content }}</p>
+    </div>
+
+    <audio controls>
+      <source src="{{ audio_url }}" type="audio/mp3" />
+      "오디오 생성"
+    </audio>
+
+    <form action="/create_video" method="post">
+      <button type="submit">영상으로 만들기</button>
+    </form>
+  </body>
+</html>
