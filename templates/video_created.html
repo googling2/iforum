@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>동영상 생성 완료</title>
+  </head>
+  <body>
+    <h1>동영상 생성 완료</h1>
+    <p>동화 이야기를 기반으로 한 동영상이 성공적으로 생성되었습니다!</p>
+
+    <h2>동영상 재생</h2>
+    <video controls>
+      <source src="{{ video_url }}" type="video/mp4" />
+      해당 브라우저에서 비디오를 지원하지 않습니다.
+    </video>
+
+    <video controls>
+      <source src="/static/final_output.mp4" type="video/mp4" />
+      해당 브라우저에서 비디오를 지원하지 않습니다.
+    </video>
+  </body>
+</html>

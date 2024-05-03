@@ -23,7 +23,7 @@ client = openai.OpenAI(api_key=api_key)
 
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("upload.html", {"request": request})
 
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...)):
@@ -38,15 +38,20 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
-            {"role": "user", "content": f"{keywords} 이 단어들을 사용해서 동화 이야기를 공백포함 200자로 작성해주고, 3단락으로 나눠줘"}
+            {"role": "user", "content": f"{keywords} 이 단어들을 사용해서 동화 이야기를 공백포함 300자로 작성해주고, 2단락으로 나눠줘"}
         ]
     )
+
 
     # 스토리 콘텐츠 확인
     if completion.choices:
         story_content = completion.choices[0].message.content
     else:
-        story_content = "Please re-enter the text!"
+        story_content = "텍스트를 다시 입력해주세요!"
+
+
+    print("동화내용 나오는지 확인 : ",story_content)
+
 
     # TTS 생성
     audio_response = client.audio.speech.create(
@@ -94,6 +99,29 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         "audio_file_path": audio_file_path,
         "image_paths": image_paths
     })
+
+
+@app.post("/create_video", response_class=HTMLResponse)
+async def create_video(request: Request):
+    # 비동기적으로 video.py 실행
+    process = await asyncio.create_subprocess_exec(
+        "python", "video.py",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    
+    # 프로세스가 완료될 때까지 대기
+    stdout, stderr = await process.communicate()
+
+    if process.returncode == 0:
+        final_output = "static\\final_output.mp4"
+        return templates.TemplateResponse("video_created.html", {"request": request, "video_url": final_output})
+    else:
+        # 프로세스 실행 중 오류가 발생한 경우 처리
+        error_message = f"{stderr.decode()}, 무슨 에러러러러????"
+        # return templates.TemplateResponse("video_error.html", {"request": request, "error_message": error_message})
+        return "에러입니다."
+    
 
 
 if __name__ == "__main__":

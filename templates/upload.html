@@ -10,7 +10,6 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="../css/app.css" />
     <title>A아이포럼</title>
   </head>
   <body>
@@ -46,66 +45,31 @@
           다음
         </button>
       </div>
-      <div
-        class="input_text"
-        id="step3"
-        style="flex: 1; padding: 20px; display: none"
+    </div>
+    <div style="margin-left: 20px;">
+      <label for="voices">목소리 선택:</label>
+      <select
+      name="selected_voice"
+      style="
+        width: 10%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-top: 30px;
+      "
       >
-        <select
-          name="selected_voice"
-          style="
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        >
-            <option value="alloy">alloy</option>
-            <option value="echo">echo</option>
-            <option value="fable">fable</option>
-            <option value="onyx">onyx</option>
-            <option value="nova">nova</option>
-            <option value="shimmer">shimmer</option>
-        </select>
-        <button
-          onclick="showNextStep('step6')"
-          style="
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        >
-          다음
-        </button>
-      </div>
-      <div
-        class="input_text"
-        id="step6"
-        style="flex: 1; padding: 20px; display: none"
-      >
-        <button
-          type="submit"
-          style="
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        >
-          동화 생성
-        </button>
-      </div>
+    </div>
+
+      <option value="alloy">alloy</option>
+      <option value="echo">echo</option>
+      <option value="fable">fable</option>
+      <option value="onyx">onyx</option>
+      <option value="nova">nova</option>
+      <option value="shimmer">shimmer</option>
+  </select>
     </form>
 
-      <div class="video_section" style="flex: 1">
+      <!-- <div class="video_section" style="flex: 1">
         <video
           class="story_video"
           poster="../../img/loading.webp"
@@ -117,9 +81,19 @@
           브라우저가 비디오 태그를 지원하지 않습니다.
         </video>
       </div>
-    </div>
+    </div> -->
+
+
+
+
+
+
+
+
+
+
     <!--업로드하는 area-->
-    <div class="container">
+    <!-- <div class="container">
       <main class="content">
         <section id="profile" class="box profile">
           <div class="top-header">
@@ -158,9 +132,20 @@
           </div>
         </section>
       </main>
-    </div>
+    </div> -->
+    
     <!--마이페이지 끝-->
-    <script>
+    
+
+
+
+
+
+
+
+
+
+    <!-- <script>
       function showNextStep(stepId) {
         document.getElementById(stepId).style.display = "block";
       }
@@ -171,6 +156,6 @@
       }
     </script>
     <script type="module" src="../js/app.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../js/common.js"></script> -->
   </body>
 </html>
