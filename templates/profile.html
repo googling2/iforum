@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -12,10 +12,12 @@
 <body>
 <header>
 
-</header>
+</header> -->
 <!--마이페이지 시작-->
-<div class="container">
-<main class="content">
+{% extends 'base.html' %} 
+{% block content %}
+<!-- <div class="container">
+<main class="content"> -->
 <section id="profile" class="box profile">
   <div class="top-header">
     <h3>frontend with salimi</h3>
@@ -79,10 +81,11 @@
     </div>
   </div>
 </section>
-</main>
+<!-- </main>
 </div>
-<!--마이페이지 끝-->
+
 <script type="module" src="/static/js/app.js"></script>
 <script src="/static/js/common.js"></script>
 </body>
-</html>
+</html> -->
+{% endblock content %}

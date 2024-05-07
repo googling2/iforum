@@ -23,7 +23,38 @@ client = openai.OpenAI(api_key=api_key)
 
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request):
-    return templates.TemplateResponse("upload.html", {"request": request})
+    try:
+        return templates.TemplateResponse("index.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+@app.get("/upload", response_class=HTMLResponse)
+async def display_form(request: Request):
+    try:
+        return templates.TemplateResponse("upload.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+@app.get("/profile", response_class=HTMLResponse)
+async def display_form(request: Request):
+    try:
+        return templates.TemplateResponse("profile.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+@app.get("/login", response_class=HTMLResponse)
+async def display_form(request: Request):
+    try:
+        return templates.TemplateResponse("login.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+
+
 
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...)):
