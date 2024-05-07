@@ -21,7 +21,7 @@ client = openai.OpenAI(api_key=api_key)
 
 
 
-@app.get("/home", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request):
     try:
         return templates.TemplateResponse("index.html", {"request": request})
