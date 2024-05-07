@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -11,9 +11,11 @@
 </head>
 <body>
 <header>
-</header>
+</header> -->
 <!--마이페이지 시작-->
 <!--소식시작-->
+{% extends 'base.html' %} 
+    {% block content %}
 <section id="inbox" class="box inbox">
     <div class="header-inbox">
         <h2>inbox</h2>
@@ -86,8 +88,9 @@
         </div>
     </div>
 </section>
-<!--소식끝-->
+<!-- 소식끝
 <script type="module" src="/static/js/app.js"></script>
 <script src="/static/js/common.js"></script>
 </body>
-</html>
+</html> -->
+{% endblock content %}

@@ -21,7 +21,7 @@ client = openai.OpenAI(api_key=api_key)
 
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/home", response_class=HTMLResponse)
 async def display_form(request: Request):
     try:
         return templates.TemplateResponse("index.html", {"request": request})
@@ -49,6 +49,14 @@ async def display_form(request: Request):
 async def display_form(request: Request):
     try:
         return templates.TemplateResponse("login.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+@app.get("/friends", response_class=HTMLResponse)
+async def display_form(request: Request):
+    try:
+        return templates.TemplateResponse("friends.html", {"request": request})
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
