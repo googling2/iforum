@@ -77,7 +77,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
-            {"role": "user", "content": f"{keywords} 이 단어들을 사용해서 동화 이야기를 공백포함 300자로 작성해주고, 2단락으로 나눠줘"}
+            {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이런식으로 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"}
         ]
     )
 
@@ -85,9 +85,14 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     # 스토리 콘텐츠 확인
     if completion.choices:
         story_content = completion.choices[0].message.content
+        story_title = story_content.split('\n')[0].replace("제목: ", "")  # 제목을 첫 줄로 가정
+        # story_title = story_title_ex.replace("제목: ", "")  # "제목:" 부분 제거
+
+
     else:
         story_content = "텍스트를 다시 입력해주세요!"
 
+    print("이거 나오냐",story_title)
 
     print("동화내용 나오는지 확인 : ",story_content)
 
@@ -106,7 +111,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     # 이미지 생성 및 저장
     image_paths = []
     paragraphs = story_content.split('\n\n')
-    rate_limit_per_minute = 5  # OpenAI 이미지 API 제한
     delay_seconds = 15
     # 60 / rate_limit_per_minute  # 15초
 
@@ -121,6 +125,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             quality="standard",
             n=1,
         )
+        
 
         if response.data:
             image_url = response.data[0].url
@@ -135,6 +140,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     return templates.TemplateResponse("story.html", {
         "request": request,
         "story_content": story_content,
+        "story_title": story_title, 
         "audio_file_path": audio_file_path,
         "image_paths": image_paths
     })
