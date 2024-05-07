@@ -1,60 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--마이페이지 시작-->
 
-{% extends 'base.html' %} 
-    {% block content %}
-    <!--마이페이지 시작-->
-
-    <form action="/story" method="post">
-    <div class="story_container" style="display: flex">
-      <div class="input_text" id="step1" style="flex: 1; padding: 20px">
-        <input
-          type="text"
-          name="keywords"
-          placeholder="나만의 단어와 문장을 입력해주세요... 예시)하늘을 날고싶은 오리의 이야기, "
-          style="
+<form action="/story" method="post">
+  <div class="story_container" style="display: flex">
+    <div class="input_text" id="step1" style="flex: 1; padding: 20px">
+      <input type="text" name="keywords" placeholder="예시)하늘을 나는 오리 이야기" style="
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-top: 30px;
-          "
-        />
-        <button
-          onclick="showNextStep('step2')"
-          style="
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        >
-          다음
-        </button>
-      </div>
+          " />
+
     </div>
-    <div style="margin-left: 20px;">
+  </div>
+  <div style="width: 100%;">
+    <div style="margin-left: 20px; ">
       <label for="voices">목소리 선택:</label>
-      <select
-      name="selected_voice"
-      style="
-        width: 10%;
+      <select name="selected_voice" id="selected_voice" class="select_v">
+        <option value="alloy" data-image="../static\img\alloy.png">에로이</option>
+        <option value="echo" data-image="../static\img\echo.png">에코</option>
+        <option value="fable" data-image="../static\img\fable.png">페이블</option>
+        <option value="onyx" data-image="../static\img\onyx.png">오닉스</option>
+        <option value="nova" data-image="../static\img\nova.png">노바</option>
+        <option value="shimmer" data-image="../static\img\shimmer.png">샤이머</option>
+      </select>
+    </div>
+    <div class="option-container">
+      <img src="../static\img\alloy.png" alt="선택된 이미지" id="selected_image" class="option-image">
+      <!-- <span id="selected_text"></span> 프로필밑에 이름-->
+    </div>
+  </div>
+  <div>
+    <label for="voices" style="margin-left: 20px;">분위기 선택:</label>
+    <select name="selected_voice" style="
+    
+    width: 38%;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
         margin-top: 30px;
-      "
-      >
-    </div>
-
-      <option value="alloy">alloy</option>
-      <option value="echo">echo</option>
-      <option value="fable">fable</option>
-      <option value="onyx">onyx</option>
-      <option value="nova">nova</option>
-      <option value="shimmer">shimmer</option>
+      ">
+  </div>
+  <option value="sina">신나는</option>
+  <option value="zeul">즐거운</option>
+  <option value="moo">무서운</option>
+  <option value="ear">귀여운</option>
+  <option value="mo">모험적인</option>
+  <option value="fuck">이게분위기야?</option>
   </select>
-    </form>
+  </div>
+  <button style="
+  margin-left: 5%;
+  width: 90%;
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  margin-top: 30px;
+">
+    딸깍
+  </button>
+</form>
+<h1>동영상 생성 완료</h1>
+<p>어.. 대충 줄거리가 어쩌구 저쩌구</p>
+<video controls class="create_video">
+  <source src="/static/final_output.mp4" type="video/mp4" />
+  해당 브라우저에서 비디오를 지원하지 않습니다.
+</video>
 
-    {% endblock content %}
+<button style="
+margin-left: 5%;
+width: 90%;
+padding: 10px;
+border: none;
+background-color: #ff5e00;
+color: #fff;
+border-radius: 5px;
+margin-top: 30px;
+">유튜브 업로드</button>
+
+<script>
+  const selectElement = document.getElementById('selected_voice');
+  const selectedImage = document.getElementById('selected_image');
+  const selectedText = document.getElementById('selected_text');
+
+  selectElement.addEventListener('change', (event) => {
+    const selectedOption = event.target.selectedOptions[0];
+    const imageSrc = selectedOption.getAttribute('data-image');
+    const text = selectedOption.textContent;
+    selectedImage.src = imageSrc;
+    selectedText.textContent = text;
+  });
+</script>
+{% endblock content %}

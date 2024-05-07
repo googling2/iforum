@@ -6,6 +6,7 @@
   box-sizing: border-box;
   font-family: monospace;
 }
+
 :root {
   --whiteColor: #ffffff;
   --redColor: #fe2c55;
@@ -149,6 +150,7 @@ button {
 .color-switch {
   color: rgb(253, 70, 3) !important;
 }
+
 a {
   color: white;
   text-decoration: none;
@@ -177,12 +179,13 @@ a {
   color: white;
   flex-direction: column;
 }
-.head_txt{
+
+.head_txt {
   margin-bottom: 0.6rem;
   font-size: 0.8rem;
   width: 100%;
   display: flex;
-    justify-content: space-evenly;
+  justify-content: space-evenly;
 }
 
 
@@ -758,19 +761,51 @@ a {
 .profile .profile-videos .videos-container .video video {
   width: 100%;
 }
-.story_container{
+
+.story_container {
 
   flex-wrap: wrap;
   display: flex;
   flex-direction: column;
 }
-.input_text{
+
+.input_text {
   margin-top: 2rem;
 }
-.story_video{
+
+.story_video {
   padding-bottom: 3rem;
   padding-top: 3rem;
   margin: 0 auto;
   width: 100%;
 }
-/*End Profile Section*/ 
+
+.create_video {
+  width: 100%;
+}
+
+.select_v {
+  width: 40%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 30px;
+
+}
+
+.option-container {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+  float: right;
+  margin-top: -3rem;
+  flex-direction: column;
+}
+
+.option-image {
+  border-radius: 100%;
+  width: 53px;
+  margin-right: 15px
+}
+
+/*End Profile Section*/
