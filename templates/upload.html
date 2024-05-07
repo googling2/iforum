@@ -19,12 +19,13 @@
     <div style="margin-left: 20px; ">
       <label for="voices">목소리 선택:</label>
       <select name="selected_voice" id="selected_voice" class="select_v">
-        <option value="alloy" data-image="../static\img\alloy.png">에로이</option>
-        <option value="echo" data-image="../static\img\echo.png">에코</option>
-        <option value="fable" data-image="../static\img\fable.png">페이블</option>
-        <option value="onyx" data-image="../static\img\onyx.png">오닉스</option>
-        <option value="nova" data-image="../static\img\nova.png">노바</option>
-        <option value="shimmer" data-image="../static\img\shimmer.png">샤이머</option>
+        <option value="alloy" data-image="../static\img\alloy.png" data-audio="../static/audio/alloy.mp3">에로이</option>
+        <option value="echo" data-image="../static\img\echo.png" data-audio="../static/audio/echo.mp3">에코</option>
+        <option value="fable" data-image="../static\img\fable.png" data-audio="../static/audio/fable.mp3">페이블</option>
+        <option value="onyx" data-image="../static\img\onyx.png" data-audio="../static/audio/onyx.mp3">오닉스</option>
+        <option value="nova" data-image="../static\img\nova.png" data-audio="../static/audio/nova.mp3">노바</option>
+        <option value="shimmer" data-image="../static\img\shimmer.png" data-audio="../static/audio/shimmer.mp3">샤이머
+        </option>
       </select>
     </div>
     <div class="option-container">
@@ -93,6 +94,14 @@ margin-top: 30px;
     const text = selectedOption.textContent;
     selectedImage.src = imageSrc;
     selectedText.textContent = text;
+  });
+  selectedImage.addEventListener('click', () => {
+    const selectedOption = selectElement.selectedOptions[0];
+    const audioSrc = selectedOption.getAttribute('data-audio');
+    if (audioSrc) {
+      const audio = new Audio(audioSrc);
+      audio.play();
+    }
   });
 </script>
 {% endblock content %}
