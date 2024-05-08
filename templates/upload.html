@@ -1,62 +1,134 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--마이페이지 시작-->
 
-{% extends 'base.html' %} 
-    {% block content %}
-    <!--마이페이지 시작-->
-
-    <form action="/story" method="post">
-    <div class="story_container" style="display: flex">
-      <div class="input_text" id="step1" style="flex: 1; padding: 20px">
-        <input
-          type="text"
-          name="keywords"
-          placeholder="나만의 단어와 문장을 입력해주세요... 예시)하늘을 날고싶은 오리의 이야기, "
-          style="
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        />
-        <button
-          onclick="showNextStep('step2')"
-          style="
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 5px;
-            margin-top: 30px;
-          "
-        >
-          다음
-        </button>
-      </div>
-    </div>
-    <div style="margin-left: 20px;">
-      <label for="voices">목소리 선택:</label>
-      <select
-      name="selected_voice"
-      style="
-        width: 10%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-top: 30px;
-      "
-      >
-    </div>
-
-      <option value="alloy">alloy</option>
-      <option value="echo">echo</option>
-      <option value="fable">fable</option>
-      <option value="onyx">onyx</option>
-      <option value="nova">nova</option>
-      <option value="shimmer">shimmer</option>
-      <option value="exp_dir/processed/BJH22-0-100_v2_UNLOrsKHhGlYFG07/wavs/BJH22-0-100_v2_UNLOrsKHhGlYFG07_seg0.wav">내목소리</option>
+<form action="/story" method="post">
+  <div class="story_container" style="display: flex">
+    <div class="input_text" id="step1" style="flex: 1; padding: 20px">
+      <input type="text" name="keywords" placeholder="예시)하늘을 나는 오리 이야기" class="input_story" />
       
-  </select>
-    </form>
+    </div>
+    <button class="base_btn">
+      딸깍
+    </button>
 
-    {% endblock content %}
+  </div>
+  <div style="width: 100%;">
+    <div style="margin-left: 20px; ">
+      <label for="voices">목소리 선택:</label>
+      <select name="selected_voice" id="selected_voice" class="select_v">
+        <option value="alloy" data-image="../static\profile_img\1.png" data-audio="../static/profile_audio/alloy.mp3">
+          alloy
+        </option>
+        <option value="echo" data-image="../static\profile_img\2.png" data-audio="../static/profile_audio/echo.mp3">
+          echo
+        </option>
+        <option value="fable" data-image="../static\profile_img\3.png" data-audio="../static/profile_audio/fable.mp3">
+          fable
+        </option>
+        <option value="onyx" data-image="../static\profile_img\4.png" data-audio="../static/profile_audio/onyx.mp3">
+          onyx
+        </option>
+        <option value="nova" data-image="../static\profile_img\5.png" data-audio="../static/profile_audio/nova.mp3">
+          nova
+        </option>
+        <option value="shimmer" data-image="../static\profile_img\6.png"
+          data-audio="../static/profile_audio/shimmer.mp3">
+          shimmer
+        </option>
+        <option value="exp_dir/processed/BJH22-0-100_v2_UNLOrsKHhGlYFG07/wavs/BJH22-0-100_v2_UNLOrsKHhGlYFG07_seg0.wav">내목소리</option>
+      </select>
+    </div>
+    <div class="option-container">
+      <img src="../static\profile_img\1.png" alt="선택된 이미지" id="selected_image" class="option-image">
+      <!-- <span id="selected_text"></span> 프로필밑에 이름-->
+    </div>
+  </div>
+  <div>
+    <label for="voices" style="margin-left: 20px;">분위기 선택:</label>
+    <select name="selected_mood" class="select_mood1">
+  </div>
+  <option value="sina">신나는</option>
+  <option value="zeul">즐거운</option>
+  <option value="moo">무서운</option>
+  <option value="ear">귀여운</option>
+  <option value="mo">모험적인</option>
+  <option value="fuck">이게분위기야?</option>
+  </select>
+  </div>
+  <div>
+    <form action="">
+      <label for="voices" style="margin-left: 20px;">스타일 선택:</label>
+      <select name="changeImg" id="changeImg" class="select_mood1">
+        <option value="" data-image="../static\sample_img\albert-cartoon-dalle3.webp">픽사</option>
+        <option value="" data-image="../static\sample_img\anime-dalle.webp">애니</option>
+        <option value="" data-image="../static\sample_img\archer-cartoon.webp">카툰</option>
+        <option value="" data-image="../static\sample_img\cartoon-disney-dalle-ai.webp">디지니</option>
+        <option value="" data-image="../static\sample_img\charlie-brown-toon.webp">땅콩</option>
+        <option value="" data-image="../static\sample_img\cute-fox-family-toon.webp">피파피그</option>
+        <option value="" data-image="../static\sample_img\dalle-powderpuff-cartoon.webp">파워 퍼프 걸</option>
+        <option value="" data-image="../static\sample_img\spirited-away-dalle.webp">미야자키 하야오의 일본 애니메이션</option>
+        <option value="" data-image="../static\sample_img\stop-motion-animation.webp">스톱 모션 애니메이션</option>
+        <option value="" data-image="../static\sample_img\aardman-animations.webp">아드먼</option>
+      </select>
+    </form>
+  </div>
+  <img src="../static\sample_img\albert-cartoon-dalle3.webp" id="selectedImage" class="cnImg">
+  <!-- https://www.instantaiprompt.com/ko/prompts/dall-e/cartoon-animation-examples/ -->
+
+</form>
+<!-- <h1>동영상 생성 완료</h1>
+<p>어.. 대충 줄거리가 어쩌구 저쩌구</p>
+<video controls class="create_video">
+  <source src="/static/audio/final_output.mp4" type="video/mp4" />
+  해당 브라우저에서 비디오를 지원하지 않습니다.
+</video> -->
+
+<button class="upload_btn">유튜브 업로드</button>
+
+<script>
+  const selectElement = document.getElementById('selected_voice');
+  const selectedImage = document.getElementById('selected_image');
+  const selectedText = document.getElementById('selected_text');
+
+  selectElement.addEventListener('change', (event) => {
+    const selectedOption = event.target.selectedOptions[0];
+    const imageSrc = selectedOption.getAttribute('data-image');
+    const text = selectedOption.textContent;
+    selectedImage.src = imageSrc;
+    selectedText.textContent = text;
+  });
+  selectedImage.addEventListener('click', () => {
+    const selectedOption = selectElement.selectedOptions[0];
+    const audioSrc = selectedOption.getAttribute('data-audio');
+    if (audioSrc) {
+      const audio = new Audio(audioSrc);
+      audio.play();
+    }
+  });
+
+</script>
+<script>
+  let changeimg = document.getElementById("changeImg");
+  let myImg = document.getElementById("myImg");
+
+  function changeImage() {
+    let index = changeimg.selectedIndex;
+    myImg.src = changeimg.options[index].data - image;
+  }
+
+  changeImage();
+  changeimg.onchange = changeImage;
+
+</script>
+<script>
+  const imageSelectElement = document.getElementById('changeImg');
+  const imageElement = document.getElementById('selectedImage');
+
+  imageSelectElement.addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    const imageUrl = selectedOption.getAttribute('data-image');
+    imageElement.src = imageUrl;
+  });
+</script>
+{% endblock content %}
