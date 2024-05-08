@@ -94,25 +94,27 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         print("동화내용 나오는지 확인 : ", story_content)
 
         language = "KR"
-    speed = 1.2
-    print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-
-    if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
-
+        speed = 1.0
         print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+
+        if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
+
+            print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
          # TTS 생성
-        audio_response = client.audio.speech.create(
+            audio_response = client.audio.speech.create(
             model="tts-1",
             input=story_content,
             voice=selected_voice
-        )
-        audio_data = audio_response.content
-        audio_file_path = "static/audio/m1.mp3"
-        with open(audio_file_path, "wb") as audio_file:
-            audio_file.write(audio_data)
-    else: 
-        predict.predict(selected_voice, story_content, language, speed)
-        audio_file_path = "static/audio/m1.mp3"       
+            )
+            audio_data = audio_response.content
+            audio_file_path = "static/audio/m1.mp3"
+            with open(audio_file_path, "wb") as audio_file:
+                audio_file.write(audio_data)
+        else: 
+            predict.predict(selected_voice, story_content, language, speed)
+            audio_file_path = "static/audio/m1.mp3"
+
+           
 
         # 이미지 생성 및 저장
         image_paths = []
