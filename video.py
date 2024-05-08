@@ -4,7 +4,7 @@ from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip,
 from moviepy.editor import AudioFileClip
 import os
 
-def create_image(image_file, output_size=(800, 800)):
+def create_image(image_file, output_size=(512, 512)):
     """지정된 크기로 이미지 파일을 열고 크기를 조정합니다."""
     image = Image.open(image_file)
     image = image.resize(output_size, Image.LANCZOS)

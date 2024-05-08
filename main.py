@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 import openai
 from dotenv import load_dotenv
 import os
+from PIL import Image
 import urllib.request
 import time
 import asyncio
@@ -114,27 +115,60 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     delay_seconds = 15
     # 60 / rate_limit_per_minute  # 15초
 
-    for idx, paragraph in enumerate(paragraphs):
-        if idx > 0:
-            await asyncio.sleep(delay_seconds)  # 요청 사이 지연
+    # for idx, paragraph in enumerate(paragraphs):
+    #     if idx > 0:
+    #         await asyncio.sleep(delay_seconds)  # 요청 사이 지연
 
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"please draw  digital art style, {paragraph}",
-            size="1024x1024",
-            quality="standard",
-            n=1,
-        )
-        
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=f"""
+"Please include four cuts in one image. Each cut must be attached to each other so that it looks like a continuous image without borders or corners. Please create an image with this condition as the top. Priority.
 
-        if response.data:
-            image_url = response.data[0].url
-            img_filename = f"a{idx + 1}.jpg"
-            img_dest = os.path.join("static", "img", img_filename)
-            if os.path.exists(img_dest):
-                os.remove(img_dest)
-            urllib.request.urlretrieve(image_url, img_dest)
-            image_paths.append(img_dest)
+The scene corresponding to the first paragraph is in the upper right,
+        The scene corresponding to the second paragraph is in the upper left,
+        The scene corresponding to the third paragraph is at the bottom right,
+        Please draw the scene corresponding to the 4th paragraph from the bottom left.
+{paragraphs} 
+""",
+        size="1024x1024",
+        quality="standard",
+        n=1
+    )
+
+    if response.data:
+        image_url = response.data[0].url
+        img_filename = "4cut_image.jpg"
+        img_dest = os.path.join("static", "img", img_filename)
+        if os.path.exists(img_dest):
+            os.remove(img_dest)
+        urllib.request.urlretrieve(image_url, img_dest)
+
+        # 이미지 다운로드
+        if os.path.exists(img_dest):
+            os.remove(img_dest)
+        urllib.request.urlretrieve(image_url, img_dest)
+
+        # 이미지 열기
+        img = Image.open(img_dest) 
+
+        crop_sizes = [(0, 0, 512, 512), (512, 0, 1024, 512), (0, 512, 512, 1024), (512, 512, 1024, 1024)]
+        # crop_sizes = [(10, 10, 502, 502), (502, 10, 1014, 502), (10, 502, 512, 1024), (512, 512, 1024, 1024)]
+
+        # 자른 이미지 저장
+        for idx, (left, upper, right, lower) in enumerate(crop_sizes):
+            # 부분 이미지 추출
+            cropped_image = img.crop((left, upper, right, lower))
+            # 저장할 파일명 설정
+            panel_filename = f"a{idx+1}.jpg"
+            panel_dest = os.path.join("static", "img", panel_filename)
+            # 파일이 이미 존재하면 삭제
+            if os.path.exists(panel_dest):
+                os.remove(panel_dest)
+            # 부분 이미지 저장
+            cropped_image.save(panel_dest)
+
+
+
 
     # 결과 템플릿 렌더링
     return templates.TemplateResponse("story.html", {
