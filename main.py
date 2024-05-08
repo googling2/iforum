@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 import os
 from PIL import Image
 import urllib.request
-import time
-import asyncio
 import shutil  # 디렉토리 삭제에 사용
+from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
+from moviepy.editor import AudioFileClip
+
 
 load_dotenv()
 
@@ -63,144 +64,189 @@ async def display_form(request: Request):
         raise
 
 
-
-
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...)):
-    # 이미지 디렉토리 초기화
-    img_dir = "static/img"
-    if os.path.exists(img_dir):
-        shutil.rmtree(img_dir)  # 디렉토리 삭제
-    os.makedirs(img_dir, exist_ok=True)  # 새 디렉토리 생성
+    try:
+        # 이미지 디렉토리 초기화
+        img_dir = "static/img"
+        if os.path.exists(img_dir):
+            shutil.rmtree(img_dir)  # 디렉토리 삭제
+        os.makedirs(img_dir, exist_ok=True)  # 새 디렉토리 생성
 
-    # GPT-3.5로 스토리 생성
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
-            {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이런식으로 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"}
-        ]
-    )
+        # GPT-3.5로 스토리 생성
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
+                {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이렇게 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"}
+            ]
+        )
 
+        # 스토리 콘텐츠 확인
+        if completion.choices:
+            story_content = completion.choices[0].message.content
+            story_title = story_content.split('\n')[0].replace("제목: ", "")  # 제목을 첫 줄로 가정
+        else:
+            story_content = "텍스트를 다시 입력해주세요!"
 
-    # 스토리 콘텐츠 확인
-    if completion.choices:
-        story_content = completion.choices[0].message.content
-        story_title = story_content.split('\n')[0].replace("제목: ", "")  # 제목을 첫 줄로 가정
-        # story_title = story_title_ex.replace("제목: ", "")  # "제목:" 부분 제거
+        print("이거 나오냐", story_title)
+        print("동화내용 나오는지 확인 : ", story_content)
 
+        # TTS 생성
+        audio_response = client.audio.speech.create(
+            model="tts-1",
+            input=story_content,
+            voice=selected_voice
+        )
+        audio_data = audio_response.content
+        audio_file_path = "static/audio/m1.mp3"
+        with open(audio_file_path, "wb") as audio_file:
+            audio_file.write(audio_data)
 
-    else:
-        story_content = "텍스트를 다시 입력해주세요!"
+        # 이미지 생성 및 저장
+        image_paths = []
+        paragraphs = story_content.split('\n\n')
+        delay_seconds = 15
 
-    print("이거 나오냐",story_title)
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"""
+            "Create a four-panel fairytale image in a square digital art style. The layout is as follows: the top left corner captures the first part, the top right corner captures the second part, and the bottom left corner captures the third part. , the lower right corner shows the fourth part. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative.”
+            {paragraphs} 
+            """,
+            size="1024x1024",
+            quality="standard",
+            n=1
+        )
 
-    print("동화내용 나오는지 확인 : ",story_content)
+        if response.data:
+            image_url = response.data[0].url
+            img_filename = "4cut_image.jpg"
+            img_dest = os.path.join("static", "img", img_filename)
+            if os.path.exists(img_dest):
+                os.remove(img_dest)
+            urllib.request.urlretrieve(image_url, img_dest)
 
+            # 이미지 열기
+            img = Image.open(img_dest)
 
-    # TTS 생성
-    audio_response = client.audio.speech.create(
-        model="tts-1",
-        input=story_content,
-        voice=selected_voice
-    )
-    audio_data = audio_response.content
-    audio_file_path = "static/audio/m1.mp3"
-    with open(audio_file_path, "wb") as audio_file:
-        audio_file.write(audio_data)
+            crop_sizes = [(0, 0, 512, 512), (512, 0, 1024, 512), (0, 512, 512, 1024), (512, 512, 1024, 1024)]
 
-    # 이미지 생성 및 저장
-    image_paths = []
-    paragraphs = story_content.split('\n\n')
-    delay_seconds = 15
-    # 60 / rate_limit_per_minute  # 15초
+            # 자른 이미지 저장
+            for idx, (left, upper, right, lower) in enumerate(crop_sizes):
+                # 부분 이미지 추출
+                cropped_image = img.crop((left, upper, right, lower))
+                # 저장할 파일명 설정
+                panel_filename = f"a{idx + 1}.jpg"
+                panel_dest = os.path.join("static", "img", panel_filename)
+                # 파일이 이미 존재하면 삭제
+                if os.path.exists(panel_dest):
+                    os.remove(panel_dest)
+                # 부분 이미지 저장
+                cropped_image.save(panel_dest)
 
-    # for idx, paragraph in enumerate(paragraphs):
-    #     if idx > 0:
-    #         await asyncio.sleep(delay_seconds)  # 요청 사이 지연
+        # 비동기적으로 비디오 생성 호출
+        await create_video()
 
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=f"""
-"Please include four cuts in one image. Each cut must be attached to each other so that it looks like a continuous image without borders or corners. Please create an image with this condition as the top. Priority.
-
-The scene corresponding to the first paragraph is in the upper right,
-        The scene corresponding to the second paragraph is in the upper left,
-        The scene corresponding to the third paragraph is at the bottom right,
-        Please draw the scene corresponding to the 4th paragraph from the bottom left.
-{paragraphs} 
-""",
-        size="1024x1024",
-        quality="standard",
-        n=1
-    )
-
-    if response.data:
-        image_url = response.data[0].url
-        img_filename = "4cut_image.jpg"
-        img_dest = os.path.join("static", "img", img_filename)
-        if os.path.exists(img_dest):
-            os.remove(img_dest)
-        urllib.request.urlretrieve(image_url, img_dest)
-
-        # 이미지 다운로드
-        if os.path.exists(img_dest):
-            os.remove(img_dest)
-        urllib.request.urlretrieve(image_url, img_dest)
-
-        # 이미지 열기
-        img = Image.open(img_dest) 
-
-        crop_sizes = [(0, 0, 512, 512), (512, 0, 1024, 512), (0, 512, 512, 1024), (512, 512, 1024, 1024)]
-        # crop_sizes = [(10, 10, 502, 502), (502, 10, 1014, 502), (10, 502, 512, 1024), (512, 512, 1024, 1024)]
-
-        # 자른 이미지 저장
-        for idx, (left, upper, right, lower) in enumerate(crop_sizes):
-            # 부분 이미지 추출
-            cropped_image = img.crop((left, upper, right, lower))
-            # 저장할 파일명 설정
-            panel_filename = f"a{idx+1}.jpg"
-            panel_dest = os.path.join("static", "img", panel_filename)
-            # 파일이 이미 존재하면 삭제
-            if os.path.exists(panel_dest):
-                os.remove(panel_dest)
-            # 부분 이미지 저장
-            cropped_image.save(panel_dest)
+        # 결과 템플릿 렌더링
+        return templates.TemplateResponse("story.html", {
+            "request": request,
+            "story_content": story_content,
+            "story_title": story_title,
+            "audio_file_path": audio_file_path,
+            "image_paths": image_paths
+        })
+    except Exception as e:
+        return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
 
 
+async def create_video():
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+        import numpy as np
+        from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
+        import os
 
+        def create_image(image_file, output_size=(512, 512)):
+            """지정된 크기로 이미지 파일을 열고 크기를 조정합니다."""
+            image = Image.open(image_file)
+            image = image.resize(output_size, Image.LANCZOS)
+            return image
 
-    # 결과 템플릿 렌더링
-    return templates.TemplateResponse("story.html", {
-        "request": request,
-        "story_content": story_content,
-        "story_title": story_title, 
-        "audio_file_path": audio_file_path,
-        "image_paths": image_paths
-    })
+        def create_zoom_frames(image, duration=6, fps=24, final_scale=1.3):
+            """주어진 이미지에 대해 지정된 기간과 fps로 줌 효과의 프레임을 생성합니다."""
+            num_frames = int(duration * fps)
+            zoomed_images = []
+            original_center_x, original_center_y = image.width // 2, image.height // 2
 
+            for i in range(num_frames):
+                scale = 1 + (final_scale - 1) * (i / num_frames)
+                new_width = int(image.width * scale)
+                new_height = int(image.height * scale)
 
-@app.post("/create_video", response_class=HTMLResponse)
-async def create_video(request: Request):
-    # 비동기적으로 video.py 실행
-    process = await asyncio.create_subprocess_exec(
-        "python", "video.py",
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-    
-    # 프로세스가 완료될 때까지 대기
-    stdout, stderr = await process.communicate()
+                if new_width % 2 != 0:
+                    new_width += 1
+                if new_height % 2 != 0:
+                    new_height += 1
 
-    if process.returncode == 0:
-        final_output = "static\\final_output.mp4"
-        return templates.TemplateResponse("video_created.html", {"request": request, "video_url": final_output})
-    else:
-        # 프로세스 실행 중 오류가 발생한 경우 처리
-        error_message = f"{stderr.decode()}, 무슨 에러러러러????"
-        # return templates.TemplateResponse("video_error.html", {"request": request, "error_message": error_message})
-        return "에러입니다."
-    
+                frame = image.resize((new_width, new_height), Image.LANCZOS)
+                new_center_x, new_center_y = frame.width // 2, frame.height // 2
+                left = max(0, new_center_x - original_center_x)
+                top = max(0, new_center_y - original_center_y)
+                right = left + image.width
+                bottom = top + image.height
+                frame = frame.crop((left, top, right, bottom))
+                zoomed_images.append(np.array(frame))
+
+            return zoomed_images
+
+        def image_to_video(images, output_file='output.mp4', fps=24):
+            """지정된 프레임 속도로 이미지 배열 목록에서 비디오를 만듭니다."""
+            clip = ImageSequenceClip(images, fps=fps)
+            clip.write_videofile(output_file, codec='libx264')
+
+        def overlay_image_and_audio_on_video(video_file, audio_file, output_file='final_output.mp4'):
+            """비디오에 오디오 트랙을 오버레이하고 지정된 출력 파일로 내보냅니다."""
+            video_clip = VideoFileClip(video_file)
+            audio_clip = AudioFileClip(audio_file)
+            final_clip = CompositeVideoClip([video_clip.set_audio(audio_clip)])
+            final_clip.write_videofile(output_file, codec='libx264')
+
+        def main():
+            """이미지를 확대하는 비디오로 처리하고 오디오를 오버레이하는 메인 함수입니다."""
+            base_path = 'static/img'
+            image_files = []
+            idx = 1
+            while True:
+                file_path = os.path.join(base_path, f'a{idx}.jpg')
+                if os.path.exists(file_path):
+                    image_files.append(file_path)
+                    idx += 1
+                else:
+                    break
+
+            if not image_files:
+                print("No image files found.")
+                return
+
+            audio_clip = AudioFileClip('static/audio/m1.mp3')
+            total_duration = audio_clip.duration
+            duration_per_image = total_duration / len(image_files)
+            all_zoomed_images = []
+
+            for image_file in image_files:
+                image = create_image(image_file)
+                zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
+                all_zoomed_images.extend(zoomed_images)
+
+            image_to_video(all_zoomed_images, 'static/output.mp4', fps=24)
+            overlay_image_and_audio_on_video('static/output.mp4', 'static/audio/m1.mp3', 'static/final_output.mp4')
+
+        main()
+        return "비디오 생성이 완료되었습니다."
+    except Exception as e:
+        return f"비디오 생성 중 오류가 발생하였습니다: {e}"
+
 
 
 if __name__ == "__main__":
