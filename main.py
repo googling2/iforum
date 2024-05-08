@@ -149,7 +149,7 @@ async def create_video(request: Request):
         stderr=asyncio.subprocess.PIPE
     )
     
-    # 프로세스가 완료될 때까지 대기
+    # 프로세스가 완료될 때까지 대기 ######
     stdout, stderr = await process.communicate()
 
     if process.returncode == 0:
