@@ -1,0 +1,71 @@
+
+<!--마이페이지 시작-->
+{% extends 'base.html' %}
+{% block content %}
+<!-- <div class="container">
+<main class="content"> -->
+<section id="profile" class="box profile">
+  <div class="top-header">
+    <h3>frontend with salimi</h3>
+    <div class="icons">
+      <i class="fa-solid fa-shoe-prints"></i>
+      <i class="fa-solid fa-bars"></i>
+    </div>
+  </div>
+  <div class="profile-info">
+    <div class="profile-img">
+      <div class="inner-img">
+        <img src="../img/go.jpg" alt="">
+      </div>
+      <h3>고윤정</h3>
+    </div>
+    <ul>
+      <li>
+        <h5>115</h5>
+        <span>팔로우</span>
+      </li>
+      <li>
+        <h5>3600</h5>
+        <span>팔로워</span>
+      </li>
+      <li>
+        <h5>9719</h5>
+        <span>likes</span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button class="btn">프로필설정</button>
+   <a href="upload.html"> <button class="btn">업로드</button></a>
+    </div>
+    <p>유튜브 채널로 이동<br />youtube.com</p>
+  </div>
+  <div class="profile-videos">
+
+    <div class="content">
+      <div class="videos-container">
+        <div class="video">
+          <video controls loop autoplay muted>
+            <source src="../vids/sample2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video">
+          <video controls loop autoplay muted>
+            <source src="../vids/sample3.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video">
+          <video controls loop autoplay muted>
+            <source src="../vids/sample4.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video">
+          <video controls loop autoplay muted>
+            <source src="../vids/sample5.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
