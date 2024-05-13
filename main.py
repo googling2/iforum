@@ -64,8 +64,6 @@ async def display_form(request: Request):
         print(f"Error rendering template: {e}")
         raise
 
-print("sungmin test")
-
 
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...)):
