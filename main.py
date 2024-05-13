@@ -255,6 +255,7 @@ async def create_video():
             image_to_video(all_zoomed_images, 'static/output.mp4', fps=24)
             overlay_image_and_audio_on_video('static/output.mp4', 'static/audio/m1.mp3', 'static/final_output.mp4')
 
+        print('sssss')
         main()
         return "비디오 생성이 완료되었습니다."
     except Exception as e:
