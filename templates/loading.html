@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<meta charset="UTF-8">
 <style>
   #page {
     position: absolute;
@@ -14,10 +15,11 @@
     right: 0;
     top: 0;
     transition: opacity 1s;
-    z-index: 50;
+    z-index: -2;
   }
 
   #phrase_box {
+    margin-top: 300px;
     display: flex;
     flex-flow: column;
     height: 150px;
@@ -109,7 +111,6 @@
     background: linear-gradient(to top right, #FC636B 10%, #FF6D92 65%, #FFB900 125%);
     margin: 0;
     box-sizing: border-box;
-    height: 100vh;
     display: grid;
     place-items: center;
     font-size: 0.25vh;
@@ -133,7 +134,8 @@
     aspect-ratio: 1;
     perspective: 250em;
     z-index: -1;
-    margin-top: -50%;
+
+    margin-top: -120%;
   }
 
   .dodecahedron {
@@ -287,174 +289,176 @@
     display: none;
   }
 </style>
+
 </head>
 
+<section id="loadingContainer" style="display: none;">
+  <section style="margin-top: 100%;">
+    <div id="page">
+      <div id="phrase_box">
+        <svg width="100%" height="100%">
+          <defs>
+            <mask id="mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+              <linearGradient id="linearGradient" gradientUnits="objectBoundingBox" x2="0" y2="1">
+                <stop stop-color="white" stop-opacity="0" offset="0%" />
+                <stop stop-color="white" stop-opacity="1" offset="30%" />
+                <stop stop-color="white" stop-opacity="1" offset="70%" />
+                <stop stop-color="white" stop-opacity="0" offset="100%" />
+              </linearGradient>
+              <rect width="100%" height="100%" fill="url(#linearGradient)" />
+            </mask>
+          </defs>
+          <g width="100%" height="100%" style="mask: url(#mask);">
+            <g id="phrases"></g>
+          </g>
+        </svg>
+      </div>
+      <div id="footer">
+        <div id="logo"></div>Iforum
+      </div>
+    </div>
+  </section>
 
-<section style="margin-top: 100%;">
-  <div id="page">
-    <div id="phrase_box">
-      <svg width="100%" height="100%">
-        <defs>
-          <mask id="mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
-            <linearGradient id="linearGradient" gradientUnits="objectBoundingBox" x2="0" y2="1">
-              <stop stop-color="white" stop-opacity="0" offset="0%" />
-              <stop stop-color="white" stop-opacity="1" offset="30%" />
-              <stop stop-color="white" stop-opacity="1" offset="70%" />
-              <stop stop-color="white" stop-opacity="0" offset="100%" />
-            </linearGradient>
-            <rect width="100%" height="100%" fill="url(#linearGradient)" />
-          </mask>
-        </defs>
-        <g width="100%" height="100%" style="mask: url(#mask);">
-          <g id="phrases"></g>
-        </g>
-      </svg>
+  <section class="cube">
+    <div class="scene">
+      <div class="dodecahedron">
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall lid"></div>
+        <div class="wall lid"></div>
+      </div>
     </div>
-    <div id="footer">
-      <div id="logo"></div>Iforum
-    </div>
-  </div>
+  </section>
 </section>
+<script>
+  // 초기 회전 각도
+  let xAngle = 0, yAngle = 0;
+  let lastTime = 0;
 
-<body class="cube">
-  <div class="scene">
-    <div class="dodecahedron">
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall side"></div>
-      <div class="wall lid"></div>
-      <div class="wall lid"></div>
-    </div>
-  </div>
-  </cube>
+  function rotate(timestamp) {
+    if (!lastTime) lastTime = timestamp; // 최초 호출 시간 초기화
+    const deltaTime = timestamp - lastTime; // 이전 프레임과의 시간 차이 계산
 
-  <script>
-    // 초기 회전 각도
-    let xAngle = 0, yAngle = 0;
-    let lastTime = 0;
+    // 각도 업데이트 (속도 조절)
+    xAngle += 1.6 * deltaTime / 50; // X축 회전 속도 (델타타임 활용)
+    yAngle += 2.7 * deltaTime / 50; // Y축 회전 속도 (델타타임 활용)
 
-    function rotate(timestamp) {
-      if (!lastTime) lastTime = timestamp; // 최초 호출 시간 초기화
-      const deltaTime = timestamp - lastTime; // 이전 프레임과의 시간 차이 계산
+    // 이십면체 요소에 회전 적용
+    const dodecahedron = document.querySelector('.dodecahedron');
+    dodecahedron.style.transform = `rotateX(${xAngle}deg) rotateY(${yAngle}deg)`;
 
-      // 각도 업데이트 (속도 조절)
-      xAngle += 1.6 * deltaTime / 50; // X축 회전 속도 (델타타임 활용)
-      yAngle += 2.7 * deltaTime / 50; // Y축 회전 속도 (델타타임 활용)
+    lastTime = timestamp; // 현재 호출 시간을 마지막 시간으로 업데이트
+    requestAnimationFrame(rotate); // 다음 프레임을 위한 요청
+  }
 
-      // 이십면체 요소에 회전 적용
-      const dodecahedron = document.querySelector('.dodecahedron');
-      dodecahedron.style.transform = `rotateX(${xAngle}deg) rotateY(${yAngle}deg)`;
+  // 애니메이션 시작
+  requestAnimationFrame(rotate);
+</script>
+<script>
+  var checkmarkIdPrefix = "loadingCheckSVG-";
+  var checkmarkCircleIdPrefix = "loadingCheckCircleSVG-";
+  var verticalSpacing = 50;
 
-      lastTime = timestamp; // 현재 호출 시간을 마지막 시간으로 업데이트
-      requestAnimationFrame(rotate); // 다음 프레임을 위한 요청
+  function createSVG(tag, properties, opt_children) {
+    var newElement = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var prop in properties) {
+      newElement.setAttribute(prop, properties[prop]);
     }
-
-    // 애니메이션 시작
-    requestAnimationFrame(rotate);
-  </script>
-  <script>
-    var checkmarkIdPrefix = "loadingCheckSVG-";
-    var checkmarkCircleIdPrefix = "loadingCheckCircleSVG-";
-    var verticalSpacing = 50;
-
-    function createSVG(tag, properties, opt_children) {
-      var newElement = document.createElementNS("http://www.w3.org/2000/svg", tag);
-      for (var prop in properties) {
-        newElement.setAttribute(prop, properties[prop]);
-      }
-      if (opt_children) {
-        opt_children.forEach(function (child) {
-          newElement.appendChild(child);
-        })
-      }
-      return newElement;
+    if (opt_children) {
+      opt_children.forEach(function (child) {
+        newElement.appendChild(child);
+      })
     }
+    return newElement;
+  }
 
-    function createPhraseSvg(phrase, yOffset) {
-      var text = createSVG("text", {
-        fill: "white",
-        x: 50,
-        y: yOffset,
-        "font-size": 18,
-        "font-family": "Arial"
-      });
-      text.appendChild(document.createTextNode(phrase + "..."));
-      return text;
-    }
-
-    function createCheckSvg(yOffset, index) {
-      var check = createSVG("polygon", {
-        points: "21.661,7.643 13.396,19.328 9.429,15.361 7.075,17.714 13.745,24.384 24.345,9.708 ",
-        fill: "rgba(255,255,255,1)",
-        id: checkmarkIdPrefix + index
-      });
-      var circle_outline = createSVG("path", {
-        d: "M16,0C7.163,0,0,7.163,0,16s7.163,16,16,16s16-7.163,16-16S24.837,0,16,0z M16,30C8.28,30,2,23.72,2,16C2,8.28,8.28,2,16,2 c7.72,0,14,6.28,14,14C30,23.72,23.72,30,16,30z",
-        fill: "white"
-      });
-      var circle = createSVG("circle", {
-        id: checkmarkCircleIdPrefix + index,
-        fill: "rgba(255,255,255,0)",
-        cx: 16,
-        cy: 16,
-        r: 15
-      });
-      var group = createSVG("g", {
-        transform: "translate(10 " + (yOffset - 20) + ") scale(.9)"
-      }, [circle, check, circle_outline]);
-      return group;
-    }
-
-    function addPhrasesToDocument(phrases) {
-      phrases.forEach(function (phrase, index) {
-        var yOffset = 30 + verticalSpacing * index;
-        document.getElementById("phrases").appendChild(createPhraseSvg(phrase, yOffset));
-        document.getElementById("phrases").appendChild(createCheckSvg(yOffset, index));
-      });
-    }
-
-    function easeInOut(t) {
-      var period = 200;
-      return (Math.sin(t / period + 100) + 1) / 2;
-    }
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-      var phrases = ["스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요"];
-      addPhrasesToDocument(phrases);
-      var start_time = new Date().getTime();
-      var upward_moving_group = document.getElementById("phrases");
-      upward_moving_group.currentY = 0;
-      var checks = phrases.map(function (_, i) {
-        return { check: document.getElementById(checkmarkIdPrefix + i), circle: document.getElementById(checkmarkCircleIdPrefix + i) };
-      });
-
-      function animateLoading() {
-        var now = new Date().getTime();
-        upward_moving_group.setAttribute("transform", "translate(0 " + upward_moving_group.currentY + ")");
-        upward_moving_group.currentY -= 1.35 * easeInOut(now);
-        checks.forEach(function (check, i) {
-          var color_change_boundary = -i * verticalSpacing + verticalSpacing + 15;
-          if (upward_moving_group.currentY < color_change_boundary) {
-            var alpha = Math.max(Math.min(1 - (upward_moving_group.currentY - color_change_boundary + 15) / 30, 1), 0);
-            check.circle.setAttribute("fill", "rgba(255, 255, 255, " + alpha + ")");
-            var check_color = [Math.round(255 * (1 - alpha) + 120 * alpha), Math.round(255 * (1 - alpha) + 154 * alpha)];
-            check.check.setAttribute("fill", "rgba(255, " + check_color[0] + "," + check_color[1] + ", 1)");
-          }
-        });
-        if (upward_moving_group.currentY <= -1000) {
-          upward_moving_group.currentY = 0; // 무한 반복을 위한 위치 재설정
-          start_time = new Date().getTime(); // 타이밍을 위한 시작 시간 재설정
-        }
-        requestAnimationFrame(animateLoading);
-      }
-      animateLoading();
+  function createPhraseSvg(phrase, yOffset) {
+    var text = createSVG("text", {
+      fill: "white",
+      x: 50,
+      y: yOffset,
+      "font-size": 18,
+      "font-family": "Arial"
     });
-  </script>
-  {% endblock content %}
+    text.appendChild(document.createTextNode(phrase + "..."));
+    return text;
+  }
+
+  function createCheckSvg(yOffset, index) {
+    var check = createSVG("polygon", {
+      points: "21.661,7.643 13.396,19.328 9.429,15.361 7.075,17.714 13.745,24.384 24.345,9.708 ",
+      fill: "rgba(255,255,255,1)",
+      id: checkmarkIdPrefix + index
+    });
+    var circle_outline = createSVG("path", {
+      d: "M16,0C7.163,0,0,7.163,0,16s7.163,16,16,16s16-7.163,16-16S24.837,0,16,0z M16,30C8.28,30,2,23.72,2,16C2,8.28,8.28,2,16,2 c7.72,0,14,6.28,14,14C30,23.72,23.72,30,16,30z",
+      fill: "white"
+    });
+    var circle = createSVG("circle", {
+      id: checkmarkCircleIdPrefix + index,
+      fill: "rgba(255,255,255,0)",
+      cx: 16,
+      cy: 16,
+      r: 15
+    });
+    var group = createSVG("g", {
+      transform: "translate(10 " + (yOffset - 20) + ") scale(.9)"
+    }, [circle, check, circle_outline]);
+    return group;
+  }
+
+  function addPhrasesToDocument(phrases) {
+    phrases.forEach(function (phrase, index) {
+      var yOffset = 30 + verticalSpacing * index;
+      document.getElementById("phrases").appendChild(createPhraseSvg(phrase, yOffset));
+      document.getElementById("phrases").appendChild(createCheckSvg(yOffset, index));
+    });
+  }
+
+  function easeInOut(t) {
+    var period = 200;
+    return (Math.sin(t / period + 100) + 1) / 2;
+  }
+
+  document.addEventListener("DOMContentLoaded", function (event) {
+    var phrases = ["스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요"];
+    addPhrasesToDocument(phrases);
+    var start_time = new Date().getTime();
+    var upward_moving_group = document.getElementById("phrases");
+    upward_moving_group.currentY = 0;
+    var checks = phrases.map(function (_, i) {
+      return { check: document.getElementById(checkmarkIdPrefix + i), circle: document.getElementById(checkmarkCircleIdPrefix + i) };
+    });
+
+    function animateLoading() {
+      var now = new Date().getTime();
+      upward_moving_group.setAttribute("transform", "translate(0 " + upward_moving_group.currentY + ")");
+      upward_moving_group.currentY -= 1.35 * easeInOut(now);
+      checks.forEach(function (check, i) {
+        var color_change_boundary = -i * verticalSpacing + verticalSpacing + 15;
+        if (upward_moving_group.currentY < color_change_boundary) {
+          var alpha = Math.max(Math.min(1 - (upward_moving_group.currentY - color_change_boundary + 15) / 30, 1), 0);
+          check.circle.setAttribute("fill", "rgba(255, 255, 255, " + alpha + ")");
+          var check_color = [Math.round(255 * (1 - alpha) + 120 * alpha), Math.round(255 * (1 - alpha) + 154 * alpha)];
+          check.check.setAttribute("fill", "rgba(255, " + check_color[0] + "," + check_color[1] + ", 1)");
+        }
+      });
+      if (upward_moving_group.currentY <= -1000) {
+        upward_moving_group.currentY = 0; // 무한 반복을 위한 위치 재설정
+        start_time = new Date().getTime(); // 타이밍을 위한 시작 시간 재설정
+      }
+      requestAnimationFrame(animateLoading);
+    }
+    animateLoading();
+  });
+
+</script>
+{% endblock content %}

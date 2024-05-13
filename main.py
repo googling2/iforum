@@ -79,7 +79,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
-                {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이렇게 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"}
+                {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이렇게 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"},
+                {"role": "assistant", "content": "3D pixar style"}
             ]
         )
 
@@ -124,7 +125,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "Create a four-panel fairytale image in a square digital art style. The layout is as follows: the top left corner captures the first part, the top right corner captures the second part, and the bottom left corner captures the third part. , the lower right corner shows the fourth part. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative.”
+            "Create a four-panel fairytale image in a square pixar style. The layout is as follows: the top left corner captures the first part, the top right corner captures the second part, and the bottom left corner captures the third part. , the lower right corner shows the fourth part. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative.”
             {paragraphs} 
             """,
             size="1024x1024",
@@ -162,7 +163,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         await create_video()
 
         # 결과 템플릿 렌더링
-        return templates.TemplateResponse("story.html", {
+        return templates.TemplateResponse("upload.html", {
             "request": request,
             "story_content": story_content,
             "story_title": story_title,
