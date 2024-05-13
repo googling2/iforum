@@ -99,13 +99,12 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
 
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
-
             print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-         # TTS 생성
+            # TTS 생성
             audio_response = client.audio.speech.create(
-            model="tts-1",
-            input=story_content,
-            voice=selected_voice
+                model="tts-1",
+                input=story_content,
+                voice=selected_voice
             )
             audio_data = audio_response.content
             audio_file_path = "static/audio/m1.mp3"
@@ -114,8 +113,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         else: 
             predict.predict(selected_voice, story_content, language, speed)
             audio_file_path = "static/audio/m1.mp3"
-
-           
 
         # 이미지 생성 및 저장
         image_paths = []
@@ -162,16 +159,21 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         # 비동기적으로 비디오 생성 호출
         await create_video()
 
+        # 타임스탬프 생성
+        timestamp = int(time.time())
+
         # 결과 템플릿 렌더링
-        return templates.TemplateResponse("upload.html", {
+        return templates.TemplateResponse("story.html", {
             "request": request,
             "story_content": story_content,
             "story_title": story_title,
             "audio_file_path": audio_file_path,
-            "image_paths": image_paths
+            "image_paths": image_paths,
+            "timestamp": timestamp  # 타임스탬프를 템플릿에 전달
         })
     except Exception as e:
         return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
+
 
 
 async def create_video():
