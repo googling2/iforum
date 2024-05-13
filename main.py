@@ -12,11 +12,12 @@ from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip,
 from moviepy.editor import AudioFileClip
 import predict
 import datetime
-from fastapi import FastAPI, Depends, Request
+from fastapi import FastAPI, Depends, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User
+from models import User, Fairytale
 from dependencies import get_db
+from starlette.status import HTTP_303_SEE_OTHER
 import os
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -31,7 +32,11 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=api_key)
 
-
+def get_current_user(request: Request):
+    user_info = request.session.get('user')
+    if not user_info:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return user_info
 
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request):
@@ -50,9 +55,10 @@ async def display_form(request: Request):
         raise
 
 @app.get("/profile", response_class=HTMLResponse)
-async def display_form(request: Request):
+async def display_form(request: Request, user_info: dict = Depends(get_current_user)):
+    print("사용자 정보 나오는지 확인", user_info)
     try:
-        return templates.TemplateResponse("profile.html", {"request": request})
+        return templates.TemplateResponse("profile.html", {"request": request, "user_info": user_info})
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
@@ -74,6 +80,7 @@ oauth.register(
 )
 
 
+
 @app.get("/login")
 async def login(request: Request):
     redirect_uri = request.url_for('auth')
@@ -90,13 +97,17 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == email).first()
     
     if existing_user:
-        # 이미 사용자가 존재하는 경우
-        response = RedirectResponse(url='/', status_code=303)
-        return response
-        # return {"message": "User already exists.", "user_id": existing_user.user_code}
+        request.session['user'] = {
+            "usercode": existing_user.user_code,
+            "name": existing_user.user_name,
+            "email": existing_user.email,
+            "picture": existing_user.profile
+        }
+        return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
     
     # 새 사용자를 데이터베이스에 추가
     new_user = User(
+        
         user_name=user_info['name'],
         email=email,
         profile=user_info.get('picture', ''),
@@ -107,10 +118,16 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     )
     db.add(new_user)
     db.commit()
-    
-    response = RedirectResponse(url='/', status_code=303)
-    return response
 
+    # 세션에 새 사용자 정보 저장
+    request.session['user'] = {
+        "usercode": new_user.user_code,
+        "name": new_user.user_name,
+        "email": new_user.email,
+        "picture": new_user.profile
+    }
+    
+    return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/friends", response_class=HTMLResponse)
 async def display_form(request: Request):
@@ -123,7 +140,7 @@ async def display_form(request: Request):
 
 
 @app.post("/story", response_class=HTMLResponse)
-async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...)):
+async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...),  db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         # 이미지 디렉토리 초기화
         img_dir = "static/img"
@@ -146,6 +163,19 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             story_title = story_content.split('\n')[0].replace("제목: ", "")  # 제목을 첫 줄로 가정
         else:
             story_content = "텍스트를 다시 입력해주세요!"
+
+        # 데이터베이스에 동화 저장
+        new_story = Fairytale(
+            user_code=user_info['usercode'],
+            ft_title=story_title,
+            ft_content=story_content,
+            ft_date=datetime.datetime.utcnow(),
+            ft_name=story_title,  # 필요하다면 수정
+            ft_like=0
+        )
+        db.add(new_story)
+        db.commit()
+
 
         print("이거 나오냐", story_title)
         print("동화내용 나오는지 확인 : ", story_content)
