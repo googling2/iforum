@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
@@ -11,13 +11,22 @@ import shutil  # 디렉토리 삭제에 사용
 from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
 from moviepy.editor import AudioFileClip
 import predict
-
-
-load_dotenv()
+import datetime
+from fastapi import FastAPI, Depends, Request
+from authlib.integrations.starlette_client import OAuth
+from sqlalchemy.orm import Session
+from models import User
+from dependencies import get_db
+import os
+from starlette.middleware.sessions import SessionMiddleware
 
 app = FastAPI()
+# SECRET_KEY: 이전에 생성했던 안전한 키 사용
+app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=api_key)
@@ -47,14 +56,61 @@ async def display_form(request: Request):
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+# =================================================================================
 
-@app.get("/login", response_class=HTMLResponse)
-async def display_form(request: Request):
-    try:
-        return templates.TemplateResponse("login.html", {"request": request})
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
+oauth = OAuth()
+oauth.register(
+    name='google',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params={'access_type': 'offline', 'prompt': 'consent'},  # access_type과 prompt 추가
+    access_token_url='https://oauth2.googleapis.com/token',
+    access_token_params=None,
+    refresh_token_url=None,
+    redirect_uri=os.getenv('GOOGLE_REDIRECT_URI'),
+    client_kwargs={'scope': 'openid email profile'},
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs'  # JWKS URI 추가
+)
+
+
+@app.get("/login")
+async def login(request: Request):
+    redirect_uri = request.url_for('auth')
+    return await oauth.google.authorize_redirect(request, redirect_uri, access_type="offline")
+
+
+@app.get("/auth")
+async def auth(request: Request, db: Session = Depends(get_db)):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = dict(token['userinfo'])
+    email = user_info['email']
+    
+    # 데이터베이스에서 해당 이메일을 가진 사용자 검색
+    existing_user = db.query(User).filter(User.email == email).first()
+    
+    if existing_user:
+        # 이미 사용자가 존재하는 경우
+        response = RedirectResponse(url='/', status_code=303)
+        return response
+        # return {"message": "User already exists.", "user_id": existing_user.user_code}
+    
+    # 새 사용자를 데이터베이스에 추가
+    new_user = User(
+        user_name=user_info['name'],
+        email=email,
+        profile=user_info.get('picture', ''),
+        joinDate=datetime.datetime.utcnow(),
+        accessToken=token['access_token'],
+        refreshToken=token.get('refresh_token', ''),
+        status='N'
+    )
+    db.add(new_user)
+    db.commit()
+    
+    response = RedirectResponse(url='/', status_code=303)
+    return response
+
 
 @app.get("/friends", response_class=HTMLResponse)
 async def display_form(request: Request):
