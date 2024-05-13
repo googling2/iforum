@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
@@ -58,21 +58,13 @@ async def display_form(request: Request):
         raise
 # =================================================================================
 
-# @app.get("/login", response_class=HTMLResponse)
-# async def display_form(request: Request):
-#     try:
-#         return templates.TemplateResponse("login.html", {"request": request})
-#     except Exception as e:
-#         print(f"Error rendering template: {e}")
-#         raise
-
 oauth = OAuth()
 oauth.register(
     name='google',
     client_id=os.getenv('GOOGLE_CLIENT_ID'),
     client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
     authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
+    authorize_params={'access_type': 'offline', 'prompt': 'consent'},  # access_type과 prompt 추가
     access_token_url='https://oauth2.googleapis.com/token',
     access_token_params=None,
     refresh_token_url=None,
@@ -99,7 +91,9 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     if existing_user:
         # 이미 사용자가 존재하는 경우
-        return {"message": "User already exists.", "user_id": existing_user.user_code}
+        response = RedirectResponse(url='/', status_code=303)
+        return response
+        # return {"message": "User already exists.", "user_id": existing_user.user_code}
     
     # 새 사용자를 데이터베이스에 추가
     new_user = User(
@@ -107,8 +101,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
         email=email,
         profile=user_info.get('picture', ''),
         joinDate=datetime.datetime.utcnow(),
-        clientId=os.getenv('GOOGLE_CLIENT_ID'),
-        secretId=os.getenv('GOOGLE_CLIENT_SECRET'),
         accessToken=token['access_token'],
         refreshToken=token.get('refresh_token', ''),
         status='N'
@@ -116,36 +108,9 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     
-    return {"message": "New user created successfully.", "user_id": new_user.user_code}
-# @app.get("/auth")
-# async def auth(request: Request, db: Session = Depends(get_db)):
-#     token = await oauth.google.authorize_access_token(request)
-#     try:
-        
-#             user_info = dict(token['userinfo'])
-#             print(user_info)
-#             print(type(user_info))
-#             print(user_info['name'])
-#             # user = User(user_name=user_info['name'], email=user_info['email'], profile=user_info['picture'])
-#             join_date = datetime.datetime.utcnow()  # 현재 UTC 시간
-#             user = User(
-#                 user_name=user_info['name'],
-#                 email=user_info['email'],
-#                 profile=user_info.get('picture', ''),
-#                 joinDate=join_date,
-#                 clientId=os.getenv('GOOGLE_CLIENT_ID'),
-#                 secretId=os.getenv('GOOGLE_CLIENT_SECRET'),
-#                 accessToken=token['access_token'],
-#                 refreshToken=token.get('refresh_token', ''),
-#                 status='N')
-#             db.add(user)
-#             db.commit()
-#             return {"message": "성공적으로 로그인되었습니다."}
-#     except Exception as e:
-#             print("ID 토큰 파싱 중 오류 발생:", str(e))
-#             return {"error": f"ID 토큰 파싱 실패: {str(e)}"}
+    response = RedirectResponse(url='/', status_code=303)
+    return response
 
-# =================================================================================
 
 @app.get("/friends", response_class=HTMLResponse)
 async def display_form(request: Request):

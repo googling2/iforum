@@ -11,8 +11,6 @@ class User(Base):
     email = Column(String(30), nullable=False, unique=True, index=True)
     profile = Column(Integer)
     joinDate = Column(Date, nullable=False)
-    clientId = Column(String(255), nullable=False)
-    secretId = Column(String(255), nullable=False)
     accessToken = Column(String(255), nullable=False)
     refreshToken = Column(String(255))
     status = Column(String(1), nullable=False, default='N', comment='탈퇴시 Y로 영상 올린 것들때문에')
