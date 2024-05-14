@@ -20,6 +20,7 @@ from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 import os
 from starlette.middleware.sessions import SessionMiddleware
+import time
 
 app = FastAPI()
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
@@ -248,13 +249,17 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         # 비동기적으로 비디오 생성 호출
         await create_video()
 
+        # 타임스탬프 생성
+        timestamp = int(time.time())
+
         # 결과 템플릿 렌더링
         return templates.TemplateResponse("story.html", {
             "request": request,
             "story_content": story_content,
             "story_title": story_title,
             "audio_file_path": audio_file_path,
-            "image_paths": image_paths
+            "image_paths": image_paths,
+            "timestamp": timestamp  # 타임스탬프를 템플릿에 전달
         })
     except Exception as e:
         return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
@@ -342,7 +347,7 @@ async def create_video():
             image_to_video(all_zoomed_images, 'static/output.mp4', fps=24)
             overlay_image_and_audio_on_video('static/output.mp4', 'static/audio/m1.mp3', 'static/final_output.mp4')
 
-        print('sssss')
+        print('비디오 생성 거의 완료')
         main()
         return "비디오 생성이 완료되었습니다."
     except Exception as e:

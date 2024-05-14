@@ -1,82 +1,130 @@
+
+
+
+
 {% extends 'base.html' %}
 {% block content %}
 <!--마이페이지 시작-->
 
-<form action="/story" method="post">
+<form id="myForm" action="/story" method="post">
   <div class="story_container" style="display: flex">
     <div class="input_text" id="step1" style="flex: 1; padding: 20px">
       <input type="text" name="keywords" placeholder="예시)하늘을 나는 오리 이야기" class="input_story" />
-      
     </div>
     <button class="base_btn">
       딸깍
     </button>
-
   </div>
   <div style="width: 100%;">
-    <div style="margin-left: 20px; ">
+    <div style="margin-left: 20px;">
       <label for="voices">목소리 선택:</label>
       <select name="selected_voice" id="selected_voice" class="select_v">
-        <option value="alloy" data-image="../static\profile_img\1.png" data-audio="../static/profile_audio/alloy.mp3">
+        <option value="alloy" data-image="../static\profile_img/1.png" data-audio="../static/profile_audio/alloy.mp3">
           alloy
         </option>
-        <option value="echo" data-image="../static\profile_img\2.png" data-audio="../static/profile_audio/echo.mp3">
+        <option value="echo" data-image="../static\profile_img/2.png" data-audio="../static/profile_audio/echo.mp3">
           echo
         </option>
-        <option value="fable" data-image="../static\profile_img\3.png" data-audio="../static/profile_audio/fable.mp3">
+        <option value="fable" data-image="../static\profile_img/3.png" data-audio="../static/profile_audio/fable.mp3">
           fable
         </option>
-        <option value="onyx" data-image="../static\profile_img\4.png" data-audio="../static/profile_audio/onyx.mp3">
+        <option value="onyx" data-image="../static\profile_img/4.png" data-audio="../static/profile_audio/onyx.mp3">
           onyx
         </option>
-        <option value="nova" data-image="../static\profile_img\5.png" data-audio="../static/profile_audio/nova.mp3">
+        <option value="nova" data-image="../static\profile_img/5.png" data-audio="../static/profile_audio/nova.mp3">
           nova
         </option>
-        <option value="shimmer" data-image="../static\profile_img\6.png"
+        <option value="shimmer" data-image="../static\profile_img/6.png"
           data-audio="../static/profile_audio/shimmer.mp3">
           shimmer
         </option>
-        <option value="exp_dir/baek.mp3">내목소리</option>
+        <option value="exp_dir/LeeByongHun.m4a">내목소리</option>
       </select>
     </div>
     <div class="option-container">
-      <img src="../static\profile_img\1.png" alt="선택된 이미지" id="selected_image" class="option-image">
-      <!-- <span id="selected_text"></span> 프로필밑에 이름-->
+      <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image">
+      <!-- <span id="selected_text"></span> 프로필 밑에 이름-->
     </div>
   </div>
   <div>
     <label for="voices" style="margin-left: 20px;">분위기 선택:</label>
     <select name="selected_mood" class="select_mood1">
-  </div>
-  <option value="sina">신나는</option>
-  <option value="zeul">즐거운</option>
-  <option value="moo">무서운</option>
-  <option value="ear">귀여운</option>
-  <option value="mo">모험적인</option>
-  <option value="fuck">이게분위기야?</option>
-  </select>
+      <option value="sina">신나는</option>
+      <option value="zeul">즐거운</option>
+      <option value="moo">무서운</option>
+      <option value="ear">귀여운</option>
+      <option value="mo">모험적인</option>
+      <option value="fuck">이게 분위기야?</option>
+    </select>
   </div>
   <div>
-    <form action="">
-      <label for="voices" style="margin-left: 20px;">스타일 선택:</label>
-      <select name="changeImg" id="changeImg" class="select_mood1">
-        <option value="" data-image="../static\sample_img\albert-cartoon-dalle3.webp">픽사</option>
-        <option value="" data-image="../static\sample_img\anime-dalle.webp">애니</option>
-        <option value="" data-image="../static\sample_img\archer-cartoon.webp">카툰</option>
-        <option value="" data-image="../static\sample_img\cartoon-disney-dalle-ai.webp">디지니</option>
-        <option value="" data-image="../static\sample_img\charlie-brown-toon.webp">땅콩</option>
-        <option value="" data-image="../static\sample_img\cute-fox-family-toon.webp">피파피그</option>
-        <option value="" data-image="../static\sample_img\dalle-powderpuff-cartoon.webp">파워 퍼프 걸</option>
-        <option value="" data-image="../static\sample_img\spirited-away-dalle.webp">미야자키 하야오의 일본 애니메이션</option>
-        <option value="" data-image="../static\sample_img\stop-motion-animation.webp">스톱 모션 애니메이션</option>
-        <option value="" data-image="../static\sample_img\aardman-animations.webp">아드먼</option>
-      </select>
-    </form>
+    <label for="voices" style="margin-left: 20px;">스타일 선택:</label>
+    <select name="changeImg" id="changeImg" class="select_mood1">
+      <option value="" data-image="../static/sample_img/albert-cartoon-dalle3.webp">픽사</option>
+      <option value="" data-image="../static/sample_img/anime-dalle.webp">애니</option>
+      <option value="" data-image="../static/sample_img/archer-cartoon.webp">카툰</option>
+      <option value="" data-image="../static/sample_img/cartoon-disney-dalle-ai.webp">디지니</option>
+      <option value="" data-image="../static/sample_img/charlie-brown-toon.webp">땅콩</option>
+      <option value="" data-image="../static/sample_img/cute-fox-family-toon.webp">피파피그</option>
+      <option value="" data-image="../static/sample_img/dalle-powderpuff-cartoon.webp">파워 퍼프 걸</option>
+      <option value="" data-image="../static/sample_img/spirited-away-dalle.webp">미야자키 하야오의 일본 애니메이션</option>
+      <option value="" data-image="../static/sample_img/stop-motion-animation.webp">스톱 모션 애니메이션</option>
+      <option value="" data-image="../static/sample_img/aardman-animations.webp">아드먼</option>
+    </select>
   </div>
-  <img src="../static\sample_img\albert-cartoon-dalle3.webp" id="selectedImage" class="cnImg">
+  <img src="../static/sample_img/albert-cartoon-dalle3.webp" id="selectedImage" class="cnImg">
   <!-- https://www.instantaiprompt.com/ko/prompts/dall-e/cartoon-animation-examples/ -->
-
 </form>
+
+
+<section id="loadingContainer" style="display: none;">
+  <section style="margin-top: 100%;">
+    <div id="page">
+      <div id="phrase_box">
+        <svg width="100%" height="100%">
+          <defs>
+            <mask id="mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+              <linearGradient id="linearGradient" gradientUnits="objectBoundingBox" x2="0" y2="1">
+                <stop stop-color="white" stop-opacity="0" offset="0%" />
+                <stop stop-color="white" stop-opacity="1" offset="30%" />
+                <stop stop-color="white" stop-opacity="1" offset="70%" />
+                <stop stop-color="white" stop-opacity="0" offset="100%" />
+              </linearGradient>
+              <rect width="100%" height="100%" fill="url(#linearGradient)" />
+            </mask>
+          </defs>
+          <g width="100%" height="100%" style="mask: url(#mask);">
+            <g id="phrases"></g>
+          </g>
+        </svg>
+      </div>
+      <div id="footer">
+        <div id="logo"></div>Iforum
+      </div>
+    </div>
+  </section>
+
+  <section class="cube">
+    <div class="scene">
+      <div class="dodecahedron">
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall side"></div>
+        <div class="wall lid"></div>
+        <div class="wall lid"></div>
+      </div>
+    </div>
+  </section>
+</section>
+
+
 <!-- <h1>동영상 생성 완료</h1>
 <p>어.. 대충 줄거리가 어쩌구 저쩌구</p>
 <video controls class="create_video">
@@ -84,51 +132,502 @@
   해당 브라우저에서 비디오를 지원하지 않습니다.
 </video> -->
 
-<button class="upload_btn">유튜브 업로드</button>
+<section id="resultvid" style="display: none;" class="result">
+  <h1>동영상 생성 완료</h1>
+  <p>동화 이야기를 기반으로 한 동영상이 성공적으로 생성되었습니다!</p>
 
-<script>
-  const selectElement = document.getElementById('selected_voice');
-  const selectedImage = document.getElementById('selected_image');
-  const selectedText = document.getElementById('selected_text');
+  <h2>동영상 재생</h2>
+  <video controls>
+    <source src="{{ video_url }}" type="video/mp4" />
+    해당 브라우저에서 비디오를 지원하지 않습니다.
+  </video>
 
-  selectElement.addEventListener('change', (event) => {
-    const selectedOption = event.target.selectedOptions[0];
-    const imageSrc = selectedOption.getAttribute('data-image');
-    const text = selectedOption.textContent;
-    selectedImage.src = imageSrc;
-    selectedText.textContent = text;
-  });
-  selectedImage.addEventListener('click', () => {
-    const selectedOption = selectElement.selectedOptions[0];
-    const audioSrc = selectedOption.getAttribute('data-audio');
-    if (audioSrc) {
-      const audio = new Audio(audioSrc);
-      audio.play();
-    }
-  });
-
-</script>
-<script>
-  let changeimg = document.getElementById("changeImg");
-  let myImg = document.getElementById("myImg");
-
-  function changeImage() {
-    let index = changeimg.selectedIndex;
-    myImg.src = changeimg.options[index].data - image;
+  <video controls class="create_video">
+    <source src="/static/final_output.mp4" type="video/mp4" />
+    해당 브라우저에서 비디오를 지원하지 않습니다.
+  </video>
+</section>
+<style>
+  #page {
+    position: absolute;
+    opacity: 90%;
+    align-items: center;
+    background: linear-gradient(to top right, #FC636B 10%, #FF6D92 65%, #FFB900 125%);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: opacity 1s;
+    z-index: -2;
   }
 
-  changeImage();
-  changeimg.onchange = changeImage;
+  #phrase_box {
+    margin-top: 300px;
+    display: flex;
+    flex-flow: column;
+    height: 150px;
+    overflow: hidden;
+    width: 260px;
+  }
 
+  #phrases {
+    animation: slide-phrases-upward 25s linear;
+  }
+
+  #footer {
+    bottom: 30px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+  }
+
+  @keyframes slide-phrases-upward {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(-1000px);
+    }
+  }
+
+  #loadingCheckCircleSVG-0,
+  #loadingCheckCircleSVG-1,
+  #loadingCheckCircleSVG-2,
+  #loadingCheckCircleSVG-3,
+  #loadingCheckCircleSVG-4,
+  #loadingCheckCircleSVG-5,
+  #loadingCheckCircleSVG-6,
+  #loadingCheckCircleSVG-7,
+  #loadingCheckCircleSVG-8,
+  #loadingCheckCircleSVG-9,
+  #loadingCheckCircleSVG-10 {
+    animation: fill-to-white 55000ms;
+  }
+
+  @keyframes fill-to-white {
+    0% {
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  #loadingCheckSVG-0,
+  #loadingCheckSVG-1,
+  #loadingCheckSVG-2,
+  #loadingCheckSVG-3,
+  #loadingCheckSVG-4,
+  #loadingCheckSVG-5,
+  #loadingCheckSVG-6,
+  #loadingCheckSVG-7,
+  #loadingCheckSVG-8,
+  #loadingCheckSVG-9,
+  #loadingCheckSVG-10 {
+    animation: fill-to-coral 5000ms;
+  }
+
+  @keyframes fill-to-coral {
+    0% {
+      fill: white;
+    }
+
+    10% {
+      fill: #FF6D92;
+    }
+
+    100% {
+      fill: #FF6D92;
+    }
+  }
+
+  .cube {
+    background: linear-gradient(to top right, #FC636B 10%, #FF6D92 65%, #FFB900 125%);
+    margin: 0;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    font-size: 0.25vh;
+  }
+
+  .cube * {
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+
+  .scene,
+  .dodecahedron {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .scene {
+    place-self: center;
+    width: 100em;
+    aspect-ratio: 1;
+    perspective: 250em;
+    z-index: -1;
+
+    margin-top: -120%;
+  }
+
+  .dodecahedron {
+    --ngon: 5;
+    --unit: calc(1em * var(--unitScale));
+    --triAngle: calc(360deg / var(--ngon));
+    /* the central angle of the pentagon's triangular slice */
+    --a3gon: calc(sin(calc(var(--triAngle) / 2)) * 100);
+    /* the base of a pentagon's triangular slice*/
+    --h3gon: calc(cos(calc(var(--triAngle) / 2)) * 50);
+    /* the height of a pentagon's triangular slice*/
+    --h5gon: calc(var(--h3gon) + 50);
+    /* total height of that same pentagon */
+    --pentAngle: asin(calc(var(--h3gon) / var(--h5gon)));
+    /* the angle that the pentagon would be inclined at if it were leaning against the center pivot axis of another pentagon */
+    --pentH: calc(cos(var(--pentAngle)) * var(--h5gon));
+    /* the height at which the tip of that pentagon touches the pivot axis */
+    --median: calc((var(--a3gon) * sin(var(--triAngle)) + var(--h5gon)) / 2);
+    /* the median value of the triangular slice's height and the pentagon's height */
+    --Hratio: calc(var(--median) / var(--h5gon));
+    /* ratio of the median and the pentagram's height */
+    --dodecaH: calc(var(--pentH) * var(--Hratio));
+    /* the height of the dodecahedron */
+    --unitScale: calc(50 / var(--dodecaH));
+    inset: calc(50 * (1em - var(--unit)));
+    transform: rotateX(60deg);
+    /* x축 회전 추가 */
+  }
+
+  .lid {
+    transform: rotateX(calc(-90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
+  }
+
+  .wall:nth-child(2n+1) {
+    --dir: 1;
+  }
+
+  .wall:nth-child(2n) {
+    --dir: -1;
+  }
+
+  .side {
+    transform: rotateY(calc(var(--step) * var(--triAngle) + .5turn)) rotateX(calc(var(--pentAngle) * -1 + 90deg + 90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
+  }
+
+  .wall {
+    inset: 0;
+    background-image: radial-gradient(at 0 0, hsla(calc(var(--triAngle) * var(--step)) 100% 50% / 1), hsla(calc(var(--triAngle) * var(--step) + 90deg) 100% 50% / 0));
+    background-size: 110px;
+    /* 이미지가 벽의 크기에 맞게 조절됩니다 */
+    background-position: center;
+    clip-path: polygon(calc((1 - sin(calc(0 * 72deg))) * 50%) calc((1 - cos(calc(0 * 72deg))) * 50%),
+        calc((1 - sin(calc(1 * 72deg))) * 50%) calc((1 - cos(calc(1 * 72deg))) * 50%),
+        calc((1 - sin(calc(2 * 72deg))) * 50%) calc((1 - cos(calc(2 * 72deg))) * 50%),
+        calc((1 - sin(calc(3 * 72deg))) * 50%) calc((1 - cos(calc(3 * 72deg))) * 50%),
+        calc((1 - sin(calc(4 * 72deg))) * 50%) calc((1 - cos(calc(4 * 72deg))) * 50%));
+  }
+
+  .wall:nth-child(1),
+  .wall:nth-child(2) {
+    --step: 0;
+  }
+
+  .wall:nth-child(3),
+  .wall:nth-child(4) {
+    --step: 1;
+  }
+
+  .wall:nth-child(5),
+  .wall:nth-child(6) {
+    --step: 2;
+  }
+
+  .wall:nth-child(7),
+  .wall:nth-child(8) {
+    --step: 3;
+  }
+
+  .wall:nth-child(9),
+  .wall:nth-child(10) {
+    --step: 4;
+  }
+
+  .wall:nth-child(11),
+  .wall:nth-child(12) {
+    --step: 5;
+  }
+
+
+
+  @media (orientation:portrait) {
+    body {
+      font-size: .5vw;
+    }
+  }
+
+  .wall:nth-child(1) {
+    background-image: url('../static/sample_img/1.png');
+
+  }
+
+  .wall:nth-child(2) {
+    background-image: url('../static/sample_img/2.png');
+  }
+
+  .wall:nth-child(3) {
+    background-image: url('../static/sample_img/3.png');
+  }
+
+  .wall:nth-child(4) {
+    background-image: url('../static/sample_img/4.png');
+  }
+
+  .wall:nth-child(5) {
+    background-image: url('../static/sample_img/5.png');
+  }
+
+  .wall:nth-child(6) {
+    background-image: url('../static/sample_img/6.png');
+  }
+
+  .wall:nth-child(7) {
+    background-image: url('../static/sample_img/7.png');
+  }
+
+  .wall:nth-child(8) {
+    background-image: url('../static/sample_img/8.png');
+  }
+
+  .wall:nth-child(9) {
+
+    background-image: url('../static/sample_img/9.png');
+  }
+
+  .wall:nth-child(10) {
+
+    background-image: url('../static/sample_img/10.png');
+  }
+
+  .wall:nth-child(11) {
+
+    background-image: url('../static/sample_img/11.png');
+  }
+
+  .wall:nth-child(12) {
+
+    background-image: url('../static/sample_img/12.png');
+  }
+
+  /* .hbody {
+    display: none;
+  } */
+
+  #resutvid {
+    z-index: 3;
+  }
+</style>
+<script>
+  // 초기 회전 각도
+  let xAngle = 0, yAngle = 0;
+  let lastTime = 0;
+
+  function rotate(timestamp) {
+    if (!lastTime) lastTime = timestamp; // 최초 호출 시간 초기화
+    const deltaTime = timestamp - lastTime; // 이전 프레임과의 시간 차이 계산
+
+    // 각도 업데이트 (속도 조절)
+    xAngle += 1.6 * deltaTime / 50; // X축 회전 속도 (델타타임 활용)
+    yAngle += 2.7 * deltaTime / 50; // Y축 회전 속도 (델타타임 활용)
+
+    // 이십면체 요소에 회전 적용
+    const dodecahedron = document.querySelector('.dodecahedron');
+    dodecahedron.style.transform = `rotateX(${xAngle}deg) rotateY(${yAngle}deg)`;
+
+    lastTime = timestamp; // 현재 호출 시간을 마지막 시간으로 업데이트
+    requestAnimationFrame(rotate); // 다음 프레임을 위한 요청
+  }
+
+  // 애니메이션 시작
+  requestAnimationFrame(rotate);
 </script>
 <script>
-  const imageSelectElement = document.getElementById('changeImg');
-  const imageElement = document.getElementById('selectedImage');
+  function createSVG(tag, properties, opt_children) {
+    var newElement = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var prop in properties) {
+      newElement.setAttribute(prop, properties[prop]);
+    }
+    if (opt_children) {
+      opt_children.forEach(function (child) {
+        newElement.appendChild(child);
+      })
+    }
+    return newElement;
+  }
 
-  imageSelectElement.addEventListener('change', function () {
-    const selectedOption = this.options[this.selectedIndex];
-    const imageUrl = selectedOption.getAttribute('data-image');
-    imageElement.src = imageUrl;
+  function createPhraseSvg(phrase, yOffset) {
+    var text = createSVG("text", {
+      fill: "white",
+      x: 50,
+      y: yOffset,
+      "font-size": 18,
+      "font-family": "Arial"
+    });
+    text.appendChild(document.createTextNode(phrase + "..."));
+    return text;
+  }
+
+  function createCheckSvg(yOffset, index) {
+    var check = createSVG("polygon", {
+      points: "21.661,7.643 13.396,19.328 9.429,15.361 7.075,17.714 13.745,24.384 24.345,9.708 ",
+      fill: "rgba(255,255,255,1)",
+      id: "loadingCheckSVG-" + index
+    });
+    var circle_outline = createSVG("path", {
+      d: "M16,0C7.163,0,0,7.163,0,16s7.163,16,16,16s16-7.163,16-16S24.837,0,16,0z M16,30C8.28,30,2,23.72,2,16C2,8.28,8.28,2,16,2 c7.72,0,14,6.28,14,14C30,23.72,23.72,30,16,30z",
+      fill: "white"
+    });
+    var circle = createSVG("circle", {
+      id: "loadingCheckCircleSVG-" + index,
+      fill: "rgba(255,255,255,0)",
+      cx: 16,
+      cy: 16,
+      r: 15
+    });
+    var group = createSVG("g", {
+      transform: "translate(10 " + (yOffset - 20) + ") scale(.9)"
+    }, [circle, check, circle_outline]);
+    return group;
+  }
+
+  function addPhrasesToDocument(phrases) {
+    phrases.forEach(function (phrase, index) {
+      var yOffset = 30 + 50 * index;
+      document.getElementById("phrases").appendChild(createPhraseSvg(phrase, yOffset));
+      document.getElementById("phrases").appendChild(createCheckSvg(yOffset, index));
+    });
+  }
+
+  function easeInOut(t) {
+    var period = 200;
+    return (Math.sin(t / period + 100) + 1) / 2;
+  }
+
+  document.addEventListener("DOMContentLoaded", function (event) {
+    var phrases = ["스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요", "스토리를 고민하고 있어요...", "캐릭터를 구상하고 있어요...", "나레이션을 만들고 있어요...", "그림을 구상 중이에요", "그림을 스케치하고 있어요", "물감을 풀고 있어요", "그림을 그리고 있어요", "그림을 다 그렸어요", "영상을 제작 중이에요", "잠시만 기다려주세요"];
+    addPhrasesToDocument(phrases);
+    var start_time = new Date().getTime();
+    var upward_moving_group = document.getElementById("phrases");
+    upward_moving_group.currentY = 0;
+    var checks = phrases.map(function (_, i) {
+      return { check: document.getElementById("loadingCheckSVG-" + i), circle: document.getElementById("loadingCheckCircleSVG-" + i) };
+    });
+
+    function animateLoading() {
+      var now = new Date().getTime();
+      upward_moving_group.setAttribute("transform", "translate(0 " + upward_moving_group.currentY + ")");
+      upward_moving_group.currentY -= 1.35 * easeInOut(now);
+      checks.forEach(function (check, i) {
+        var color_change_boundary = -i * 50 + 50 + 15;
+        if (upward_moving_group.currentY < color_change_boundary) {
+          var alpha = Math.max(Math.min(1 - (upward_moving_group.currentY - color_change_boundary + 15) / 30, 1), 0);
+          check.circle.setAttribute("fill", "rgba(255, 255, 255, " + alpha + ")");
+          var check_color = [Math.round(255 * (1 - alpha) + 120 * alpha), Math.round(255 * (1 - alpha) + 154 * alpha)];
+          check.check.setAttribute("fill", "rgba(255, " + check_color[0] + "," + check_color[1] + ", 1)");
+        }
+      });
+      if (upward_moving_group.currentY <= -1000) {
+        upward_moving_group.currentY = 0; // 무한 반복을 위한 위치 재설정
+        start_time = new Date().getTime(); // 타이밍을 위한 시작 시간 재설정
+      }
+      requestAnimationFrame(animateLoading);
+    }
+    animateLoading();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const selectElement = document.getElementById('selected_voice');
+    const selectedImage = document.getElementById('selected_image');
+    const selectedText = document.getElementById('selected_text');
+    const resultvid = document.getElementById('resultvid');
+
+    selectElement.addEventListener('change', (event) => {
+      const selectedOption = event.target.selectedOptions[0];
+      const imageSrc = selectedOption.getAttribute('data-image');
+      const text = selectedOption.textContent;
+      selectedImage.src = imageSrc;
+      selectedText.textContent = text;
+    });
+
+    selectedImage.addEventListener('click', () => {
+      const selectedOption = selectElement.selectedOptions[0];
+      const audioSrc = selectedOption.getAttribute('data-audio');
+      if (audioSrc) {
+        const audio = new Audio(audioSrc);
+        audio.play();
+      }
+    });
+
+    const imageSelectElement = document.getElementById('changeImg');
+    const imageElement = document.getElementById('selectedImage');
+
+    imageSelectElement.addEventListener('change', function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const imageUrl = selectedOption.getAttribute('data-image');
+      imageElement.src = imageUrl;
+    });
+
+    const form = document.getElementById('myForm');
+    const loadingContainer = document.getElementById('loadingContainer');
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // 폼의 기본 제출 동작 방지
+      loadingContainer.style.display = 'block';
+      myForm.style.display = 'none';
+
+      // 폼 데이터를 수집합니다.
+      const formData = new FormData(form);
+
+      // AJAX 요청을 사용하여 폼을 제출합니다.
+      fetch(form.action, {
+        method: form.method,
+        body: formData
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json(); // 응답이 JSON 형식일 때 사용
+        })
+        .then(data => {
+          // 서버에서 성공 응답을 받았을 때의 처리
+          console.log('성공:', data);
+          resultvid.style.display = 'block';
+          loadingContainer.style.display = 'none';
+          myForm.style.display = 'none';
+
+          // 페이지를 story.html로 리디렉션
+
+        })
+        .catch((error) => {
+          console.error('오류:', error);
+          loadingContainer.style.display = 'none';
+          resultvid.style.display = 'block';
+        });
+    });
   });
 </script>
+
 {% endblock content %}
