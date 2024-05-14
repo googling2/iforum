@@ -168,9 +168,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_content=story_content,
             ft_date=datetime.datetime.utcnow(),
-            ft_name=story_title,  # 필요하다면 수정
+            ft_name=story_content,  # 필요하다면 수정
             ft_like=0
         )
         db.add(new_story)
