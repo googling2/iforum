@@ -164,13 +164,14 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         else:
             story_content = "텍스트를 다시 입력해주세요!"
 
+        korean_now = datetime.datetime.now() + datetime.timedelta(hours=9)  # 현재 한국 시간
+
         # 데이터베이스에 동화 저장
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_content=story_content,
-            ft_date=datetime.datetime.utcnow(),
-            ft_name=story_title,  # 필요하다면 수정
+            ft_name=story_content,
+            ft_date=korean_now,
             ft_like=0
         )
         db.add(new_story)
@@ -182,11 +183,10 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         language = "KR"
         speed = 1.0
-        print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+        print(selected_voice, "선택한 목소리")
 
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
 
-            print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
          # TTS 생성
             audio_response = client.audio.speech.create(
             model="tts-1",
@@ -211,7 +211,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "Create a four-panel fairytale image in a square digital art style. The layout is as follows: the top left corner captures the first part, the top right corner captures the second part, and the bottom left corner captures the third part. , the lower right corner shows the fourth part. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative.”
+            "Create a 4-panel fairy tale image with the same drawing style in a square digital art style. The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part. , the fourth section appears in the lower right corner. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative."
             {paragraphs} 
             """,
             size="1024x1024",
