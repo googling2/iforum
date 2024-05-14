@@ -20,6 +20,7 @@ from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 import os
 from starlette.middleware.sessions import SessionMiddleware
+import time
 
 app = FastAPI()
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
@@ -164,12 +165,14 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         else:
             story_content = "텍스트를 다시 입력해주세요!"
 
+        korean_now = datetime.datetime.now() + datetime.timedelta(hours=9)  # 현재 한국 시간
+
         # 데이터베이스에 동화 저장
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_date=datetime.datetime.utcnow(),
-            ft_name=story_content,  # 필요하다면 수정
+            ft_name=story_content,
+            ft_date=korean_now,
             ft_like=0
         )
         db.add(new_story)
@@ -181,11 +184,10 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         language = "KR"
         speed = 1.0
-        print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+        print(selected_voice, "선택한 목소리")
 
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
 
-            print(selected_voice, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
          # TTS 생성
             audio_response = client.audio.speech.create(
             model="tts-1",
@@ -210,7 +212,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "Create a four-panel fairytale image in a square digital art style. The layout is as follows: the top left corner captures the first part, the top right corner captures the second part, and the bottom left corner captures the third part. , the lower right corner shows the fourth part. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative.”
+            "Create a 4-panel fairy tale image with the same drawing style in a square digital art style. The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part. , the fourth section appears in the lower right corner. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative."
             {paragraphs} 
             """,
             size="1024x1024",
@@ -247,13 +249,17 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         # 비동기적으로 비디오 생성 호출
         await create_video()
 
+        # 타임스탬프 생성
+        timestamp = int(time.time())
+
         # 결과 템플릿 렌더링
         return templates.TemplateResponse("story.html", {
             "request": request,
             "story_content": story_content,
             "story_title": story_title,
             "audio_file_path": audio_file_path,
-            "image_paths": image_paths
+            "image_paths": image_paths,
+            "timestamp": timestamp  # 타임스탬프를 템플릿에 전달
         })
     except Exception as e:
         return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
@@ -341,7 +347,7 @@ async def create_video():
             image_to_video(all_zoomed_images, 'static/output.mp4', fps=24)
             overlay_image_and_audio_on_video('static/output.mp4', 'static/audio/m1.mp3', 'static/final_output.mp4')
 
-        print('sssss')
+        print('비디오 생성 거의 완료')
         main()
         return "비디오 생성이 완료되었습니다."
     except Exception as e:
