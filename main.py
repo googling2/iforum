@@ -130,6 +130,7 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
+
 @app.get("/friends", response_class=HTMLResponse)
 async def display_form(request: Request):
     try:
@@ -246,26 +247,47 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 # 부분 이미지 저장
                 cropped_image.save(panel_dest)
 
-        # 비동기적으로 비디오 생성 호출
-        await create_video()
+        # # 비동기적으로 비디오 생성 호출
+        # await create_video()
 
         # 타임스탬프 생성
         timestamp = int(time.time())
+        await create_video(timestamp)
 
-        # 결과 템플릿 렌더링
-        return templates.TemplateResponse("story.html", {
-            "request": request,
-            "story_content": story_content,
-            "story_title": story_title,
-            "audio_file_path": audio_file_path,
-            "image_paths": image_paths,
-            "timestamp": timestamp  # 타임스탬프를 템플릿에 전달
-        })
+        video_url = f"/static/final_output{timestamp}.mp4"
+        print("video_url 출력해보기 ",video_url)
+
+    #     # 결과 템플릿 렌더링
+    #     return templates.TemplateResponse("story.html", {
+    #         "request": request,
+    #         "story_content": story_content,
+    #         "story_title": story_title,
+    #         "audio_file_path": audio_file_path,
+    #         "image_paths": image_paths,
+    #         "video_url": video_url
+    #     })
+    # except Exception as e:
+    #     return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
+
+        # 리디렉션
+        return RedirectResponse(
+            url=f"/story_view?video_url={video_url}&story_title={story_title}&story_content={story_content}",
+            status_code=HTTP_303_SEE_OTHER
+        )
     except Exception as e:
-        return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
+        return {"error": f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"}
+    
 
+@app.get("/story_view", response_class=HTMLResponse)
+async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+    return templates.TemplateResponse("story.html", {
+        "request": request,
+        "video_url": video_url,
+        "story_title": story_title,
+        "story_content": story_content
+    })
 
-async def create_video():
+async def create_video(timestamp):
     try:
         from PIL import Image, ImageDraw, ImageFont
         import numpy as np
@@ -273,13 +295,11 @@ async def create_video():
         import os
 
         def create_image(image_file, output_size=(512, 512)):
-            """지정된 크기로 이미지 파일을 열고 크기를 조정합니다."""
             image = Image.open(image_file)
             image = image.resize(output_size, Image.LANCZOS)
             return image
 
         def create_zoom_frames(image, duration=6, fps=24, final_scale=1.3):
-            """주어진 이미지에 대해 지정된 기간과 fps로 줌 효과의 프레임을 생성합니다."""
             num_frames = int(duration * fps)
             zoomed_images = []
             original_center_x, original_center_y = image.width // 2, image.height // 2
@@ -305,20 +325,25 @@ async def create_video():
 
             return zoomed_images
 
-        def image_to_video(images, output_file='output.mp4', fps=24):
-            """지정된 프레임 속도로 이미지 배열 목록에서 비디오를 만듭니다."""
-            clip = ImageSequenceClip(images, fps=fps)
-            clip.write_videofile(output_file, codec='libx264')
+        def image_to_video(images, output_file=f'static/output{timestamp}.mp4', fps=24):
+            try:
+                clip = ImageSequenceClip(images, fps=fps)
+                clip.write_videofile(output_file, codec='libx264')
+            except Exception as e:
+                print(f"Error creating video: {e}")
+                raise
 
-        def overlay_image_and_audio_on_video(video_file, audio_file, output_file='final_output.mp4'):
-            """비디오에 오디오 트랙을 오버레이하고 지정된 출력 파일로 내보냅니다."""
-            video_clip = VideoFileClip(video_file)
-            audio_clip = AudioFileClip(audio_file)
-            final_clip = CompositeVideoClip([video_clip.set_audio(audio_clip)])
-            final_clip.write_videofile(output_file, codec='libx264')
+        def overlay_image_and_audio_on_video(video_file, audio_file, output_file=f'static/final_output{timestamp}.mp4'):
+            try:
+                video_clip = VideoFileClip(video_file)
+                audio_clip = AudioFileClip(audio_file)
+                final_clip = CompositeVideoClip([video_clip.set_audio(audio_clip)])
+                final_clip.write_videofile(output_file, codec='libx264')
+            except Exception as e:
+                print(f"Error overlaying audio on video: {e}")
+                raise
 
         def main():
-            """이미지를 확대하는 비디오로 처리하고 오디오를 오버레이하는 메인 함수입니다."""
             base_path = 'static/img'
             image_files = []
             idx = 1
@@ -344,16 +369,13 @@ async def create_video():
                 zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
                 all_zoomed_images.extend(zoomed_images)
 
-            image_to_video(all_zoomed_images, 'static/output.mp4', fps=24)
-            overlay_image_and_audio_on_video('static/output.mp4', 'static/audio/m1.mp3', 'static/final_output.mp4')
+            image_to_video(all_zoomed_images, f'static/output{timestamp}.mp4', fps=24)
+            overlay_image_and_audio_on_video(f'static/output{timestamp}.mp4', 'static/audio/m1.mp3', f'static/final_output{timestamp}.mp4')
 
-        print('비디오 생성 거의 완료')
         main()
         return "비디오 생성이 완료되었습니다."
     except Exception as e:
         return f"비디오 생성 중 오류가 발생하였습니다: {e}"
-
-
 
 if __name__ == "__main__":
     import uvicorn

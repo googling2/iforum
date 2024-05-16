@@ -125,25 +125,15 @@
 </section>
 
 
-<!-- <h1>동영상 생성 완료</h1>
-<p>어.. 대충 줄거리가 어쩌구 저쩌구</p>
-<video controls class="create_video">
-  <source src="/static/audio/final_output.mp4" type="video/mp4" />
-  해당 브라우저에서 비디오를 지원하지 않습니다.
-</video> -->
-
 <section id="resultvid" style="display: none;" class="result">
   <h1>동영상 생성 완료</h1>
   <p>동화 이야기를 기반으로 한 동영상이 성공적으로 생성되었습니다!</p>
 
   <h2>동영상 재생</h2>
-  <video controls>
-    <source src="{{ video_url }}" type="video/mp4" />
-    해당 브라우저에서 비디오를 지원하지 않습니다.
-  </video>
 
   <video controls class="create_video">
-    <source src="/static/final_output.mp4" type="video/mp4" />
+    <source src="{{ video_url }}" type="video/mp4" />
+    
     해당 브라우저에서 비디오를 지원하지 않습니다.
   </video>
 </section>
@@ -589,45 +579,42 @@
       imageElement.src = imageUrl;
     });
 
-    const form = document.getElementById('myForm');
-    const loadingContainer = document.getElementById('loadingContainer');
+    document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('myForm');
+  const loadingContainer = document.getElementById('loadingContainer');
 
-    form.addEventListener('submit', function (event) {
-      event.preventDefault(); // 폼의 기본 제출 동작 방지
-      loadingContainer.style.display = 'block';
-      myForm.style.display = 'none';
+  form.addEventListener('submit', function (event) {
+    event.preventDefault(); // 폼의 기본 제출 동작 방지
+    loadingContainer.style.display = 'block';
+    form.style.display = 'none';
 
-      // 폼 데이터를 수집합니다.
-      const formData = new FormData(form);
+    // 폼 데이터를 수집합니다.
+    const formData = new FormData(form);
 
-      // AJAX 요청을 사용하여 폼을 제출합니다.
-      fetch(form.action, {
-        method: form.method,
-        body: formData
+    // AJAX 요청을 사용하여 폼을 제출합니다.
+    fetch(form.action, {
+      method: form.method,
+      body: formData
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.url; // 리디렉션된 URL을 받음
       })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json(); // 응답이 JSON 형식일 때 사용
-        })
-        .then(data => {
-          // 서버에서 성공 응답을 받았을 때의 처리
-          console.log('성공:', data);
-          resultvid.style.display = 'block';
-          loadingContainer.style.display = 'none';
-          myForm.style.display = 'none';
-
-          // 페이지를 story.html로 리디렉션
-
-        })
-        .catch((error) => {
-          console.error('오류:', error);
-          loadingContainer.style.display = 'none';
-          resultvid.style.display = 'block';
-        });
-    });
+      .then(redirectedUrl => {
+        // 페이지를 리디렉션된 URL로 이동
+        window.location.href = redirectedUrl;
+      })
+      .catch(error => {
+        console.error('오류:', error);
+        loadingContainer.style.display = 'none';
+        form.style.display = 'block';
+      });
   });
+});
+  })
+
 </script>
 
 {% endblock content %}
