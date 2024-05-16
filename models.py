@@ -15,6 +15,9 @@ class User(Base):
     refreshToken = Column(String(255))
     status = Column(String(1), nullable=False, default='N', comment='탈퇴시 Y로 영상 올린 것들때문에')
 
+    fairytales = relationship("Fairytale", back_populates="user")
+    voices = relationship("Voice", back_populates="user")
+
 class Fairytale(Base):
     __tablename__ = 'fairytale'
 
@@ -26,7 +29,21 @@ class Fairytale(Base):
     ft_like = Column(Integer)
     ft_youtubeLink = Column(String(255))
 
-    # 관계 정의
     user = relationship("User", back_populates="fairytales")
+
+class Voice(Base):
+    __tablename__ = 'voice'
+
+    voice_code = Column(Integer, primary_key=True, index=True)
+    user_code = Column(Integer, ForeignKey('user.user_code'), nullable=False)
+    voice_name = Column(String(255), nullable=False)
+    voice_date = Column(Date, nullable=False)
+    voice_status = Column(CHAR(1), nullable=False, default='N', comment='Y일시 남들이 사용가능')
+
+    # 관계 정의
+    user = relationship("User", back_populates="voices")
+
+
+    # 관계 정의
 
 User.fairytales = relationship("Fairytale", order_by=Fairytale.ft_code, back_populates="user")

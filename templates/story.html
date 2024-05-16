@@ -2,13 +2,17 @@
 {% extends 'base.html' %} 
 {% block content %}
 
-<h1>{{ story_title }}</h1>
-<p>{{ story_content }}</p>
-
-<h2>동영상 재생</h2>
-<video controls>
-  <source src="{{ video_url }}" type="video/mp4" />
-  해당 브라우저에서 비디오를 지원하지 않습니다.
-</video>
+<section id="story">
+  <div class="container">
+    <h1>{{ story_title }}</h1>
+    <p>{{ story_content }}</p>
+    <div class="video">
+      <video controls>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</section>
 
 {% endblock content %}

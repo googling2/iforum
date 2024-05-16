@@ -1,9 +1,15 @@
 
-<!--마이페이지 시작-->
+<!--프로필 시작-->
 {% extends 'base.html' %}
 {% block content %}
-<!-- <div class="container">
-<main class="content"> -->
+<style>
+  .profile-videos .video video {
+    width: 300px; /* 원하는 너비 */
+    height: 260px; /* 원하는 높이 */
+    object-fit: cover; /* 비디오의 비율을 유지하면서 크기를 조정 */
+  }
+</style>
+
 <section id="profile" class="box profile">
   <div class="top-header">
     <h3>frontend with salimi</h3>
@@ -19,6 +25,7 @@
       </div>
       <h3>{{ user_info['name'] }}</h3>
     </div>
+
     <ul>
       <li>
         <h5>115</h5>
@@ -33,36 +40,22 @@
         <span>likes</span>
       </li>
     </ul>
+
     <div class="buttons">
       <button class="btn">프로필설정</button>
-   <a href="upload.html"> <button class="btn">업로드</button></a>
+      <a href="upload.html"><button class="btn">업로드</button></a>
     </div>
-    <p>유튜브 채널로 이동<br />youtube.com</p>
   </div>
   <div class="profile-videos">
-
     <div class="content">
       <div class="videos-container">
+        {% for fairytale in fairytales %}
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample2.mp4" type="video/mp4">
+            <source src="{{ fairytale.ft_name }}" type="video/mp4">
           </video>
         </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample3.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample4.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample5.mp4" type="video/mp4">
-          </video>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>

@@ -15,7 +15,7 @@ import datetime
 from fastapi import FastAPI, Depends, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User, Fairytale
+from models import User, Fairytale, Voice
 from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 import os
@@ -56,13 +56,22 @@ async def display_form(request: Request):
         raise
 
 @app.get("/profile", response_class=HTMLResponse)
-async def display_form(request: Request, user_info: dict = Depends(get_current_user)):
+async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     print("사용자 정보 나오는지 확인", user_info)
     try:
-        return templates.TemplateResponse("profile.html", {"request": request, "user_info": user_info})
+        # 현재 사용자 정보를 이용하여 사용자가 생성한 동화 목록을 가져옴
+        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
+        print("유저 동화 정보", user_fairytales)
+        
+        return templates.TemplateResponse("profile.html", {
+            "request": request,
+            "user_info": user_info,
+            "fairytales": user_fairytales  # 동화 목록을 템플릿에 전달
+        })
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+
 # =================================================================================
 
 oauth = OAuth()
@@ -142,7 +151,7 @@ async def display_form(request: Request):
 
 
 @app.post("/story", response_class=HTMLResponse)
-async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...),  db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         # 이미지 디렉토리 초기화
         img_dir = "static/img"
@@ -168,17 +177,19 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         korean_now = datetime.datetime.now() + datetime.timedelta(hours=9)  # 현재 한국 시간
 
+        # 타임스탬프 생성
+        timestamp = int(time.time())
+
         # 데이터베이스에 동화 저장
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_name=story_content,
+            ft_name=f"/static/final_output{timestamp}.mp4",  # 비디오 파일 경로를 설정
             ft_date=korean_now,
             ft_like=0
         )
         db.add(new_story)
         db.commit()
-
 
         print("이거 나오냐", story_title)
         print("동화내용 나오는지 확인 : ", story_content)
@@ -188,22 +199,19 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         print(selected_voice, "선택한 목소리")
 
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
-
-         # TTS 생성
+            # TTS 생성
             audio_response = client.audio.speech.create(
-            model="tts-1",
-            input=story_content,
-            voice=selected_voice
+                model="tts-1",
+                input=story_content,
+                voice=selected_voice
             )
             audio_data = audio_response.content
             audio_file_path = "static/audio/m1.mp3"
             with open(audio_file_path, "wb") as audio_file:
                 audio_file.write(audio_data)
-        else: 
+        else:
             predict.predict(selected_voice, story_content, language, speed)
             audio_file_path = "static/audio/m1.mp3"
-
-           
 
         # 이미지 생성 및 저장
         image_paths = []
@@ -247,36 +255,19 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 # 부분 이미지 저장
                 cropped_image.save(panel_dest)
 
-        # # 비동기적으로 비디오 생성 호출
-        # await create_video()
+        # 비디오 생성 호출
+        final_output_file = await create_video(timestamp)
 
-        # 타임스탬프 생성
-        timestamp = int(time.time())
-        await create_video(timestamp)
-
-        video_url = f"/static/final_output{timestamp}.mp4"
-        print("video_url 출력해보기 ",video_url)
-
-    #     # 결과 템플릿 렌더링
-    #     return templates.TemplateResponse("story.html", {
-    #         "request": request,
-    #         "story_content": story_content,
-    #         "story_title": story_title,
-    #         "audio_file_path": audio_file_path,
-    #         "image_paths": image_paths,
-    #         "video_url": video_url
-    #     })
-    # except Exception as e:
-    #     return f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"
+        print("video_url 출력해보기 ", final_output_file)
 
         # 리디렉션
         return RedirectResponse(
-            url=f"/story_view?video_url={video_url}&story_title={story_title}&story_content={story_content}",
+            url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
             status_code=HTTP_303_SEE_OTHER
         )
     except Exception as e:
-        return {"error": f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}"}
-    
+        print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
+        return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
@@ -325,7 +316,7 @@ async def create_video(timestamp):
 
             return zoomed_images
 
-        def image_to_video(images, output_file=f'static/output{timestamp}.mp4', fps=24):
+        def image_to_video(images, output_file, fps=24):
             try:
                 clip = ImageSequenceClip(images, fps=fps)
                 clip.write_videofile(output_file, codec='libx264')
@@ -333,7 +324,7 @@ async def create_video(timestamp):
                 print(f"Error creating video: {e}")
                 raise
 
-        def overlay_image_and_audio_on_video(video_file, audio_file, output_file=f'static/final_output{timestamp}.mp4'):
+        def overlay_image_and_audio_on_video(video_file, audio_file, output_file):
             try:
                 video_clip = VideoFileClip(video_file)
                 audio_clip = AudioFileClip(audio_file)
@@ -343,39 +334,41 @@ async def create_video(timestamp):
                 print(f"Error overlaying audio on video: {e}")
                 raise
 
-        def main():
-            base_path = 'static/img'
-            image_files = []
-            idx = 1
-            while True:
-                file_path = os.path.join(base_path, f'a{idx}.jpg')
-                if os.path.exists(file_path):
-                    image_files.append(file_path)
-                    idx += 1
-                else:
-                    break
+        base_path = 'static/img'
+        image_files = []
+        idx = 1
+        while True:
+            file_path = os.path.join(base_path, f'a{idx}.jpg')
+            if os.path.exists(file_path):
+                image_files.append(file_path)
+                idx += 1
+            else:
+                break
 
-            if not image_files:
-                print("No image files found.")
-                return
+        if not image_files:
+            print("No image files found.")
+            return
 
-            audio_clip = AudioFileClip('static/audio/m1.mp3')
-            total_duration = audio_clip.duration
-            duration_per_image = total_duration / len(image_files)
-            all_zoomed_images = []
+        audio_clip = AudioFileClip('static/audio/m1.mp3')
+        total_duration = audio_clip.duration
+        duration_per_image = total_duration / len(image_files)
+        all_zoomed_images = []
 
-            for image_file in image_files:
-                image = create_image(image_file)
-                zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
-                all_zoomed_images.extend(zoomed_images)
+        for image_file in image_files:
+            image = create_image(image_file)
+            zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
+            all_zoomed_images.extend(zoomed_images)
 
-            image_to_video(all_zoomed_images, f'static/output{timestamp}.mp4', fps=24)
-            overlay_image_and_audio_on_video(f'static/output{timestamp}.mp4', 'static/audio/m1.mp3', f'static/final_output{timestamp}.mp4')
+        output_video_file = f'static/output{timestamp}.mp4'
+        final_output_file = f'static/final_output{timestamp}.mp4'
 
-        main()
-        return "비디오 생성이 완료되었습니다."
+        image_to_video(all_zoomed_images, output_video_file, fps=24)
+        overlay_image_and_audio_on_video(output_video_file, 'static/audio/m1.mp3', final_output_file)
+
+        return final_output_file
     except Exception as e:
-        return f"비디오 생성 중 오류가 발생하였습니다: {e}"
+        print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
+        raise
 
 if __name__ == "__main__":
     import uvicorn
