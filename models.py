@@ -2,6 +2,18 @@ from email.policy import default
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Date, CHAR
 from sqlalchemy.orm import relationship
 from db import Base
+import datetime
+
+
+class Profile(Base):
+    __tablename__ = 'profile'
+
+    profile_code = Column(Integer, primary_key=True, index=True)
+    user_code = Column(Integer, ForeignKey('user.user_code'), nullable=False)
+    profile_date = Column(Date, nullable=False, default=datetime.date.today)
+    profile_name = Column(String(255), nullable=False)
+
+    user = relationship("User", back_populates="profiles")
 
 class User(Base):
     __tablename__ = 'user'
@@ -17,6 +29,8 @@ class User(Base):
 
     fairytales = relationship("Fairytale", back_populates="user")
     voices = relationship("Voice", back_populates="user")
+    profiles = relationship("Profile", back_populates="user")
+
 
 class Fairytale(Base):
     __tablename__ = 'fairytale'

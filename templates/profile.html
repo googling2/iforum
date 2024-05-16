@@ -1,12 +1,30 @@
-
-<!--프로필 시작-->
 {% extends 'base.html' %}
+
 {% block content %}
 <style>
   .profile-videos .video video {
     width: 300px; /* 원하는 너비 */
     height: 260px; /* 원하는 높이 */
     object-fit: cover; /* 비디오의 비율을 유지하면서 크기를 조정 */
+  }
+
+  /* 이미지 업로드 폼 스타일 */
+  .profile-img-upload {
+    display: none; /* 초기에는 숨김 */
+    margin-top: 20px;
+  }
+
+  .profile-img-upload input[type="file"] {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .profile-img-upload button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
   }
 </style>
 
@@ -21,7 +39,7 @@
   <div class="profile-info">
     <div class="profile-img">
       <div class="inner-img">
-        <img src="../img/go.jpg" alt="">
+        <img src="{{ profile_image }}" alt="Profile Image">
       </div>
       <h3>{{ user_info['name'] }}</h3>
     </div>
@@ -42,8 +60,16 @@
     </ul>
 
     <div class="buttons">
-      <button class="btn">프로필설정</button>
+      <button class="btn" id="profile-settings-button">프로필설정</button>
       <a href="upload.html"><button class="btn">업로드</button></a>
+    </div>
+
+    <!-- 이미지 업로드 폼 -->
+    <div class="profile-img-upload" id="profile-img-upload">
+      <form action="/upload_profile_image" method="post" enctype="multipart/form-data">
+        <input type="file" name="profile_image" accept="image/*" required>
+        <button type="submit">업로드</button>
+      </form>
     </div>
   </div>
   <div class="profile-videos">
@@ -60,5 +86,16 @@
     </div>
   </div>
 </section>
+
+<script>
+  document.getElementById('profile-settings-button').addEventListener('click', function() {
+    var uploadForm = document.getElementById('profile-img-upload');
+    if (uploadForm.style.display === 'none' || uploadForm.style.display === '') {
+      uploadForm.style.display = 'block';
+    } else {
+      uploadForm.style.display = 'none';
+    }
+  });
+</script>
 
 {% endblock content %}

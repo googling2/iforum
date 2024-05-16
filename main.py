@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -15,9 +15,11 @@ import datetime
 from fastapi import FastAPI, Depends, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User, Fairytale, Voice
+from models import User, Fairytale, Voice, Base, Profile
 from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
+from db import SessionLocal
+
 import os
 from starlette.middleware.sessions import SessionMiddleware
 import time
@@ -32,6 +34,20 @@ load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=api_key)
+
+UPLOAD_FOLDER = "static/uploads"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+
+# 데이터베이스 세션을 반환하는 의존성
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 def get_current_user(request: Request):
     user_info = request.session.get('user')
@@ -56,21 +72,75 @@ async def display_form(request: Request):
         raise
 
 @app.get("/profile", response_class=HTMLResponse)
+@app.get("/profile", response_class=HTMLResponse)
 async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    print("사용자 정보 나오는지 확인", user_info)
     try:
+        print("사용자 정보 나오는지 확인:", user_info)
+        
         # 현재 사용자 정보를 이용하여 사용자가 생성한 동화 목록을 가져옴
         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
-        print("유저 동화 정보", user_fairytales)
+        print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
+
+        # Profile 객체 가져오기
+        try:
+            profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
+            print("Profile 조회 성공:", profile)
+        except Exception as e:
+            print(f"Profile 조회 중 오류 발생: {e}")
+            profile = None
         
-        return templates.TemplateResponse("profile.html", {
-            "request": request,
-            "user_info": user_info,
-            "fairytales": user_fairytales  # 동화 목록을 템플릿에 전달
-        })
+        # 프로필 이미지 설정
+        if profile:
+            print(f"Profile object found: {profile}")
+            profile_image = f"/static/uploads/{profile.profile_name}"
+        else:
+            print("Profile object not found, using default image.")
+            profile_image = "/static/uploads/tang.png"
+        
+        print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
+
+        # 템플릿 렌더링
+        try:
+            response = templates.TemplateResponse("profile.html", {
+                "request": request,
+                "user_info": user_info,
+                "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
+                "profile_image": profile_image
+            })
+            print("템플릿 렌더링 성공")
+            return response
+        except Exception as e:
+            print(f"템플릿 렌더링 중 오류 발생: {e}")
+            raise
+        
     except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
+        print(f"전체 코드 실행 중 오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+# 사용자 정보를 업데이트하는 함수
+def update_profile_image(db: Session, user_code: int, file_name: str):
+    profile_date = datetime.date.today()
+    profile = db.query(Profile).filter(Profile.user_code == user_code).first()
+    if profile:
+        profile.profile_name = file_name
+        profile.profile_date = profile_date
+    else:
+        profile = Profile(user_code=user_code, profile_name=file_name, profile_date=profile_date)
+        db.add(profile)
+    db.commit()
+    db.refresh(profile)
+    return profile
+
+@app.post("/upload_profile_image")
+async def upload_profile_image(request: Request, profile_image: UploadFile = File(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    file_location = os.path.join(UPLOAD_FOLDER, profile_image.filename)
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(profile_image.file, buffer)
+    
+    update_profile_image(db, user_info['usercode'], profile_image.filename)
+    
+    return RedirectResponse(url="/profile", status_code=303)
+
 
 # =================================================================================
 
