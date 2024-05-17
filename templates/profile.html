@@ -52,6 +52,7 @@
     border-radius: 5px;
   }
 
+
   .like-btn:hover,
   .delete-btn:hover {
     background-color: #ddd;
@@ -117,12 +118,12 @@
             <source src="{{ fairytale.ft_name }}" type="video/mp4">
           </video>
           <div class="video-controls">
-            <!-- <button class="like-btn">👍 Like</button> -->
-            <button id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">
+            <button class="like-btn" id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">
               👍 Like
           </button>
 
-            <button class="delete-btn">🗑️</button>
+          <button class="delete-btn" onclick="confirmDelete('{{ fairytale.ft_code }}')">🗑️</button>
+
           </div>
         </div>
         {% endfor %}
@@ -142,11 +143,34 @@ function toggleLike(ftCode) {
         }
     }).then(response => response.json())
       .then(data => {
-          alert(`좋아요 수: ${data.likes_count}`);
+          alert(`이 영상의 좋아요 수: ${data.likes_count}`);
           // 이 부분에서 버튼의 텍스트나 스타일을 업데이트할 수 있습니다.
       }).catch(error => {
           console.error('오류가 발생했습니다:', error);
       });
+}
+
+function confirmDelete(ftCode) {
+    if (confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
+        deleteVideo(ftCode);
+    }
+}
+
+function deleteVideo(ftCode) {
+    fetch(`/delete-video/${ftCode}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('서버 처리 중 오류 발생');
+    }).then(data => {
+        alert(data.message);  
+        document.getElementById(`video-container-${ftCode}`).remove();  // 정확한 ID 사용
+    }).catch(error => {
+        console.error('오류 발생:', error);
+        alert('비디오 삭제 중 오류가 발생했습니다.');  // 사용자에게 더 명확한 에러 메시지 제공
+    });
 }
 
   document.getElementById('profile-settings-button').addEventListener('click', function () {
@@ -158,26 +182,26 @@ function toggleLike(ftCode) {
     }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const likeButtons = document.querySelectorAll(".like-btn");
-    const deleteButtons = document.querySelectorAll(".delete-btn");
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   const likeButtons = document.querySelectorAll(".like-btn");
+  //   const deleteButtons = document.querySelectorAll(".delete-btn");
 
-    likeButtons.forEach(button => {
-      button.addEventListener("click", function () {
-        alert("좋아요!");
-        // You can add more functionality here, such as updating a like counter
-      });
-    });
+  //   likeButtons.forEach(button => {
+  //     button.addEventListener("click", function () {
+  //       // alert("좋아요!");
+  //       // You can add more functionality here, such as updating a like counter
+  //     });
+  //   });
 
-    deleteButtons.forEach(button => {
-      button.addEventListener("click", function () {
-        if (confirm("삭제하쉴랍니까는 db삭제아님 그냥 삭제 해줘잉?")) {
-          const videoContainer = this.closest(".video");
-          videoContainer.remove();
-          // You can add more functionality here, such as making an API call to delete the video from the server
-        }
-      });
-    });
-  });
+  //   deleteButtons.forEach(button => {
+  //     button.addEventListener("click", function () {
+  //       if (confirm("삭제하쉴랍니까는 db삭제아님 그냥 삭제 해줘잉?")) {
+  //         const videoContainer = this.closest(".video");
+  //         videoContainer.remove();
+  //         // You can add more functionality here, such as making an API call to delete the video from the server
+  //       }
+  //     });
+  //   });
+  // });
 </script>
 {% endblock content %}

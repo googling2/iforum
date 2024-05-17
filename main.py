@@ -484,6 +484,21 @@ async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: di
     db.commit()
     return {"likes_count": fairytale.ft_like}
 
+@app.delete("/delete-video/{ft_code}")
+async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code, user_code=user_info['usercode']).first()
+    if not fairytale:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    video_path = os.path.join('static', fairytale.ft_name)
+    db.delete(fairytale)
+    db.commit()
+
+    if os.path.exists(video_path):
+        os.remove(video_path)
+
+    return {"message": "비디오 삭제가 완료되었습니다!"}
+
 
 if __name__ == "__main__":
     import uvicorn
