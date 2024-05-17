@@ -1,6 +1,4 @@
-
-{% extends 'base.html' %} 
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <!-- <h1>생성된 동화</h1>
 
 
@@ -27,5 +25,9 @@
   <source src="/static/final_output.mp4" type="video/mp4" />
   해당 브라우저에서 비디오를 지원하지 않습니다.
 </video>
+
+<form action="/upload_video" method="post">
+  <button type="submit">유튜브 업로드</button>
+</form>
 
 {% endblock content %}

@@ -1,7 +1,5 @@
-
 <!--마이페이지 시작-->
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <!-- <div class="container">
 <main class="content"> -->
 <section id="profile" class="box profile">
@@ -15,7 +13,7 @@
   <div class="profile-info">
     <div class="profile-img">
       <div class="inner-img">
-        <img src="../img/go.jpg" alt="">
+        <img src="../img/go.jpg" alt="" />
       </div>
       <h3>{{ user_info['name'] }}</h3>
     </div>
@@ -35,33 +33,42 @@
     </ul>
     <div class="buttons">
       <button class="btn">프로필설정</button>
-   <a href="upload.html"> <button class="btn">업로드</button></a>
+      <a href="upload.html"> <button class="btn">업로드</button></a>
     </div>
     <p>유튜브 채널로 이동<br />youtube.com</p>
   </div>
   <div class="profile-videos">
-
     <div class="content">
       <div class="videos-container">
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample2.mp4" type="video/mp4">
+            <source src="../vids/sample2.mp4" type="video/mp4" />
           </video>
         </div>
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample3.mp4" type="video/mp4">
+            <source src="../vids/sample3.mp4" type="video/mp4" />
           </video>
         </div>
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample4.mp4" type="video/mp4">
+            <source src="../vids/sample4.mp4" type="video/mp4" />
           </video>
         </div>
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample5.mp4" type="video/mp4">
+            <source src="../vids/sample5.mp4" type="video/mp4" />
           </video>
+        </div>
+        <div class="video">
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/rLNK367heAU"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
         </div>
       </div>
     </div>
