@@ -1,7 +1,31 @@
-<!--마이페이지 시작-->
 {% extends 'base.html' %} {% block content %}
-<!-- <div class="container">
-<main class="content"> -->
+<style>
+  .profile-videos .video video {
+    width: 300px; /* 원하는 너비 */
+    height: 260px; /* 원하는 높이 */
+    object-fit: cover; /* 비디오의 비율을 유지하면서 크기를 조정 */
+  }
+
+  /* 이미지 업로드 폼 스타일 */
+  .profile-img-upload {
+    display: none; /* 초기에는 숨김 */
+    margin-top: 20px;
+  }
+
+  .profile-img-upload input[type="file"] {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .profile-img-upload button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
 <section id="profile" class="box profile">
   <div class="top-header">
     <h3>frontend with salimi</h3>
@@ -13,10 +37,11 @@
   <div class="profile-info">
     <div class="profile-img">
       <div class="inner-img">
-        <img src="../img/go.jpg" alt="" />
+        <img src="{{ profile_image }}" alt="Profile Image" />
       </div>
       <h3>{{ user_info['name'] }}</h3>
     </div>
+
     <ul>
       <li>
         <h5>115</h5>
@@ -31,48 +56,53 @@
         <span>likes</span>
       </li>
     </ul>
+
     <div class="buttons">
-      <button class="btn">프로필설정</button>
-      <a href="upload.html"> <button class="btn">업로드</button></a>
+      <button class="btn" id="profile-settings-button">프로필설정</button>
+      <a href="upload.html"><button class="btn">업로드</button></a>
     </div>
-    <p>유튜브 채널로 이동<br />youtube.com</p>
+
+    <!-- 이미지 업로드 폼 -->
+    <div class="profile-img-upload" id="profile-img-upload">
+      <form
+        action="/upload_profile_image"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input type="file" name="profile_image" accept="image/*" required />
+        <button type="submit">업로드</button>
+      </form>
+    </div>
   </div>
   <div class="profile-videos">
     <div class="content">
       <div class="videos-container">
+        {% for fairytale in fairytales %}
         <div class="video">
           <video controls loop autoplay muted>
-            <source src="../vids/sample2.mp4" type="video/mp4" />
+            <source src="{{ fairytale.ft_name }}" type="video/mp4" />
           </video>
         </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample3.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample4.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div class="video">
-          <video controls loop autoplay muted>
-            <source src="../vids/sample5.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div class="video">
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/rLNK367heAU"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  document
+    .getElementById("profile-settings-button")
+    .addEventListener("click", function () {
+      var uploadForm = document.getElementById("profile-img-upload");
+      if (
+        uploadForm.style.display === "none" ||
+        uploadForm.style.display === ""
+      ) {
+        uploadForm.style.display = "block";
+      } else {
+        uploadForm.style.display = "none";
+      }
+    });
+</script>
 
 {% endblock content %}

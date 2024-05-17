@@ -1,3 +1,4 @@
+
 const vPlayer = (video) => {
     return `
         <div class="vdo-wrapper">

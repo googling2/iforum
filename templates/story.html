@@ -1,33 +1,19 @@
 {% extends 'base.html' %} {% block content %}
-<!-- <h1>생성된 동화</h1>
 
-
-<audio controls>
-  <source src="{{ audio_url }}" type="audio/mp3" />
-  "오디오 생성"
-</audio>
-
-<form action="/create_video" method="post">
-  <button type="submit">영상으로 만들기</button>
-</form>
-</body>
-</html> -->
-<h1>동영상 생성 완료</h1>
-<p>동화 이야기를 기반으로 한 동영상이 성공적으로 생성되었습니다!</p>
-
-<h2>동영상 재생</h2>
-<video controls>
-  <source src="{{ video_url }}" type="video/mp4" />
-  해당 브라우저에서 비디오를 지원하지 않습니다.
-</video>
-
-<video controls>
-  <source src="/static/final_output.mp4" type="video/mp4" />
-  해당 브라우저에서 비디오를 지원하지 않습니다.
-</video>
-
-<form action="/upload_video" method="post">
-  <button type="submit">유튜브 업로드</button>
-</form>
+<section id="story">
+  <div class="container">
+    <h1>{{ story_title }}</h1>
+    <p>{{ story_content }}</p>
+    <div class="video">
+      <video controls>
+        <source src="{{ video_url }}" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <form action="/upload_video" method="post">
+      <button type="submit">유튜브 업로드</button>
+    </form>
+  </div>
+</section>
 
 {% endblock content %}
