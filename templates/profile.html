@@ -3,14 +3,18 @@
 {% block content %}
 <style>
   .profile-videos .video video {
-    width: 300px; /* 원하는 너비 */
-    height: 260px; /* 원하는 높이 */
-    object-fit: cover; /* 비디오의 비율을 유지하면서 크기를 조정 */
+    width: 300px;
+    /* 원하는 너비 */
+    height: 260px;
+    /* 원하는 높이 */
+    object-fit: cover;
+    /* 비디오의 비율을 유지하면서 크기를 조정 */
   }
 
   /* 이미지 업로드 폼 스타일 */
   .profile-img-upload {
-    display: none; /* 초기에는 숨김 */
+    display: none;
+    /* 초기에는 숨김 */
     margin-top: 20px;
   }
 
@@ -25,6 +29,38 @@
     color: white;
     border: none;
     cursor: pointer;
+  }
+
+  .video {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
+
+  .video-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .like-btn,
+  .delete-btn {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+  }
+
+  .like-btn:hover,
+  .delete-btn:hover {
+    background-color: #ddd;
+  }
+
+  .profile .profile-videos .content {
+    position: relative;
+    width: 100%;
+    height: 24rem;
   }
 </style>
 
@@ -54,7 +90,7 @@
         <span>팔로워</span>
       </li>
       <li>
-        <h5>9719</h5>
+        <h5>{{ total_likes }}</h5>
         <span>likes</span>
       </li>
     </ul>
@@ -80,6 +116,14 @@
           <video controls loop autoplay muted>
             <source src="{{ fairytale.ft_name }}" type="video/mp4">
           </video>
+          <div class="video-controls">
+            <!-- <button class="like-btn">👍 Like</button> -->
+            <button id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">
+              👍 Like
+          </button>
+
+            <button class="delete-btn">🗑️</button>
+          </div>
         </div>
         {% endfor %}
       </div>
@@ -88,7 +132,24 @@
 </section>
 
 <script>
-  document.getElementById('profile-settings-button').addEventListener('click', function() {
+
+function toggleLike(ftCode) {
+    fetch(`/like/${ftCode}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    }).then(response => response.json())
+      .then(data => {
+          alert(`좋아요 수: ${data.likes_count}`);
+          // 이 부분에서 버튼의 텍스트나 스타일을 업데이트할 수 있습니다.
+      }).catch(error => {
+          console.error('오류가 발생했습니다:', error);
+      });
+}
+
+  document.getElementById('profile-settings-button').addEventListener('click', function () {
     var uploadForm = document.getElementById('profile-img-upload');
     if (uploadForm.style.display === 'none' || uploadForm.style.display === '') {
       uploadForm.style.display = 'block';
@@ -96,6 +157,27 @@
       uploadForm.style.display = 'none';
     }
   });
-</script>
 
+  document.addEventListener("DOMContentLoaded", function () {
+    const likeButtons = document.querySelectorAll(".like-btn");
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+
+    likeButtons.forEach(button => {
+      button.addEventListener("click", function () {
+        alert("좋아요!");
+        // You can add more functionality here, such as updating a like counter
+      });
+    });
+
+    deleteButtons.forEach(button => {
+      button.addEventListener("click", function () {
+        if (confirm("삭제하쉴랍니까는 db삭제아님 그냥 삭제 해줘잉?")) {
+          const videoContainer = this.closest(".video");
+          videoContainer.remove();
+          // You can add more functionality here, such as making an API call to delete the video from the server
+        }
+      });
+    });
+  });
+</script>
 {% endblock content %}

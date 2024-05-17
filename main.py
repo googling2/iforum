@@ -15,7 +15,7 @@ import datetime
 from fastapi import FastAPI, Depends, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User, Fairytale, Voice, Base, Profile
+from models import User, Fairytale, Voice, Base, Profile, Like
 from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 from db import SessionLocal
@@ -72,11 +72,13 @@ async def display_form(request: Request):
         raise
 
 @app.get("/profile", response_class=HTMLResponse)
-@app.get("/profile", response_class=HTMLResponse)
 async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         print("사용자 정보 나오는지 확인:", user_info)
-        
+                # 동화의 좋아요 수 합산
+        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
+
+        total_likes = sum(fairy.ft_like for fairy in user_fairytales)
         # 현재 사용자 정보를 이용하여 사용자가 생성한 동화 목록을 가져옴
         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
@@ -105,7 +107,8 @@ async def display_profile(request: Request, db: Session = Depends(get_db), user_
                 "request": request,
                 "user_info": user_info,
                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-                "profile_image": profile_image
+                "profile_image": profile_image,
+                "total_likes": total_likes
             })
             print("템플릿 렌더링 성공")
             return response
@@ -140,6 +143,24 @@ async def upload_profile_image(request: Request, profile_image: UploadFile = Fil
     update_profile_image(db, user_info['usercode'], profile_image.filename)
     
     return RedirectResponse(url="/profile", status_code=303)
+
+@app.post("/like/{ft_code}")
+async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user = user_info['usercode']  # 사용자 인증 시스템에서 사용자 ID 가져오기
+    existing_like = db.query(Like).filter_by(user_code=user, ft_code=ft_code).first()
+    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code).first()
+    if not fairytale:
+        raise HTTPException(status_code=404, detail="Fairytale not found")
+
+    if existing_like:
+        db.delete(existing_like)
+        fairytale.ft_like -= 1
+    else:
+        new_like = Like(user_code=user, ft_code=ft_code)
+        db.add(new_like)
+        fairytale.ft_like += 1
+    db.commit()
+    return {"likes_count": fairytale.ft_like}
 
 
 # =================================================================================
@@ -329,6 +350,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         final_output_file = await create_video(timestamp)
 
         print("video_url 출력해보기 ", final_output_file)
+        
 
         # 리디렉션
         return RedirectResponse(
@@ -341,6 +363,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+    
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
@@ -439,6 +462,28 @@ async def create_video(timestamp):
     except Exception as e:
         print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
         raise
+
+@app.post("/like/{ft_code}")
+async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']  # 사용자 코드를 세션에서 가져옴
+    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code).first()
+
+    if not fairytale:
+        raise HTTPException(status_code=404, detail="Fairytale not found")
+
+    existing_like = db.query(Like).filter_by(user_code=user_code, ft_code=ft_code).first()
+
+    if existing_like:
+        db.delete(existing_like)
+        fairytale.ft_like = (fairytale.ft_like - 1 if fairytale.ft_like > 0 else 0)
+    else:
+        new_like = Like(user_code=user_code, ft_code=ft_code)
+        db.add(new_like)
+        fairytale.ft_like = (fairytale.ft_like + 1 if fairytale.ft_like is not None else 1)
+    
+    db.commit()
+    return {"likes_count": fairytale.ft_like}
+
 
 if __name__ == "__main__":
     import uvicorn

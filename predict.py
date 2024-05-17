@@ -73,6 +73,7 @@ def predict(audio, text, language="KR", speed=1.2):
     shutil.copyfile(out_path, final_path)
     return final_path
 
+
 # 인터페이스 코드
 # iface = gr.Interface(
 #     fn=predict,

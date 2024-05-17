@@ -13,7 +13,18 @@ class Profile(Base):
     profile_date = Column(Date, nullable=False, default=datetime.date.today)
     profile_name = Column(String(255), nullable=False)
 
-    user = relationship("User", back_populates="profiles")
+    user = relationship("User", back_populates="profiles")   
+
+
+class Like(Base):
+    __tablename__ = 'likes'
+
+    like_code = Column(Integer, primary_key=True, index=True)
+    user_code = Column(Integer, ForeignKey('user.user_code'), nullable=False)
+    ft_code = Column(Integer, ForeignKey('fairytale.ft_code'), nullable=False)
+
+    user = relationship("User", back_populates="likes")
+    fairytale = relationship("Fairytale", back_populates="likes")
 
 class User(Base):
     __tablename__ = 'user'
@@ -30,6 +41,8 @@ class User(Base):
     fairytales = relationship("Fairytale", back_populates="user")
     voices = relationship("Voice", back_populates="user")
     profiles = relationship("Profile", back_populates="user")
+    likes = relationship("Like", back_populates="user")
+
 
 
 class Fairytale(Base):
@@ -44,6 +57,8 @@ class Fairytale(Base):
     ft_youtubeLink = Column(String(255))
 
     user = relationship("User", back_populates="fairytales")
+    likes = relationship("Like", back_populates="fairytale")
+
 
 class Voice(Base):
     __tablename__ = 'voice'
