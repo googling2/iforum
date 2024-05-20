@@ -23,6 +23,7 @@ from db import SessionLocal
 import os
 from starlette.middleware.sessions import SessionMiddleware
 import time
+import upload
 
 app = FastAPI()
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
@@ -62,6 +63,13 @@ async def display_form(request: Request):
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+
+# 비디오 업로드 엔드포인트
+@app.post("/upload_video")
+async def upload_video(request: Request, db: Session = Depends(get_db)):
+    return await upload.upload_video(request, db)
+
+
 
 @app.get("/upload", response_class=HTMLResponse)
 async def display_form(request: Request):
@@ -176,7 +184,7 @@ oauth.register(
     access_token_params=None,
     refresh_token_url=None,
     redirect_uri=os.getenv('GOOGLE_REDIRECT_URI'),
-    client_kwargs={'scope': 'openid email profile'},
+    client_kwargs={'scope': 'openid email profile https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly'},
     jwks_uri='https://www.googleapis.com/oauth2/v3/certs'  # JWKS URI 추가
 )
 
@@ -254,8 +262,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "너는 어린이 동화를 만드는 AI야."},
-                {"role": "user", "content": f"{keywords} 이 문자을 사용해서 동화 제목을 제목: 이렇게 지어주고, 동화 이야기를 공백포함 300자로 작성해주고, 4단락으로 나눠줘"}
+                {"role": "system", "content": "Write in Korean,You are an AI that creates fairy tales"},
+                {"role": "user", "content": f"{keywords} Using these characters, title the fairy tale as Title:, write the fairy tale story in 300 characters including spaces, and divide it into 4 paragraphs."}
             ]
         )
 
@@ -361,9 +369,16 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
         return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
 
+import json
+
+
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
-    
+
+   
+    with open('video_url.json', 'w') as f:
+     json.dump({"video_url": video_url}, f)
+
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
