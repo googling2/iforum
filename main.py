@@ -261,7 +261,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_name=f"/static/final_output{timestamp}.mp4",  # 비디오 파일 경로를 설정
+            ft_name=f"static/final_output{timestamp}.mp4",  # 비디오 파일 경로를 설정
             ft_date=korean_now,
             ft_like=0
         )

@@ -142,11 +142,11 @@
 #     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 import json
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 import os
 from dependencies import get_db
-from models import User
+from models import Fairytale, User
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -197,20 +197,25 @@ async def upload_video(request, db):
     print(video_url)
 
 
+    ft_title = get_ft_title_by_video_url(db, video_url)
+    if not ft_title:
+            raise HTTPException(status_code=404, detail="Fairytale not found")
+
     try:
         youtube = get_authenticated_service(user_credentials, db, usercode)
 
         options = Namespace(
             file=video_url,
-            title="[아이포럼]동화 제목",
-            description="AI 동화 만들기 페이지\n누구나 쉽게 동화를 창작하고 \n유튜브에 직접 업로드 하지 않고 자동으로 업로드가 됩니다!\n\n기발한 아이디어? 편집? 직접 업로드?\n이제 단 한 줄을 작성하면 이 모든 것을 손쉽게 할 수 있습니다!\nAI 부업 시대, 여러분을 기다립니다.",
+            title=f"[IFORUM] AI창작 부업 - {ft_title}",
+            description="AI 동화 만들기\n누구나 쉽게 AI동화를 창작합니다.\n유튜브에 직접 업로드 하지 않고 자동으로 업로드가 됩니다!\n\n기발한 아이디어? 편집? 직접 업로드?\n이제 단 한 줄을 작성하면 이 모든 것을 손쉽게 할 수 있습니다!\nAI 부업 시대, 여러분을 기다립니다.",
             category="24",
-            keywords="동화,어린이,교육,창작,이야기,동화책,판타지",
+            keywords="부업,동화,어린이,교육,창작,이야기,동화책,판타지",
             privacyStatus="public"
         )
 
         initialize_upload(youtube, options)
-        return JSONResponse(status_code=200, content={"message": "Upload successful"})
+        return RedirectResponse(url="/profile", status_code=302)
+        # return JSONResponse(status_code=200, content={"message": "Upload successful"})
     except Exception as e:
         print(f"An error occurred: {e}")
         return JSONResponse(status_code=500, content={"message": str(e)})
@@ -235,6 +240,17 @@ def get_authenticated_service(credentials: Credentials, db: Session, usercode: i
         print(f"Error creating YouTube service: {e}")
         raise
 
+def get_ft_title_by_video_url(db: Session, video_url: str):
+    print(f"Looking for Fairytale with ft_name: {video_url}")
+    fairytale = db.query(Fairytale).filter(Fairytale.ft_name == video_url).first()
+    if fairytale:
+        print(f"Found Fairytale: {fairytale.ft_title}")
+        return fairytale.ft_title
+    else:
+        print("Fairytale not found")
+        print(f"Found Fairytale: {fairytale.ft_title}")
+        return None
+
 def get_user_access_token(db: Session, usercode: int):
     user = db.query(User).filter(User.user_code == usercode).first()
     return user.accessToken if user else None
@@ -252,7 +268,9 @@ def initialize_upload(youtube, options):
             "categoryId": options.category
         },
         "status": {
-            "privacyStatus": options.privacyStatus
+            "privacyStatus": options.privacyStatus,
+            "madeForKids": True,
+            "selfDeclaredMadeForKids": True  
         }
     }
 
