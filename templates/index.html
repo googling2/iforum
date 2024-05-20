@@ -1,12 +1,173 @@
-
-
+<!-- templates/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-        
 
 <script src="/static/js/common.js"></script>
 
-<main class="videos"></main>
+<div class="videos"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const headerElement = document.querySelector('header');
+
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        headerElement.innerHTML = data;
+        updateActiveLink();
+      });
+
+    function updateActiveLink() {
+      const currentPath = window.location.pathname;
+      const menuItems = document.querySelectorAll('.menu-bar ul li');
+
+      menuItems.forEach(item => {
+        if (item.querySelector('a') && item.querySelector('a').getAttribute('href') === currentPath) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    const videosWrapper = document.querySelector(".videos");
+
+    const vPlayer = (video) => {
+      if (!video.url) {
+        // 비디오 URL이 없는 경우 error.png 이미지를 표시
+        return `
+          <div class="vdo-wrapper">
+            <img src="/static/uploads/error.png" alt="Error" class="error-img" />
+            <div class="info-wrapper">
+              <a href="#"><img src="${video.img}" alt="profile" /></a>
+              <div>
+                <h3>${video.title}</h3>
+                <p>${video.name}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="vdo-wrapper">
+          <!-- video -->
+          <video src="${video.url}" autoplay poster="${video.img}" loop class="vdo"></video>
+
+          <!-- pause play btn -->
+          <button id="pause-play-btn">
+            <i class="fa-solid fa-pause"></i>
+          </button>
+
+          <!-- side btn -->
+          <div class="side-btns-wrapper">
+            <button class="control-btn" id="like-btn">
+              <i class="fa-solid fa-thumbs-up"></i>
+            </button>
+            <button class="control-btn" id="dislike-btn">
+              <i class="fa-solid fa-thumbs-down"></i>
+            </button>
+            <button class="control-btn" id="comments-btn">
+              <i class="fa-solid fa-comment"></i>
+            </button>
+            <button class="control-btn" id="share-btn">
+              <i class="fa-solid fa-share"></i>
+            </button>
+          </div>
+
+          <!-- video info -->
+          <div class="info-wrapper">
+            <a href="#"><img src="${video.img}" alt="profile" /></a>
+            <div>
+              <h3>${video.title}</h3>
+              <p>${video.name}</p>
+            </div>
+          </div>
+
+          <!-- blury background -->
+          <div class="blury"></div>
+
+          <!-- comments -->
+          <div class="comments">
+            <p>Comments</p>
+          </div>
+        </div>
+      `;
+    };
+
+    const videoData = JSON.parse('{{ videos | tojson | safe }}');
+
+    function injectVideos() {
+      videoData.forEach((video) => {
+        const videoElement = vPlayer(video);
+        if (videoElement) {
+          videosWrapper.innerHTML += videoElement;
+        }
+      });
+
+      const vids = document.querySelectorAll(".vdo-wrapper");
+      vids.forEach((vid) => {
+        const vdo = vid.querySelector(".vdo");
+
+        if (vdo) {
+          // 화면 내비켜진 경우에만 비디오를 재생합니다.
+          const intersectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.intersectionRatio > 0) {
+                vdo.play();
+              } else {
+                vdo.pause();
+              }
+            });
+          });
+
+          intersectionObserver.observe(vdo);
+
+          const pausePlayBtn = vid.querySelector("#pause-play-btn");
+          pausePlayBtn.addEventListener("click", () => {
+            if (vdo.paused) {
+              vdo.play();
+              pausePlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            } else {
+              vdo.pause();
+              pausePlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            }
+          });
+        }
+
+        const likeBtn = vid.querySelector("#like-btn");
+        likeBtn.addEventListener("click", () => {
+          likeBtn.classList.toggle("color-switch");
+          const dislikeBtn = vid.querySelector("#dislike-btn");
+          dislikeBtn.classList.remove("color-switch");
+        });
+
+        const dislikeBtn = vid.querySelector("#dislike-btn");
+        dislikeBtn.addEventListener("click", () => {
+          dislikeBtn.classList.toggle("color-switch");
+          const likeBtn = vid.querySelector("#like-btn");
+          likeBtn.classList.remove("color-switch");
+        });
+
+        const commentsBtn = vid.querySelector("#comments-btn");
+        const comments = vid.querySelector(".comments");
+        commentsBtn.addEventListener("click", () => {
+          comments.classList.toggle("toggle-comments");
+        });
+
+        const shareBtn = vid.querySelector("#share-btn");
+        const vidTitle = vid.querySelector(".info-wrapper h3");
+        shareBtn.addEventListener("click", () => {
+          navigator.share({
+            title: vidTitle.textContent,
+            text: "Check out this video!",
+            url: vdo.src,
+          });
+        });
+      });
+    }
+
+    injectVideos();
+  });
+</script>
 
 <script type="module" src="/static/js/app.js"></script>
 {% endblock content %}

@@ -194,6 +194,7 @@ async def upload_video(request, db):
         data = json.load(f)
 
     video_url = data['video_url']
+    story_title = data['story_title']
     print(video_url)
 
 

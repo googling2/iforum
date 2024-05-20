@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request, File, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
@@ -19,6 +19,9 @@ from models import User, Fairytale, Voice, Base, Profile, Like
 from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 from db import SessionLocal
+from sqlalchemy.sql import func
+
+
 
 import os
 from starlette.middleware.sessions import SessionMiddleware
@@ -57,12 +60,34 @@ def get_current_user(request: Request):
     return user_info
 
 @app.get("/", response_class=HTMLResponse)
-async def display_form(request: Request):
+async def display_form(request: Request, db: Session = Depends(get_db)):
+    # 랜덤으로 필요한 데이터 가져오기
+    videos = db.query(
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        User.user_name.label("name"),
+        Profile.profile_name.label("img")
+    ).join(User, Fairytale.user_code == User.user_code)\
+     .outerjoin(Profile, User.user_code == Profile.user_code)\
+     .order_by(func.random())\
+     .limit(10).all()
+
+    video_data = [
+        {
+            "url": video.url if video.url else None,
+            "name": video.name if video.name else "",
+            "title": video.title if video.title else "",
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/tang.png"
+        }
+        for video in videos
+    ]
+
     try:
-        return templates.TemplateResponse("index.html", {"request": request})
+        return templates.TemplateResponse("index.html", {"request": request, "videos": video_data})
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+
 
 # 비디오 업로드 엔드포인트
 @app.post("/upload_video")
@@ -239,10 +264,10 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
 
-@app.get("/friends", response_class=HTMLResponse)
+@app.get("/gudog", response_class=HTMLResponse)
 async def display_form(request: Request):
     try:
-        return templates.TemplateResponse("friends.html", {"request": request})
+        return templates.TemplateResponse("gudog.html", {"request": request})
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
@@ -377,7 +402,7 @@ async def story_view(request: Request, video_url: str, story_title: str, story_c
 
    
     with open('video_url.json', 'w') as f:
-     json.dump({"video_url": video_url}, f)
+     json.dump({"video_url": video_url,"story_title": story_title}, f)
 
     return templates.TemplateResponse("story.html", {
         "request": request,
@@ -513,6 +538,7 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
         os.remove(video_path)
 
     return {"message": "비디오 삭제가 완료되었습니다!"}
+
 
 
 if __name__ == "__main__":
