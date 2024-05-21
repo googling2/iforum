@@ -68,6 +68,7 @@ class Voice(Base):
     voice_name = Column(String(255), nullable=False)
     voice_date = Column(Date, nullable=False)
     voice_status = Column(CHAR(1), nullable=False, default='N', comment='Y일시 남들이 사용가능')
+    voice_filename = Column(String(255))
 
     # 관계 정의
     user = relationship("User", back_populates="voices")

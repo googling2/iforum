@@ -103,6 +103,17 @@
       <button class="csbbtn" id="cancel-subscription-button">구독취소</button>
     </div>
 
+     <!-- 파일 업로드 폼 -->
+  <form id="uploadForm" onsubmit="uploadVoice(event)">
+    <div class="buttons">
+        <label for="fileInput">목소리 첨부파일</label>
+        <input type="file" id="fileInput" name="file" accept="audio/*" required>
+        <label for="voiceName">목소리 이름</label>
+        <input type="text" id="voiceName" name="voiceName" required>
+        <button type="submit" id="submitBtn">등록하기</button>
+    </div>
+  </form>
+
     <!-- 이미지 업로드 폼 -->
     <div class="profile-img-upload" id="profile-img-upload">
       <form action="/upload_profile_image" method="post" enctype="multipart/form-data">
@@ -132,9 +143,89 @@
       </div>
     </div>
   </div>
+<!-- 목소리 목록 -->
+<div class="profile-voices">
+  <div class="content">
+    <div class="voices-container">
+      {% for voice in voices %}
+      <div class="voice" id="voice-container-{{ voice.voice_code }}">
+        <p>{{ voice.voice_name }}</p>
+        <button class="delete-btn" onclick="confirmDeleteVoice('{{ voice.voice_code }}')">🗑️ 삭제</button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 </section>
 
 <script>
+
+async function uploadVoice(event) {
+event.preventDefault();
+
+const formData = new FormData(event.target);
+
+// 업로드된 목소리 파일 수 확인
+try {
+    const response = await fetch('/check_voice_count');
+    const data = await response.json();
+    
+    console.log("Voice count data:", data); // 디버깅을 위해 추가
+    if (data.voice_count >= 1) {
+        alert('최대 1개까지만 업로드할 수 있습니다.');
+        return;
+    }
+} catch (error) {
+    console.error("Error checking voice count:", error);
+    alert('목소리 파일 개수 확인 중 오류가 발생했습니다.');
+    return;
+}
+
+fetch('/upload_voice', {
+    method: 'POST',
+    body: formData
+}).then(response => {
+    if (!response.ok) {
+        throw new Error('업로드 중 오류가 발생했습니다.');
+    }
+    return response.json();
+}).then(data => {
+    alert('업로드가 완료되었습니다!');
+    // 폼 초기화
+    event.target.reset();
+    // 필요한 경우 추가적인 작업 수행
+    location.reload();  // 업로드 완료 후 페이지 새로고침
+}).catch(error => {
+    console.error('업로드 중 오류가 발생했습니다:', error);
+    alert(error.message);
+});
+}
+
+async function confirmDeleteVoice(voiceCode) {
+if (confirm("정말로 이 목소리를 삭제하시겠습니까?")) {
+    deleteVoice(voiceCode);
+}
+}
+
+async function deleteVoice(voiceCode) {
+fetch(`/delete_voice/${voiceCode}`, {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+}).then(response => {
+    if (!response.ok) {
+        throw new Error('삭제 중 오류가 발생했습니다.');
+    }
+    return response.json();
+}).then(data => {
+    alert(data.message);
+    document.getElementById(`voice-container-${voiceCode}`).remove();
+}).catch(error => {
+    console.error('삭제 중 오류가 발생했습니다:', error);
+    alert(error.message);
+});
+}  
 
 function toggleLike(ftCode) {
     fetch(`/prolike/${ftCode}`, {
