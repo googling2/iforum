@@ -78,7 +78,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "url": video.url if video.url else None,
             "name": video.name if video.name else "",
             "title": video.title if video.title else "",
-            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/tang.png"
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png"
         }
         for video in videos
     ]
@@ -88,6 +88,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+
 
 
 # 비디오 업로드 엔드포인트
@@ -131,7 +132,7 @@ async def display_profile(request: Request, db: Session = Depends(get_db), user_
             profile_image = f"/static/uploads/{profile.profile_name}"
         else:
             print("Profile object not found, using default image.")
-            profile_image = "/static/uploads/tang.png"
+            profile_image = "/static/uploads/basic.png"
         
         print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
 
