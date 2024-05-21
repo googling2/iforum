@@ -83,7 +83,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.user_name.label("name"),
         User.profile.label("img"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(func.random()).limit(10).all()
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
 
     video_data = [
         {
@@ -99,7 +99,6 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
     ]
 
     return templates.TemplateResponse("index.html", {"request": request, "videos": video_data, "user_code": user_code})
-
 
 # 비디오 업로드 엔드포인트
 @app.post("/upload_video")
