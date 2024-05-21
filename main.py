@@ -20,8 +20,9 @@ from dependencies import get_db
 from starlette.status import HTTP_303_SEE_OTHER
 from db import SessionLocal
 from sqlalchemy.sql import func
-
-
+from moviepy.audio.fx.all import audio_fadeout
+import json
+import numpy as np
 
 import os
 from starlette.middleware.sessions import SessionMiddleware
@@ -275,55 +276,44 @@ async def display_form(request: Request):
 
 
 @app.post("/story", response_class=HTMLResponse)
-async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), changeImg: str = Form(...) , db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), selected_mood: str = Form(...), changeImg: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
-        # 이미지 디렉토리 초기화
         img_dir = "static/img"
         if os.path.exists(img_dir):
-            shutil.rmtree(img_dir)  # 디렉토리 삭제
-        os.makedirs(img_dir, exist_ok=True)  # 새 디렉토리 생성
+            shutil.rmtree(img_dir)
+        os.makedirs(img_dir, exist_ok=True)
 
-        # GPT-3.5로 스토리 생성
         completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "Write in Korean,You are an AI that creates story"},
-                {"role": "user", "content": f"{keywords} Using these characters, Title:, write the story in 100 characters including spaces, and divide it into 4 paragraphs."}
+                {"role": "user", "content": f"{keywords} Using these characters, Title:, write the story in 200 characters including spaces, and divide it into 4 paragraphs."}
             ]
         )
 
-        # 스토리 콘텐츠 확인
         if completion.choices:
             story_content = completion.choices[0].message.content
-            story_title = story_content.split('\n')[0].replace("제목: ", "")  # 제목을 첫 줄로 가정
+            story_title = story_content.split('\n')[0].replace("제목: ", "")
         else:
             story_content = "텍스트를 다시 입력해주세요!"
 
-        korean_now = datetime.datetime.now() + datetime.timedelta(hours=9)  # 현재 한국 시간
-
-        # 타임스탬프 생성
+        korean_now = datetime.datetime.now() + datetime.timedelta(hours=9)
         timestamp = int(time.time())
 
-        # 데이터베이스에 동화 저장
         new_story = Fairytale(
             user_code=user_info['usercode'],
             ft_title=story_title,
-            ft_name=f"static/final_output{timestamp}.mp4",  # 비디오 파일 경로를 설정
+            ft_name=f"static/final_output{timestamp}.mp4",
             ft_date=korean_now,
             ft_like=0
         )
         db.add(new_story)
         db.commit()
 
-        print("이거 나오냐", story_title)
-        print("동화내용 나오는지 확인 : ", story_content)
-
         language = "KR"
         speed = 1.0
-        print(selected_voice, "선택한 목소리")
 
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
-            # TTS 생성
             audio_response = client.audio.speech.create(
                 model="tts-1",
                 input=story_content,
@@ -337,16 +327,17 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             predict.predict(selected_voice, story_content, language, speed)
             audio_file_path = "static/audio/m1.mp3"
 
-        # 이미지 생성 및 저장
-        image_paths = []
         paragraphs = story_content.split('\n\n')
-        delay_seconds = 15
+        prompt_paragraphs = [
+            f"{changeImg} {paragraph}" for paragraph in paragraphs
+        ]
+        print("prompt_paragraphs : ",prompt_paragraphs)
 
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "Create a 4-panel image with the same drawing style in a square {changeImg} The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part. , the fourth section appears in the lower right corner."
-            {paragraphs} 
+            "{changeImg} Create a 4-panel image with the same drawing style in a square , The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, the fourth section appears in the lower right corner."
+             {' '.join(prompt_paragraphs)}
             """,
             size="1024x1024",
             quality="standard",
@@ -361,63 +352,31 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 os.remove(img_dest)
             urllib.request.urlretrieve(image_url, img_dest)
 
-            # 이미지 열기
             img = Image.open(img_dest)
-
             crop_sizes = [(0, 0, 512, 512), (512, 0, 1024, 512), (0, 512, 512, 1024), (512, 512, 1024, 1024)]
 
-            # 자른 이미지 저장
             for idx, (left, upper, right, lower) in enumerate(crop_sizes):
-                # 부분 이미지 추출
                 cropped_image = img.crop((left, upper, right, lower))
-                # 저장할 파일명 설정
                 panel_filename = f"a{idx + 1}.jpg"
                 panel_dest = os.path.join("static", "img", panel_filename)
-                # 파일이 이미 존재하면 삭제
                 if os.path.exists(panel_dest):
                     os.remove(panel_dest)
-                # 부분 이미지 저장
                 cropped_image.save(panel_dest)
 
-        # 비디오 생성 호출
-        final_output_file = await create_video(timestamp)
+        final_output_file = await create_video(timestamp, selected_mood)
 
-        print("video_url 출력해보기 ", final_output_file)
-        
-
-        # 리디렉션
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
-            status_code=HTTP_303_SEE_OTHER
+            status_code=303
         )
     except Exception as e:
         print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
         return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
 
-import json
 
 
-@app.get("/story_view", response_class=HTMLResponse)
-async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
-
-   
-    with open('video_url.json', 'w') as f:
-     json.dump({"video_url": video_url,"story_title": story_title}, f)
-
-    return templates.TemplateResponse("story.html", {
-        "request": request,
-        "video_url": video_url,
-        "story_title": story_title,
-        "story_content": story_content
-    })
-
-async def create_video(timestamp):
+async def create_video(timestamp, selected_mood):
     try:
-        from PIL import Image, ImageDraw, ImageFont
-        import numpy as np
-        from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
-        import os
-
         def create_image(image_file, output_size=(512, 512)):
             image = Image.open(image_file)
             image = image.resize(output_size, Image.LANCZOS)
@@ -457,11 +416,19 @@ async def create_video(timestamp):
                 print(f"Error creating video: {e}")
                 raise
 
-        def overlay_image_and_audio_on_video(video_file, audio_file, output_file):
+        def overlay_image_and_audio_on_video(video_file, audio_file, bgm_file, output_file, fadeout_duration=3):
             try:
                 video_clip = VideoFileClip(video_file)
                 audio_clip = AudioFileClip(audio_file)
-                final_clip = CompositeVideoClip([video_clip.set_audio(audio_clip)])
+
+                bgm_clip = AudioFileClip(bgm_file).volumex(0.4)
+                bgm_duration = video_clip.duration
+                bgm_clip = bgm_clip.subclip(0, bgm_duration)
+                bgm_clip = bgm_clip.fx(audio_fadeout, fadeout_duration)
+
+                combined_audio = CompositeAudioClip([audio_clip, bgm_clip])
+
+                final_clip = CompositeVideoClip([video_clip.set_audio(combined_audio)])
                 final_clip.write_videofile(output_file, codec='libx264')
             except Exception as e:
                 print(f"Error overlaying audio on video: {e}")
@@ -492,16 +459,32 @@ async def create_video(timestamp):
             zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
             all_zoomed_images.extend(zoomed_images)
 
-        output_video_file = f'static/output{timestamp}.mp4'
+        output_video_file = f'static/output.mp4'
         final_output_file = f'static/final_output{timestamp}.mp4'
 
         image_to_video(all_zoomed_images, output_video_file, fps=24)
-        overlay_image_and_audio_on_video(output_video_file, 'static/audio/m1.mp3', final_output_file)
+
+        bgm_file = f'static/bgm/{selected_mood}.mp3'
+        overlay_image_and_audio_on_video(output_video_file, 'static/audio/m1.mp3', bgm_file, final_output_file)
 
         return final_output_file
     except Exception as e:
         print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
         raise
+
+@app.get("/story_view", response_class=HTMLResponse)
+async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+
+   
+    with open('video_url.json', 'w') as f:
+     json.dump({"video_url": video_url,"story_title": story_title}, f)
+
+    return templates.TemplateResponse("story.html", {
+        "request": request,
+        "video_url": video_url,
+        "story_title": story_title,
+        "story_content": story_content
+    })
 
 @app.post("/like/{ft_code}")
 async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):

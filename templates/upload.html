@@ -74,59 +74,58 @@
   </div>
   <div>
     <label for="voices" style="margin-left: 20px">분위기 선택:</label>
-    <select name="selected_mood" class="select_mood1">
-      <option value="sina">신나는</option>
-      <option value="zeul">즐거운</option>
-      <option value="moo">무서운</option>
-      <option value="ear">귀여운</option>
-      <option value="mo">모험적인</option>
-      <option value="fuck">이게 분위기야?</option>
+    <select name="selected_mood" id="selected_mood" class="select_mood1">
+      <option value="peaceful">평화로운</option>
+
+      <option value="touching">신비롭고 감동적인</option>
+
+      <option value="adventurous">모험적인</option>
+
+      <option value="lively">활기찬</option>
+
+      <option value="exciting">신나는</option>
+
+      <option value="nervous">긴장되는</option>
     </select>
   </div>
-
   <div>
     <label for="voices" style="margin-left: 20px">스타일 선택:</label>
     <select name="changeImg" id="changeImg" class="select_mood1">
       <option
-        value="animation style, features vibrant and detailed artwork with a serene and warm atmosphere."
+        value="animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere."
         data-image="../static/sample_img/albert-cartoon-dalle3.webp"
       >
         애니메이션
       </option>
-
       <option
         value="A illustration from a graphic novel."
         data-image="../static/sample_img/anime-dalle.webp"
       >
-        그래픽 노벨
+        노벨
       </option>
-
       <option
-        value="Realism style."
+        value="3D style."
         data-image="../static/sample_img/archer-cartoon.webp"
       >
-        리얼리즘
+        현실적인
       </option>
-
       <option
         value="Surreal Desert Oasis style."
         data-image="../static/sample_img/cartoon-disney-dalle-ai.webp"
       >
-        사막과 오아시스
+        듄
       </option>
-
       <option
         value="cyberpunk portrait style."
         data-image="../static/sample_img/charlie-brown-toon.webp"
       >
         사이버펑크
       </option>
-
       <option
         value="pixel art style."
         data-image="../static/sample_img/cute-fox-family-toon.webp"
       >
-        픽셀 아트
+        픽셀
       </option>
     </select>
   </div>
@@ -135,7 +134,6 @@
     id="selectedImage"
     class="cnImg"
   />
-  <!-- https://www.instantaiprompt.com/ko/prompts/dall-e/cartoon-animation-examples/ -->
 </form>
 
 <section id="loadingContainer" style="display: none">
@@ -195,327 +193,6 @@
   </section>
 </section>
 
-<section id="resultvid" style="display: none" class="result">
-  <h1>동영상 생성 완료</h1>
-  <p>동화 이야기를 기반으로 한 동영상이 성공적으로 생성되었습니다!</p>
-
-  <h2>동영상 재생</h2>
-
-  <video controls class="create_video">
-    <source src="{{ video_url }}" type="video/mp4" />
-
-    해당 브라우저에서 비디오를 지원하지 않습니다.
-  </video>
-</section>
-<style>
-  #page {
-    position: absolute;
-    opacity: 90%;
-    align-items: center;
-    background: linear-gradient(
-      to top right,
-      #fc636b 10%,
-      #ff6d92 65%,
-      #ffb900 125%
-    );
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: opacity 1s;
-    z-index: -2;
-  }
-
-  #phrase_box {
-    margin-top: 300px;
-    display: flex;
-    flex-flow: column;
-    height: 150px;
-    overflow: hidden;
-    width: 260px;
-  }
-
-  #phrases {
-    animation: slide-phrases-upward 25s linear;
-  }
-
-  #footer {
-    bottom: 30px;
-    color: white;
-    display: flex;
-    justify-content: center;
-    left: 0;
-    position: fixed;
-    right: 0;
-  }
-
-  @keyframes slide-phrases-upward {
-    0% {
-      transform: translateY(0);
-    }
-
-    100% {
-      transform: translateY(-1000px);
-    }
-  }
-
-  #loadingCheckCircleSVG-0,
-  #loadingCheckCircleSVG-1,
-  #loadingCheckCircleSVG-2,
-  #loadingCheckCircleSVG-3,
-  #loadingCheckCircleSVG-4,
-  #loadingCheckCircleSVG-5,
-  #loadingCheckCircleSVG-6,
-  #loadingCheckCircleSVG-7,
-  #loadingCheckCircleSVG-8,
-  #loadingCheckCircleSVG-9,
-  #loadingCheckCircleSVG-10 {
-    animation: fill-to-white 55000ms;
-  }
-
-  @keyframes fill-to-white {
-    0% {
-      opacity: 0;
-    }
-
-    10% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  #loadingCheckSVG-0,
-  #loadingCheckSVG-1,
-  #loadingCheckSVG-2,
-  #loadingCheckSVG-3,
-  #loadingCheckSVG-4,
-  #loadingCheckSVG-5,
-  #loadingCheckSVG-6,
-  #loadingCheckSVG-7,
-  #loadingCheckSVG-8,
-  #loadingCheckSVG-9,
-  #loadingCheckSVG-10 {
-    animation: fill-to-coral 5000ms;
-  }
-
-  @keyframes fill-to-coral {
-    0% {
-      fill: white;
-    }
-
-    10% {
-      fill: #ff6d92;
-    }
-
-    100% {
-      fill: #ff6d92;
-    }
-  }
-
-  .cube {
-    background: linear-gradient(
-      to top right,
-      #fc636b 10%,
-      #ff6d92 65%,
-      #ffb900 125%
-    );
-    margin: 0;
-    box-sizing: border-box;
-    display: grid;
-    place-items: center;
-    font-size: 0.25vh;
-  }
-
-  .cube * {
-    position: absolute;
-    transform-style: preserve-3d;
-  }
-
-  .scene,
-  .dodecahedron {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .scene {
-    place-self: center;
-    width: 100em;
-    aspect-ratio: 1;
-    perspective: 250em;
-    z-index: -1;
-
-    margin-top: -120%;
-  }
-
-  .dodecahedron {
-    --ngon: 5;
-    --unit: calc(1em * var(--unitScale));
-    --triAngle: calc(360deg / var(--ngon));
-    /* the central angle of the pentagon's triangular slice */
-    --a3gon: calc(sin(calc(var(--triAngle) / 2)) * 100);
-    /* the base of a pentagon's triangular slice*/
-    --h3gon: calc(cos(calc(var(--triAngle) / 2)) * 50);
-    /* the height of a pentagon's triangular slice*/
-    --h5gon: calc(var(--h3gon) + 50);
-    /* total height of that same pentagon */
-    --pentAngle: asin(calc(var(--h3gon) / var(--h5gon)));
-    /* the angle that the pentagon would be inclined at if it were leaning against the center pivot axis of another pentagon */
-    --pentH: calc(cos(var(--pentAngle)) * var(--h5gon));
-    /* the height at which the tip of that pentagon touches the pivot axis */
-    --median: calc((var(--a3gon) * sin(var(--triAngle)) + var(--h5gon)) / 2);
-    /* the median value of the triangular slice's height and the pentagon's height */
-    --Hratio: calc(var(--median) / var(--h5gon));
-    /* ratio of the median and the pentagram's height */
-    --dodecaH: calc(var(--pentH) * var(--Hratio));
-    /* the height of the dodecahedron */
-    --unitScale: calc(50 / var(--dodecaH));
-    inset: calc(50 * (1em - var(--unit)));
-    transform: rotateX(60deg);
-    /* x축 회전 추가 */
-  }
-
-  .lid {
-    transform: rotateX(calc(-90deg * var(--dir)))
-      translateZ(calc(var(--dodecaH) * var(--unit)));
-  }
-
-  .wall:nth-child(2n + 1) {
-    --dir: 1;
-  }
-
-  .wall:nth-child(2n) {
-    --dir: -1;
-  }
-
-  .side {
-    transform: rotateY(calc(var(--step) * var(--triAngle) + 0.5turn))
-      rotateX(calc(var(--pentAngle) * -1 + 90deg + 90deg * var(--dir)))
-      translateZ(calc(var(--dodecaH) * var(--unit)));
-  }
-
-  .wall {
-    inset: 0;
-    background-image: radial-gradient(
-      at 0 0,
-      hsla(calc(var(--triAngle) * var(--step)) 100% 50% / 1),
-      hsla(calc(var(--triAngle) * var(--step) + 90deg) 100% 50% / 0)
-    );
-    background-size: 110px;
-    /* 이미지가 벽의 크기에 맞게 조절됩니다 */
-    background-position: center;
-    clip-path: polygon(
-      calc((1 - sin(calc(0 * 72deg))) * 50%)
-        calc((1 - cos(calc(0 * 72deg))) * 50%),
-      calc((1 - sin(calc(1 * 72deg))) * 50%)
-        calc((1 - cos(calc(1 * 72deg))) * 50%),
-      calc((1 - sin(calc(2 * 72deg))) * 50%)
-        calc((1 - cos(calc(2 * 72deg))) * 50%),
-      calc((1 - sin(calc(3 * 72deg))) * 50%)
-        calc((1 - cos(calc(3 * 72deg))) * 50%),
-      calc((1 - sin(calc(4 * 72deg))) * 50%)
-        calc((1 - cos(calc(4 * 72deg))) * 50%)
-    );
-  }
-
-  .wall:nth-child(1),
-  .wall:nth-child(2) {
-    --step: 0;
-  }
-
-  .wall:nth-child(3),
-  .wall:nth-child(4) {
-    --step: 1;
-  }
-
-  .wall:nth-child(5),
-  .wall:nth-child(6) {
-    --step: 2;
-  }
-
-  .wall:nth-child(7),
-  .wall:nth-child(8) {
-    --step: 3;
-  }
-
-  .wall:nth-child(9),
-  .wall:nth-child(10) {
-    --step: 4;
-  }
-
-  .wall:nth-child(11),
-  .wall:nth-child(12) {
-    --step: 5;
-  }
-
-  @media (orientation: portrait) {
-    body {
-      font-size: 0.5vw;
-    }
-  }
-
-  .wall:nth-child(1) {
-    background-image: url("../static/sample_img/1.png");
-  }
-
-  .wall:nth-child(2) {
-    background-image: url("../static/sample_img/2.png");
-  }
-
-  .wall:nth-child(3) {
-    background-image: url("../static/sample_img/3.png");
-  }
-
-  .wall:nth-child(4) {
-    background-image: url("../static/sample_img/4.png");
-  }
-
-  .wall:nth-child(5) {
-    background-image: url("../static/sample_img/5.png");
-  }
-
-  .wall:nth-child(6) {
-    background-image: url("../static/sample_img/6.png");
-  }
-
-  .wall:nth-child(7) {
-    background-image: url("../static/sample_img/7.png");
-  }
-
-  .wall:nth-child(8) {
-    background-image: url("../static/sample_img/8.png");
-  }
-
-  .wall:nth-child(9) {
-    background-image: url("../static/sample_img/9.png");
-  }
-
-  .wall:nth-child(10) {
-    background-image: url("../static/sample_img/10.png");
-  }
-
-  .wall:nth-child(11) {
-    background-image: url("../static/sample_img/11.png");
-  }
-
-  .wall:nth-child(12) {
-    background-image: url("../static/sample_img/12.png");
-  }
-
-  /* .hbody {
-    display: none;
-  } */
-
-  #resutvid {
-    z-index: 3;
-  }
-</style>
 <script>
   // 초기 회전 각도
   let xAngle = 0,
@@ -541,6 +218,7 @@
   // 애니메이션 시작
   requestAnimationFrame(rotate);
 </script>
+
 <script>
   function createSVG(tag, properties, opt_children) {
     var newElement = document.createElementNS(
@@ -705,7 +383,6 @@
     const selectElement = document.getElementById("selected_voice");
     const selectedImage = document.getElementById("selected_image");
     const selectedText = document.getElementById("selected_text");
-    const resultvid = document.getElementById("resultvid");
 
     selectElement.addEventListener("change", (event) => {
       const selectedOption = event.target.selectedOptions[0];
@@ -733,39 +410,43 @@
       imageElement.src = imageUrl;
     });
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("myForm");
-      const loadingContainer = document.getElementById("loadingContainer");
+    const form = document.getElementById("myForm");
+    const loadingContainer = document.getElementById("loadingContainer");
 
-      form.addEventListener("submit", function (event) {
-        event.preventDefault(); // 폼의 기본 제출 동작 방지
-        loadingContainer.style.display = "block";
-        form.style.display = "none";
-
-        // 폼 데이터를 수집합니다.
-        const formData = new FormData(form);
-
-        // AJAX 요청을 사용하여 폼을 제출합니다.
-        fetch(form.action, {
-          method: form.method,
-          body: formData,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.url; // 리디렉션된 URL을 받음
-          })
-          .then((redirectedUrl) => {
-            // 페이지를 리디렉션된 URL로 이동
-            window.location.href = redirectedUrl;
-          })
-          .catch((error) => {
-            console.error("오류:", error);
-            loadingContainer.style.display = "none";
-            form.style.display = "block";
-          });
+    form.addEventListener("submit", function (event) {
+      event.preventDefault(); // 폼의 기본 제출 동작 방지
+      loadingContainer.style.display = "block";
+      form.style.display = "none";
+      document.querySelectorAll(".hbody").forEach((element) => {
+        element.style.display = "none";
       });
+
+      // 폼 데이터를 수집합니다.
+      const formData = new FormData(form);
+
+      // AJAX 요청을 사용하여 폼을 제출합니다.
+      fetch(form.action, {
+        method: form.method,
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.url; // 리디렉션된 URL을 받음
+        })
+        .then((redirectedUrl) => {
+          // 페이지를 리디렉션된 URL로 이동
+          window.location.href = redirectedUrl;
+        })
+        .catch((error) => {
+          console.error("오류:", error);
+          loadingContainer.style.display = "none";
+          form.style.display = "block";
+          document.querySelectorAll(".hbody").forEach((element) => {
+            element.style.display = "block";
+          });
+        });
     });
   });
 </script>

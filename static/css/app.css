@@ -1,10 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
+@font-face {
+  font-family: 'GmarketSansMedium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: small;
+  font-style: normal;
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: monospace;
+  font-family: GmarketSansMedium;
 }
 
 :root {
@@ -267,9 +274,6 @@ a {
   transition: all .5s ease;
 }
 
-.container .menu-bar ul li.active {
-  opacity: 1;
-}
 
 .container .menu-bar ul li i {
   font-size: 1.6rem;
@@ -746,7 +750,7 @@ a {
 
 .profile .profile-videos .videos-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(10.33rem, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(20.33rem, 100%), 1fr));
   gap: .2rem;
   background-color: var(--whiteColor);
   position: relative;
@@ -899,3 +903,281 @@ a {
 }
 
 /*End Profile Section*/
+#page {
+  position: absolute;
+  opacity: 90%;
+  align-items: center;
+  background: linear-gradient(to top right, #fc636b 10%, #ff6d92 65%, #ffb900 125%);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 1s;
+  z-index: -2;
+}
+
+#phrase_box {
+  margin-top: 300px;
+  display: flex;
+  flex-flow: column;
+  height: 150px;
+  overflow: hidden;
+  width: 260px;
+}
+
+#phrases {
+  animation: slide-phrases-upward 25s linear;
+}
+
+#footer {
+  bottom: 30px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+}
+
+@keyframes slide-phrases-upward {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-1000px);
+  }
+}
+
+#loadingCheckCircleSVG-0,
+#loadingCheckCircleSVG-1,
+#loadingCheckCircleSVG-2,
+#loadingCheckCircleSVG-3,
+#loadingCheckCircleSVG-4,
+#loadingCheckCircleSVG-5,
+#loadingCheckCircleSVG-6,
+#loadingCheckCircleSVG-7,
+#loadingCheckCircleSVG-8,
+#loadingCheckCircleSVG-9,
+#loadingCheckCircleSVG-10 {
+  animation: fill-to-white 55000ms;
+}
+
+@keyframes fill-to-white {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+#loadingCheckSVG-0,
+#loadingCheckSVG-1,
+#loadingCheckSVG-2,
+#loadingCheckSVG-3,
+#loadingCheckSVG-4,
+#loadingCheckSVG-5,
+#loadingCheckSVG-6,
+#loadingCheckSVG-7,
+#loadingCheckSVG-8,
+#loadingCheckSVG-9,
+#loadingCheckSVG-10 {
+  animation: fill-to-coral 5000ms;
+}
+
+@keyframes fill-to-coral {
+  0% {
+    fill: white;
+  }
+
+  10% {
+    fill: #ff6d92;
+  }
+
+  100% {
+    fill: #ff6d92;
+  }
+}
+
+.cube {
+  background: linear-gradient(to top right, #fc636b 10%, #ff6d92 65%, #ffb900 125%);
+  margin: 0;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  font-size: 0.25vh;
+}
+
+.cube * {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.scene,
+.dodecahedron {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scene {
+  place-self: center;
+  width: 100em;
+  aspect-ratio: 1;
+  perspective: 250em;
+  z-index: -1;
+  margin-top: -165%;
+}
+
+.dodecahedron {
+  --ngon: 5;
+  --unit: calc(1em * var(--unitScale));
+  --triAngle: calc(360deg / var(--ngon));
+  --a3gon: calc(sin(calc(var(--triAngle) / 2)) * 100);
+  --h3gon: calc(cos(calc(var(--triAngle) / 2)) * 50);
+  --h5gon: calc(var(--h3gon) + 50);
+  --pentAngle: asin(calc(var(--h3gon) / var(--h5gon)));
+  --pentH: calc(cos(var(--pentAngle)) * var(--h5gon));
+  --median: calc((var(--a3gon) * sin(var(--triAngle)) + var(--h5gon)) / 2);
+  --Hratio: calc(var(--median) / var(--h5gon));
+  --dodecaH: calc(var(--pentH) * var(--Hratio));
+  --unitScale: calc(50 / var(--dodecaH));
+  inset: calc(50 * (1em - var(--unit)));
+  transform: rotateX(60deg);
+}
+
+.lid {
+  transform: rotateX(calc(-90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
+}
+
+.wall:nth-child(2n + 1) {
+  --dir: 1;
+}
+
+.wall:nth-child(2n) {
+  --dir: -1;
+}
+
+.side {
+  transform: rotateY(calc(var(--step) * var(--triAngle) + 0.5turn)) rotateX(calc(var(--pentAngle) * -1 + 90deg + 90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
+}
+
+.wall {
+  inset: 0;
+  background-image: radial-gradient(at 0 0, hsla(calc(var(--triAngle) * var(--step)) 100% 50% / 1), hsla(calc(var(--triAngle) * var(--step) + 90deg) 100% 50% / 0));
+  background-size: 110px;
+  background-position: center;
+  clip-path: polygon(calc((1 - sin(calc(0 * 72deg))) * 50%) calc((1 - cos(calc(0 * 72deg))) * 50%), calc((1 - sin(calc(1 * 72deg))) * 50%) calc((1 - cos(calc(1 * 72deg))) * 50%), calc((1 - sin(calc(2 * 72deg))) * 50%) calc((1 - cos(calc(2 * 72deg))) * 50%), calc((1 - sin(calc(3 * 72deg))) * 50%) calc((1 - cos(calc(3 * 72deg))) * 50%), calc((1 - sin(calc(4 * 72deg))) * 50%) calc((1 - cos(calc(4 * 72deg))) * 50%));
+}
+
+.wall:nth-child(1),
+.wall:nth-child(2) {
+  --step: 0;
+}
+
+.wall:nth-child(3),
+.wall:nth-child(4) {
+  --step: 1;
+}
+
+.wall:nth-child(5),
+.wall:nth-child(6) {
+  --step: 2;
+}
+
+.wall:nth-child(7),
+.wall:nth-child(8) {
+  --step: 3;
+}
+
+.wall:nth-child(9),
+.wall:nth-child(10) {
+  --step: 4;
+}
+
+.wall:nth-child(11),
+.wall:nth-child(12) {
+  --step: 5;
+}
+
+@media (orientation: portrait) {
+  body {
+    font-size: 4.5vw;
+  }
+}
+
+.wall:nth-child(1) {
+  background-image: url("../sample_img/1.png");
+}
+
+.wall:nth-child(2) {
+  background-image: url("../sample_img/2.png");
+}
+
+.wall:nth-child(3) {
+  background-image: url("../sample_img/3.png");
+}
+
+.wall:nth-child(4) {
+  background-image: url("../sample_img/4.png");
+}
+
+.wall:nth-child(5) {
+  background-image: url("../sample_img/5.png");
+}
+
+.wall:nth-child(6) {
+  background-image: url("../sample_img/6.png");
+}
+
+.wall:nth-child(7) {
+  background-image: url("../sample_img/7.png");
+}
+
+.wall:nth-child(8) {
+  background-image: url("../static/sample_img/8.png");
+}
+
+.wall:nth-child(9) {
+  background-image: url("../sample_img/9.png");
+}
+
+.wall:nth-child(10) {
+  background-image: url("../sample_img/10.png");
+}
+
+.wall:nth-child(11) {
+  background-image: url("../sample_img/11.png");
+}
+
+.wall:nth-child(12) {
+  background-image: url("../sample_img/12.png");
+}
+
+#resutvid {
+  z-index: 3;
+}
+
+/*여기서부터는 모바일*/
+
+@media (max-width: 768px) {
+
+  /* 모바일 화면 크기에 맞추어 조정, 필요에 따라 크기 수정 가능 */
+  .profile .profile-videos .videos-container {
+    grid-template-columns: repeat(auto-fit, minmax(min(10.33rem, 100%), 1fr));
+  }
+
+  .scene {
+
+    margin-top: -120%;
+  }
+}
