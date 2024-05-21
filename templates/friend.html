@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .profile-videos .video video {
+    width: 300px;
+    /* 원하는 너비 */
+    height: 260px;
+    /* 원하는 높이 */
+    object-fit: cover;
+    /* 비디오의 비율을 유지하면서 크기를 조정 */
+  }
+
+  /* 이미지 업로드 폼 스타일 */
+  .profile-img-upload {
+    display: none;
+    /* 초기에는 숨김 */
+    margin-top: 20px;
+  }
+
+  .profile-img-upload input[type="file"] {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .profile-img-upload button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .video {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
+
+  .video-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .like-btn,
+  .delete-btn {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+  }
+
+
+  .like-btn:hover,
+  .delete-btn:hover {
+    background-color: #ddd;
+  }
+
+  .profile .profile-videos .content {
+    position: relative;
+    width: 100%;
+    height: 24rem;
+  }
+</style>
+
+<section id="profile" class="box profile">
+  <div class="top-header">
+    <h3>frontend with salimi</h3>
+    <div class="icons">
+      <i class="fa-solid fa-shoe-prints"></i>
+      <i class="fa-solid fa-bars"></i>
+    </div>
+  </div>
+  <div class="profile-info">
+    <div class="profile-img">
+      <div class="inner-img">
+        <img src="{{ profile_image }}" alt="Profile Image">
+      </div>
+      <h3>{{ user_info['name'] }}</h3>
+    </div>
+
+    <ul>
+      <li>
+        <h5>115</h5><a href="/gudog">
+          <span>팔로우</span>
+        </a>
+      </li>
+      <li>
+        <h5>3600</h5>
+        <span>팔로워</span>
+      </li>
+      <li>
+        <h5>{{ total_likes }}</h5>
+        <span>likes</span>
+      </li>
+    </ul>
+
+    <div class="buttons">
+      <button class="btn" id="profile-settings-button">프로필설정</button>
+      <button class="sbbtn" id="subscription-button">구독</button>
+      <button class="csbbtn" id="cancel-subscription-button">구독취소</button>
+    </div>
+
+    <!-- 이미지 업로드 폼 -->
+    <div class="profile-img-upload" id="profile-img-upload">
+      <form action="/upload_profile_image" method="post" enctype="multipart/form-data">
+        <input type="file" name="profile_image" accept="image/*" required>
+        <button type="submit">업로드</button>
+      </form>
+    </div>
+  </div>
+  <div class="profile-videos">
+    <div class="content">
+      <div class="videos-container">
+        {% for fairytale in fairytales %}
+        <div class="video">
+          <video controls loop autoplay muted>
+            <source src="{{ fairytale.ft_name }}" type="video/mp4">
+          </video>
+          <div class="video-controls">
+            <button class="like-btn" id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">
+              👍 Like
+          </button>
+
+          <button class="delete-btn" onclick="confirmDelete('{{ fairytale.ft_code }}')">🗑️</button>
+
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+function toggleLike(ftCode) {
+    fetch(`/prolike/${ftCode}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    }).then(response => response.json())
+      .then(data => {
+          alert(`이 영상의 좋아요 수: ${data.likes_count}`);
+          // 이 부분에서 버튼의 텍스트나 스타일을 업데이트할 수 있습니다.
+      }).catch(error => {
+          console.error('오류가 발생했습니다:', error);
+      });
+}
+
+function confirmDelete(ftCode) {
+    if (confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
+        deleteVideo(ftCode);
+    }
+}
+
+function deleteVideo(ftCode) {
+    fetch(`/delete-video/${ftCode}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('서버 처리 중 오류 발생');
+    }).then(data => {
+        alert(data.message);  
+        document.getElementById(`video-container-${ftCode}`).remove();  // 정확한 ID 사용
+    }).catch(error => {
+        console.error('오류 발생:', error);
+        alert('비디오 삭제 중 오류가 발생했습니다.');  // 사용자에게 더 명확한 에러 메시지 제공
+    });
+}
+
+  document.getElementById('profile-settings-button').addEventListener('click', function () {
+    var uploadForm = document.getElementById('profile-img-upload');
+    if (uploadForm.style.display === 'none' || uploadForm.style.display === '') {
+      uploadForm.style.display = 'block';
+    } else {
+      uploadForm.style.display = 'none';
+    }
+  });
+
+</script>
+{% endblock content %}
