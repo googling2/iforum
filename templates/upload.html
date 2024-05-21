@@ -3,158 +3,83 @@
 
 <form id="myForm" action="/story" method="post">
   <div class="story_container" style="display: flex">
-    <div class="input_text" id="step1" style="flex: 1; padding: 20px">
-      <input
-        type="text"
-        name="keywords"
-        placeholder="예시)하늘을 나는 오리 이야기"
-        class="input_story"
-      />
-    </div>
-    <button class="base_btn">딸깍</button>
+      <div class="input_text" id="step1" style="flex: 1; padding: 20px">
+          <input type="text" name="keywords" placeholder="예시)하늘을 나는 오리 이야기" class="input_story" />
+      </div>
+      <button class="base_btn">딸깍</button>
   </div>
   <div style="width: 100%">
-    <div style="margin-left: 20px">
-      <label for="voices">목소리 선택:</label>
-      <select name="selected_voice" id="selected_voice" class="select_v">
-        <option
-          value="alloy"
-          data-image="../static\profile_img/1.png"
-          data-audio="../static/profile_audio/alloy.mp3"
-        >
-          alloy
-        </option>
-        <option
-          value="echo"
-          data-image="../static\profile_img/2.png"
-          data-audio="../static/profile_audio/echo.mp3"
-        >
-          echo
-        </option>
-        <option
-          value="fable"
-          data-image="../static\profile_img/3.png"
-          data-audio="../static/profile_audio/fable.mp3"
-        >
-          fable
-        </option>
-        <option
-          value="onyx"
-          data-image="../static\profile_img/4.png"
-          data-audio="../static/profile_audio/onyx.mp3"
-        >
-          onyx
-        </option>
-        <option
-          value="nova"
-          data-image="../static\profile_img/5.png"
-          data-audio="../static/profile_audio/nova.mp3"
-        >
-          nova
-        </option>
-        <option
-          value="shimmer"
-          data-image="../static\profile_img/6.png"
-          data-audio="../static/profile_audio/shimmer.mp3"
-        >
-          shimmer
-        </option>
-        <option value="exp_dir/LeeByongHun.m4a">내목소리</option>
+      <div style="margin-left: 20px">
+          <label for="voices">목소리 선택:</label>
+          <select name="selected_voice" id="selected_voice" class="select_v">
+              <option value="alloy">alloy</option>
+              <option value="echo">echo</option>
+              <option value="fable">fable</option>
+              <option value="onyx">onyx</option>
+              <option value="nova">nova</option>
+              <option value="shimmer">shimmer</option>
+              {% for voice in user_voices %}
+              <option value="{{ '../static/myvoice/' + voice.voice_filename }}">{{ voice.voice_name }}</option>
+              {% endfor %}
+          </select>
+          <button type="button" onclick="location.href='/profile'" class="base_btn" style="margin-left: 10px;">목소리 등록</button>
+      </div>
+      <div class="option-container">
+          <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image" />
+      </div>
+  </div>
+  <div>
+      <label for="voices" style="margin-left: 20px">분위기 선택:</label>
+      <select name="selected_mood" class="select_mood1">
+          <option value="sina">신나는</option>
+          <option value="zeul">즐거운</option>
+          <option value="moo">무서운</option>
+          <option value="ear">귀여운</option>
+          <option value="mo">모험적인</option>
+          <option value="fuck">이게 분위기야?</option>
       </select>
-    </div>
-    <div class="option-container">
-      <img
-        src="../static/profile_img/1.png"
-        alt="선택된 이미지"
-        id="selected_image"
-        class="option-image"
-      />
-      <!-- <span id="selected_text"></span> 프로필 밑에 이름-->
-    </div>
   </div>
   <div>
-    <label for="voices" style="margin-left: 20px">분위기 선택:</label>
-    <select name="selected_mood" class="select_mood1">
-      <option value="sina">신나는</option>
-      <option value="zeul">즐거운</option>
-      <option value="moo">무서운</option>
-      <option value="ear">귀여운</option>
-      <option value="mo">모험적인</option>
-      <option value="fuck">이게 분위기야?</option>
-    </select>
   </div>
-  <div>
-    <form action="/upload_video" method="post">
-      <button type="submit">유튜브 업로드</button>
-    </form>
-  </div>
-
-  <div>
-    <label for="voices" style="margin-left: 20px">스타일 선택:</label>
-    <select name="changeImg" id="changeImg" class="select_mood1">
-      <option
-        value=""
-        data-image="../static/sample_img/albert-cartoon-dalle3.webp"
-      >
-        픽사
-      </option>
-      <option value="" data-image="../static/sample_img/anime-dalle.webp">
-        애니
-      </option>
-      <option value="" data-image="../static/sample_img/archer-cartoon.webp">
-        카툰
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/cartoon-disney-dalle-ai.webp"
-      >
-        디지니
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/charlie-brown-toon.webp"
-      >
-        땅콩
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/cute-fox-family-toon.webp"
-      >
-        피파피그
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/dalle-powderpuff-cartoon.webp"
-      >
-        파워 퍼프 걸
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/spirited-away-dalle.webp"
-      >
-        미야자키 하야오의 일본 애니메이션
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/stop-motion-animation.webp"
-      >
-        스톱 모션 애니메이션
-      </option>
-      <option
-        value=""
-        data-image="../static/sample_img/aardman-animations.webp"
-      >
-        아드먼
-      </option>
-    </select>
-  </div>
-  <img
-    src="../static/sample_img/albert-cartoon-dalle3.webp"
-    id="selectedImage"
-    class="cnImg"
-  />
-  <!-- https://www.instantaiprompt.com/ko/prompts/dall-e/cartoon-animation-examples/ -->
 </form>
+<div>
+  <label for="voices" style="margin-left: 20px">스타일 선택:</label>
+  <select name="changeImg" id="changeImg" class="select_mood1">
+    <option value="" data-image="../static/sample_img/albert-cartoon-dalle3.webp">
+      픽사
+    </option>
+    <option value="" data-image="../static/sample_img/anime-dalle.webp">
+      애니
+    </option>
+    <option value="" data-image="../static/sample_img/archer-cartoon.webp">
+      카툰
+    </option>
+    <option value="" data-image="../static/sample_img/cartoon-disney-dalle-ai.webp">
+      디지니
+    </option>
+    <option value="" data-image="../static/sample_img/charlie-brown-toon.webp">
+      땅콩
+    </option>
+    <option value="" data-image="../static/sample_img/cute-fox-family-toon.webp">
+      피파피그
+    </option>
+    <option value="" data-image="../static/sample_img/dalle-powderpuff-cartoon.webp">
+      파워 퍼프 걸
+    </option>
+    <option value="" data-image="../static/sample_img/spirited-away-dalle.webp">
+      미야자키 하야오의 일본 애니메이션
+    </option>
+    <option value="" data-image="../static/sample_img/stop-motion-animation.webp">
+      스톱 모션 애니메이션
+    </option>
+    <option value="" data-image="../static/sample_img/aardman-animations.webp">
+      아드먼
+    </option>
+  </select>
+</div>
+<img src="../static/sample_img/albert-cartoon-dalle3.webp" id="selectedImage" class="cnImg" />
+<!-- https://www.instantaiprompt.com/ko/prompts/dall-e/cartoon-animation-examples/ -->
+
 
 <section id="loadingContainer" style="display: none">
   <section style="margin-top: 100%">
@@ -162,17 +87,8 @@
       <div id="phrase_box">
         <svg width="100%" height="100%">
           <defs>
-            <mask
-              id="mask"
-              maskUnits="userSpaceOnUse"
-              maskContentUnits="userSpaceOnUse"
-            >
-              <linearGradient
-                id="linearGradient"
-                gradientUnits="objectBoundingBox"
-                x2="0"
-                y2="1"
-              >
+            <mask id="mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+              <linearGradient id="linearGradient" gradientUnits="objectBoundingBox" x2="0" y2="1">
                 <stop stop-color="white" stop-opacity="0" offset="0%" />
                 <stop stop-color="white" stop-opacity="1" offset="30%" />
                 <stop stop-color="white" stop-opacity="1" offset="70%" />
@@ -230,12 +146,10 @@
     position: absolute;
     opacity: 90%;
     align-items: center;
-    background: linear-gradient(
-      to top right,
-      #fc636b 10%,
-      #ff6d92 65%,
-      #ffb900 125%
-    );
+    background: linear-gradient(to top right,
+        #fc636b 10%,
+        #ff6d92 65%,
+        #ffb900 125%);
     bottom: 0;
     display: flex;
     justify-content: center;
@@ -337,12 +251,10 @@
   }
 
   .cube {
-    background: linear-gradient(
-      to top right,
-      #fc636b 10%,
-      #ff6d92 65%,
-      #ffb900 125%
-    );
+    background: linear-gradient(to top right,
+        #fc636b 10%,
+        #ff6d92 65%,
+        #ffb900 125%);
     margin: 0;
     box-sizing: border-box;
     display: grid;
@@ -400,8 +312,7 @@
   }
 
   .lid {
-    transform: rotateX(calc(-90deg * var(--dir)))
-      translateZ(calc(var(--dodecaH) * var(--unit)));
+    transform: rotateX(calc(-90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
   }
 
   .wall:nth-child(2n + 1) {
@@ -413,33 +324,22 @@
   }
 
   .side {
-    transform: rotateY(calc(var(--step) * var(--triAngle) + 0.5turn))
-      rotateX(calc(var(--pentAngle) * -1 + 90deg + 90deg * var(--dir)))
-      translateZ(calc(var(--dodecaH) * var(--unit)));
+    transform: rotateY(calc(var(--step) * var(--triAngle) + 0.5turn)) rotateX(calc(var(--pentAngle) * -1 + 90deg + 90deg * var(--dir))) translateZ(calc(var(--dodecaH) * var(--unit)));
   }
 
   .wall {
     inset: 0;
-    background-image: radial-gradient(
-      at 0 0,
-      hsla(calc(var(--triAngle) * var(--step)) 100% 50% / 1),
-      hsla(calc(var(--triAngle) * var(--step) + 90deg) 100% 50% / 0)
-    );
+    background-image: radial-gradient(at 0 0,
+        hsla(calc(var(--triAngle) * var(--step)) 100% 50% / 1),
+        hsla(calc(var(--triAngle) * var(--step) + 90deg) 100% 50% / 0));
     background-size: 110px;
     /* 이미지가 벽의 크기에 맞게 조절됩니다 */
     background-position: center;
-    clip-path: polygon(
-      calc((1 - sin(calc(0 * 72deg))) * 50%)
-        calc((1 - cos(calc(0 * 72deg))) * 50%),
-      calc((1 - sin(calc(1 * 72deg))) * 50%)
-        calc((1 - cos(calc(1 * 72deg))) * 50%),
-      calc((1 - sin(calc(2 * 72deg))) * 50%)
-        calc((1 - cos(calc(2 * 72deg))) * 50%),
-      calc((1 - sin(calc(3 * 72deg))) * 50%)
-        calc((1 - cos(calc(3 * 72deg))) * 50%),
-      calc((1 - sin(calc(4 * 72deg))) * 50%)
-        calc((1 - cos(calc(4 * 72deg))) * 50%)
-    );
+    clip-path: polygon(calc((1 - sin(calc(0 * 72deg))) * 50%) calc((1 - cos(calc(0 * 72deg))) * 50%),
+        calc((1 - sin(calc(1 * 72deg))) * 50%) calc((1 - cos(calc(1 * 72deg))) * 50%),
+        calc((1 - sin(calc(2 * 72deg))) * 50%) calc((1 - cos(calc(2 * 72deg))) * 50%),
+        calc((1 - sin(calc(3 * 72deg))) * 50%) calc((1 - cos(calc(3 * 72deg))) * 50%),
+        calc((1 - sin(calc(4 * 72deg))) * 50%) calc((1 - cos(calc(4 * 72deg))) * 50%));
   }
 
   .wall:nth-child(1),
@@ -690,8 +590,8 @@
           var alpha = Math.max(
             Math.min(
               1 -
-                (upward_moving_group.currentY - color_change_boundary + 15) /
-                  30,
+              (upward_moving_group.currentY - color_change_boundary + 15) /
+              30,
               1
             ),
             0

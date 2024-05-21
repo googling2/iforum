@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request, File, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
@@ -11,7 +11,7 @@ import shutil  # 디렉토리 삭제에 사용
 from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
 from moviepy.editor import AudioFileClip
 import predict
-import datetime
+from datetime import datetime
 from fastapi import FastAPI, Depends, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
@@ -39,7 +39,7 @@ client = openai.OpenAI(api_key=api_key)
 UPLOAD_FOLDER = "static/uploads"
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
+UPLOAD_FOLDER2 = "static/myvoice"
 
 # 데이터베이스 세션을 반환하는 의존성
 def get_db():
@@ -72,9 +72,13 @@ async def upload_video(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/upload", response_class=HTMLResponse)
-async def display_form(request: Request):
+async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
-        return templates.TemplateResponse("upload.html", {"request": request})
+        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        return templates.TemplateResponse("upload.html", {
+            "request": request,
+            "user_voices": user_voices
+        })
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
@@ -82,52 +86,25 @@ async def display_form(request: Request):
 @app.get("/profile", response_class=HTMLResponse)
 async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
-        print("사용자 정보 나오는지 확인:", user_info)
-                # 동화의 좋아요 수 합산
         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
-
         total_likes = sum(fairy.ft_like for fairy in user_fairytales)
-        # 현재 사용자 정보를 이용하여 사용자가 생성한 동화 목록을 가져옴
-        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
-        print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
+        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/tang.png"
 
-        # Profile 객체 가져오기
-        try:
-            profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
-            print("Profile 조회 성공:", profile)
-        except Exception as e:
-            print(f"Profile 조회 중 오류 발생: {e}")
-            profile = None
-        
-        # 프로필 이미지 설정
-        if profile:
-            print(f"Profile object found: {profile}")
-            profile_image = f"/static/uploads/{profile.profile_name}"
-        else:
-            print("Profile object not found, using default image.")
-            profile_image = "/static/uploads/tang.png"
-        
-        print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
-
-        # 템플릿 렌더링
-        try:
-            response = templates.TemplateResponse("profile.html", {
-                "request": request,
-                "user_info": user_info,
-                "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-                "profile_image": profile_image,
-                "total_likes": total_likes
-            })
-            print("템플릿 렌더링 성공")
-            return response
-        except Exception as e:
-            print(f"템플릿 렌더링 중 오류 발생: {e}")
-            raise
-        
+        response = templates.TemplateResponse("profile.html", {
+            "request": request,
+            "user_info": user_info,
+            "fairytales": user_fairytales,
+            "voices": user_voices,
+            "profile_image": profile_image,
+            "total_likes": total_likes
+        })
+        return response
     except Exception as e:
         print(f"전체 코드 실행 중 오류 발생: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
-
+    
 # 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
     profile_date = datetime.date.today()
@@ -514,6 +491,61 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
 
     return {"message": "비디오 삭제가 완료되었습니다!"}
 
+@app.get("/check_voice_count")
+async def check_voice_count(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
+    return {"voice_count": voice_count}
+
+@app.post("/upload_voice")
+async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
+    
+    if voice_count >= 1:
+        return JSONResponse(content={"message": "최대 1개까지만 업로드할 수 있습니다."}, status_code=400)
+
+    current_date = datetime.now().strftime("%Y%m%d%H%M%S")
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"{os.path.splitext(file.filename)[0]}_{current_date}{file_extension}"
+    file_location = os.path.join(UPLOAD_FOLDER2, unique_filename)
+    
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    new_voice = Voice(
+        user_code=user_code,
+        voice_name=voiceName,
+        voice_date=datetime.utcnow(),
+        voice_status="active",
+        voice_filename=unique_filename
+    )
+    db.add(new_voice)
+    db.commit()
+    db.refresh(new_voice)
+
+    return {"info": f"파일 '{file.filename}'이 '{unique_filename}'로 업로드되었습니다.", "voiceName": voiceName}
+
+@app.delete("/delete_voice/{voice_code}")
+async def delete_voice(voice_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice = db.query(Voice).filter(Voice.voice_code == voice_code, Voice.user_code == user_code).first()
+
+    if not voice:
+        raise HTTPException(status_code=404, detail="Voice not found")
+
+    # 파일 경로
+    file_path = os.path.join(UPLOAD_FOLDER2, voice.voice_filename)
+    
+    # 데이터베이스에서 삭제
+    db.delete(voice)
+    db.commit()
+
+    # 파일 시스템에서 삭제
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    return {"message": "목소리가 삭제되었습니다."}
 
 if __name__ == "__main__":
     import uvicorn
