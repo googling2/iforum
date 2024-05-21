@@ -32,7 +32,17 @@ import upload
 app = FastAPI()
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
-templates = Jinja2Templates(directory="templates")
+
+
+class CustomJinja2Templates(Jinja2Templates):
+    def TemplateResponse(self, name: str, context: dict, **kwargs):
+        request: Request = context.get("request")
+        user_info = request.session.get('user')
+        context["user_info"] = user_info
+        return super().TemplateResponse(name, context, **kwargs)
+
+
+templates = CustomJinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
@@ -222,6 +232,10 @@ async def login(request: Request):
     redirect_uri = request.url_for('auth')
     return await oauth.google.authorize_redirect(request, redirect_uri, access_type="offline")
 
+@app.get("/logout")
+async def logout(request: Request):
+    request.session.pop('user', None)
+    return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/auth")
 async def auth(request: Request, db: Session = Depends(get_db)):
@@ -294,7 +308,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         if completion.choices:
             story_content = completion.choices[0].message.content
-            story_title = story_content.split('\n')[0].replace("제목: ", "")
+            story_title = story_content.split('\n')[0].replace("제목: ", "").replace("Title: ", "").strip()
         else:
             story_content = "텍스트를 다시 입력해주세요!"
 
@@ -333,12 +347,12 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             f"{changeImg} {paragraph}" for paragraph in paragraphs
         ]
         print("prompt_paragraphs : ",prompt_paragraphs)
-
+        # {' '.join(prompt_paragraphs)}
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
             "{changeImg} Create a 4-panel image with the same drawing style in a square , The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, the fourth section appears in the lower right corner."
-             {' '.join(prompt_paragraphs)}
+            {paragraphs},please {changeImg}
             """,
             size="1024x1024",
             quality="standard",
@@ -383,13 +397,41 @@ async def create_video(timestamp, selected_mood):
             image = image.resize(output_size, Image.LANCZOS)
             return image
 
-        def create_zoom_frames(image, duration=6, fps=24, final_scale=1.3):
+        # 이미지 줌인 프레임 생성 함수
+        def create_zoom_in_frames(image, duration=12, fps=24, final_scale=1.3):
             num_frames = int(duration * fps)
             zoomed_images = []
             original_center_x, original_center_y = image.width // 2, image.height // 2
 
             for i in range(num_frames):
                 scale = 1 + (final_scale - 1) * (i / num_frames)
+                new_width = int(image.width * scale)
+                new_height = int(image.height * scale)
+
+                if new_width % 2 != 0:
+                    new_width += 1
+                if new_height % 2 != 0:
+                    new_height += 1
+
+                frame = image.resize((new_width, new_height), Image.LANCZOS)
+                new_center_x, new_center_y = frame.width // 2, frame.height // 2
+                left = max(0, new_center_x - original_center_x)
+                top = max(0, new_center_y - original_center_y)
+                right = left + image.width
+                bottom = top + image.height
+                frame = frame.crop((left, top, right, bottom))
+                zoomed_images.append(np.array(frame))
+
+            return zoomed_images
+
+        # 이미지 줌아웃 프레임 생성 함수
+        def create_zoom_out_frames(image, duration=12, fps=24, initial_scale=1.1):
+            num_frames = int(duration * fps)
+            zoomed_images = []
+            original_center_x, original_center_y = image.width // 2, image.height // 2
+
+            for i in range(num_frames):
+                scale = initial_scale - (initial_scale - 1) * (i / num_frames)
                 new_width = int(image.width * scale)
                 new_height = int(image.height * scale)
 
@@ -455,9 +497,12 @@ async def create_video(timestamp, selected_mood):
         duration_per_image = total_duration / len(image_files)
         all_zoomed_images = []
 
-        for image_file in image_files:
+        for i, image_file in enumerate(image_files):
             image = create_image(image_file)
-            zoomed_images = create_zoom_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
+            if i % 2 == 0:  # 첫 번째와 세 번째 이미지는 줌인 효과
+                zoomed_images = create_zoom_in_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
+            else:  # 두 번째와 네 번째 이미지는 10% 확대 상태에서 줌아웃 효과
+                zoomed_images = create_zoom_out_frames(image, duration=duration_per_image, fps=24, initial_scale=1.1)
             all_zoomed_images.extend(zoomed_images)
 
         output_video_file = f'static/output.mp4'
@@ -472,6 +517,7 @@ async def create_video(timestamp, selected_mood):
     except Exception as e:
         print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
         raise
+
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):

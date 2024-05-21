@@ -48,13 +48,15 @@ button {
   width: 100%;
   overflow: hidden;
   scroll-snap-align: start;
+  background: black;
 
 }
 
 .vdo {
+  padding-top: 50%;
   pointer-events: none;
   position: absolute;
-  height: 100%;
+  height: 69%;
   width: 100%;
   object-fit: cover;
   object-position: center;
@@ -92,6 +94,7 @@ button {
 }
 
 .info-wrapper {
+  border-top: solid #5f5353;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -101,7 +104,7 @@ button {
   gap: 1rem;
   padding: 1rem;
   color: #fff;
-  background-color: #131313;
+  background-color: black;
 }
 
 .info-wrapper a img {
@@ -814,10 +817,10 @@ a {
 
 .input_story {
   width: 100%;
-  padding: 10px;
+  padding: 30px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-top: 30px;
+  margin-top: 50px
 }
 
 .select_mood1 {
@@ -833,10 +836,11 @@ a {
   width: 90%;
   padding: 10px;
   border: none;
-  background-color: #007bff;
+  background-color: #9a78ff;
   color: #fff;
   border-radius: 5px;
   margin-top: 30px;
+  margin-bottom: 200px;
 }
 
 .upload_btn {
@@ -851,10 +855,17 @@ a {
 }
 
 .cnImg {
+  border-radius: 25%;
   margin-top: 10%;
   margin-left: 13%;
   width: 70%;
   height: 70%;
+}
+
+.story_text {
+  width: 111%;
+  margin-left: 10%;
+  margin-top: 15%;
 }
 
 .loader {
@@ -868,6 +879,35 @@ a {
   animation: spin 2s linear infinite;
   margin: auto;
   margin-top: 20%;
+}
+
+.result_vdo {
+  margin-top: 25%;
+}
+
+.result_btn {
+  float: left;
+  margin-left: 25%;
+  width: 35%;
+  padding: 10px;
+  border: none;
+  background-color: #e13333;
+  color: #fff;
+  border-radius: 5px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.story_btn {
+  margin-left: 5%;
+  width: 35%;
+  padding: 10px;
+  border: none;
+  background-color: black;
+  color: #fff;
+  border-radius: 5px;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 @keyframes spin {
@@ -1165,6 +1205,10 @@ a {
 
 #resutvid {
   z-index: 3;
+}
+
+#myForm {
+  background: linear-gradient(to top right, #c2ffef 10%, #f9aabe 65%, #ffb900 125%);
 }
 
 /*여기서부터는 모바일*/
