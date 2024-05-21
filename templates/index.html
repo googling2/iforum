@@ -32,7 +32,9 @@
     const videosWrapper = document.querySelector(".videos");
 
     const vPlayer = (video) => {
-      if (!video.url) {
+      const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
+      console.log("비디오 URL: ", videoUrl);  // 비디오 URL 확인
+      if (!videoUrl) {
         // 비디오 URL이 없는 경우 error.png 이미지를 표시
         return `
           <div class="vdo-wrapper">
@@ -50,7 +52,7 @@
       return `
         <div class="vdo-wrapper">
           <!-- video -->
-          <video src="${video.url}" autoplay poster="${video.img}" loop class="vdo"></video>
+          <video src="${videoUrl}" preload="none" loop class="vdo"></video>
 
           <!-- pause play btn -->
           <button id="pause-play-btn">
@@ -96,7 +98,9 @@
     const videoData = JSON.parse('{{ videos | tojson | safe }}');
 
     function injectVideos() {
+      console.log("비디오 데이터 확인용 ", videoData);  // 비디오 데이터 확인
       videoData.forEach((video) => {
+        console.log("Processing video: ", video);  // 각 비디오 데이터 확인
         const videoElement = vPlayer(video);
         if (videoElement) {
           videosWrapper.innerHTML += videoElement;
@@ -108,11 +112,13 @@
         const vdo = vid.querySelector(".vdo");
 
         if (vdo) {
-          // 화면 내비켜진 경우에만 비디오를 재생합니다.
+          // 화면 내 비디오가 보일 때만 자동 재생
           const intersectionObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
               if (entry.intersectionRatio > 0) {
-                vdo.play();
+                vdo.play().catch((error) => {
+                  console.log("자동 재생 오류: ", error);
+                });
               } else {
                 vdo.pause();
               }
@@ -124,7 +130,9 @@
           const pausePlayBtn = vid.querySelector("#pause-play-btn");
           pausePlayBtn.addEventListener("click", () => {
             if (vdo.paused) {
-              vdo.play();
+              vdo.play().catch((error) => {
+                console.log("수동 재생 오류: ", error);
+              });
               pausePlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
             } else {
               vdo.pause();
@@ -169,5 +177,4 @@
   });
 </script>
 
-<script type="module" src="/static/js/app.js"></script>
 {% endblock content %}
