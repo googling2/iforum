@@ -23,7 +23,7 @@ from sqlalchemy.sql import func
 from moviepy.audio.fx.all import audio_fadeout
 import json
 import numpy as np
-
+from sqlalchemy import and_
 import os
 from starlette.middleware.sessions import SessionMiddleware
 import time
@@ -62,33 +62,33 @@ def get_current_user(request: Request):
 
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
-    # 랜덤으로 필요한 데이터 가져오기
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+
     videos = db.query(
+        Fairytale.ft_code.label("id"),
         Fairytale.ft_name.label("url"),
         Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        Profile.profile_name.label("img")
-    ).join(User, Fairytale.user_code == User.user_code)\
-     .outerjoin(Profile, User.user_code == Profile.user_code)\
-     .order_by(func.random())\
-     .limit(10).all()
+        User.profile.label("img"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code).order_by(func.random()).limit(10).all()
 
     video_data = [
         {
+            "id": video.id,
             "url": video.url if video.url else None,
             "name": video.name if video.name else "",
             "title": video.title if video.title else "",
-            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png"
+            "ft_like": video.ft_like,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "liked": video.liked
         }
         for video in videos
     ]
 
-    try:
-        return templates.TemplateResponse("index.html", {"request": request, "videos": video_data})
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
-
+    return templates.TemplateResponse("index.html", {"request": request, "videos": video_data, "user_code": user_code})
 
 
 # 비디오 업로드 엔드포인트
@@ -487,27 +487,6 @@ async def story_view(request: Request, video_url: str, story_title: str, story_c
         "story_content": story_content
     })
 
-@app.post("/like/{ft_code}")
-async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    user_code = user_info['usercode']  # 사용자 코드를 세션에서 가져옴
-    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code).first()
-
-    if not fairytale:
-        raise HTTPException(status_code=404, detail="Fairytale not found")
-
-    existing_like = db.query(Like).filter_by(user_code=user_code, ft_code=ft_code).first()
-
-    if existing_like:
-        db.delete(existing_like)
-        fairytale.ft_like = (fairytale.ft_like - 1 if fairytale.ft_like > 0 else 0)
-    else:
-        new_like = Like(user_code=user_code, ft_code=ft_code)
-        db.add(new_like)
-        fairytale.ft_like = (fairytale.ft_like + 1 if fairytale.ft_like is not None else 1)
-    
-    db.commit()
-    return {"likes_count": fairytale.ft_like}
-
 @app.delete("/delete-video/{ft_code}")
 async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fairytale = db.query(Fairytale).filter_by(ft_code=ft_code, user_code=user_info['usercode']).first()
@@ -522,6 +501,45 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
         os.remove(video_path)
 
     return {"message": "비디오 삭제가 완료되었습니다!"}
+
+
+@app.post("/like/{ft_code}")
+async def like_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code).first()
+
+    if not fairytale:
+        raise HTTPException(status_code=404, detail="Fairytale not found")
+
+    existing_like = db.query(Like).filter_by(user_code=user_code, ft_code=ft_code).first()
+
+    if existing_like:
+        return {"success": False, "message": "Already liked"}
+
+    new_like = Like(user_code=user_code, ft_code=ft_code)
+    db.add(new_like)
+    fairytale.ft_like = (fairytale.ft_like + 1 if fairytale.ft_like is not None else 1)
+    db.commit()
+    return {"success": True, "likes_count": fairytale.ft_like}
+
+@app.post("/unlike/{ft_code}")
+async def unlike_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    fairytale = db.query(Fairytale).filter_by(ft_code=ft_code).first()
+
+    if not fairytale:
+        raise HTTPException(status_code=404, detail="Fairytale not found")
+
+    existing_like = db.query(Like).filter_by(user_code=user_code, ft_code=ft_code).first()
+
+    if not existing_like:
+        raise HTTPException(status_code=400, detail="User has not liked this video")
+
+    db.delete(existing_like)
+    fairytale.ft_like -= 1
+    db.commit()
+    return {"success": True, "likes_count": fairytale.ft_like}
+
 
 
 
