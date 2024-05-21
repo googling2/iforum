@@ -59,7 +59,7 @@
           shimmer
         </option>
         {% for voice in user_voices %}
-        <option value="{{ '../static/myvoice/' + voice.voice_filename }}">{{ voice.voice_name }}</option>
+        <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
         {% endfor %}
       </select>
     </div>

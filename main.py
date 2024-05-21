@@ -389,6 +389,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         final_output_file = await create_video(timestamp, selected_mood)
 
+        
+
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
             status_code=303
@@ -612,7 +614,7 @@ async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...),
     if voice_count >= 1:
         return JSONResponse(content={"message": "최대 1개까지만 업로드할 수 있습니다."}, status_code=400)
 
-    current_date = datetime.now().strftime("%Y%m%d%H%M%S")
+    current_date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     file_extension = os.path.splitext(file.filename)[1]
     unique_filename = f"{os.path.splitext(file.filename)[0]}_{current_date}{file_extension}"
     file_location = os.path.join(UPLOAD_FOLDER2, unique_filename)
@@ -623,7 +625,7 @@ async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...),
     new_voice = Voice(
         user_code=user_code,
         voice_name=voiceName,
-        voice_date=datetime.utcnow(),
+        voice_date=datetime.datetime.utcnow(),
         voice_status="active",
         voice_filename=unique_filename
     )
