@@ -179,7 +179,7 @@ async def upload_profile_image(request: Request, profile_image: UploadFile = Fil
     
     return RedirectResponse(url="/profile", status_code=303)
 
-@app.post("/like/{ft_code}")
+@app.post("/prolike/{ft_code}")
 async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user = user_info['usercode']  # 사용자 인증 시스템에서 사용자 ID 가져오기
     existing_like = db.query(Like).filter_by(user_code=user, ft_code=ft_code).first()
@@ -514,11 +514,11 @@ async def like_video(ft_code: int, db: Session = Depends(get_db), user_info: dic
     existing_like = db.query(Like).filter_by(user_code=user_code, ft_code=ft_code).first()
 
     if existing_like:
-        return {"success": False, "message": "Already liked"}
+        return {"success": True, "message": "Already liked"}
 
     new_like = Like(user_code=user_code, ft_code=ft_code)
     db.add(new_like)
-    fairytale.ft_like = (fairytale.ft_like + 1 if fairytale.ft_like is not None else 1)
+    fairytale.ft_like = fairytale.ft_like + 1 if fairytale.ft_like is not None else 1
     db.commit()
     return {"success": True, "likes_count": fairytale.ft_like}
 
