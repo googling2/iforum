@@ -276,7 +276,7 @@ async def display_form(request: Request):
 
 
 @app.post("/story", response_class=HTMLResponse)
-async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), changeImg: str = Form(...) , db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         # 이미지 디렉토리 초기화
         img_dir = "static/img"
@@ -288,8 +288,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Write in Korean,You are an AI that creates fairy tales"},
-                {"role": "user", "content": f"{keywords} Using these characters, title the fairy tale as Title:, write the fairy tale story in 300 characters including spaces, and divide it into 4 paragraphs."}
+                {"role": "system", "content": "Write in Korean,You are an AI that creates story"},
+                {"role": "user", "content": f"{keywords} Using these characters, Title:, write the story in 100 characters including spaces, and divide it into 4 paragraphs."}
             ]
         )
 
@@ -346,7 +346,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "Create a 4-panel fairy tale image with the same drawing style in a square digital art style. The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part. , the fourth section appears in the lower right corner. The style should be vibrant and attractive, with no spaces between cuts to create a seamless visual narrative."
+            "Create a 4-panel image with the same drawing style in a square {changeImg} The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part. , the fourth section appears in the lower right corner."
             {paragraphs} 
             """,
             size="1024x1024",
