@@ -7,28 +7,26 @@ from dotenv import load_dotenv
 import os
 from PIL import Image
 import urllib.request
-import shutil  # 디렉토리 삭제에 사용
-from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip
-from moviepy.editor import AudioFileClip
+import shutil
+from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip, AudioFileClip
 import predict
 import datetime
 from fastapi import Depends, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User, Fairytale, Voice, Base, Profile, Like
-from dependencies import get_db
-from starlette.status import HTTP_303_SEE_OTHER
+from models import User, Fairytale, Voice, Profile, Like
 from db import SessionLocal
-from sqlalchemy.sql import func
-from moviepy.audio.fx.all import audio_fadeout
 import json
+import uuid
 import numpy as np
-from sqlalchemy import and_
+from sqlalchemy.sql import exists
 from starlette.middleware.sessions import SessionMiddleware
 import time
 import upload
+from moviepy.audio.fx.all import audio_fadeout
 
 app = FastAPI()
+
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
 
@@ -143,6 +141,67 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "total_likes": total_likes
     })
 
+@app.get("/upload", response_class=HTMLResponse)
+async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    try:
+        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        return templates.TemplateResponse("upload.html", {
+            "request": request,
+            "user_voices": user_voices
+        })
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
+@app.get("/profile", response_class=HTMLResponse)
+async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    try:
+        print("사용자 정보 나오는지 확인:", user_info)
+        user_code = user_info['usercode']
+        # 동화의 좋아요 수 합산
+        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
+        total_likes = sum(fairy.ft_like for fairy in user_fairytales)
+        print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
+
+        user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
+        try:
+            profile = db.query(Profile).filter(Profile.user_code == user_code).first()
+            print("Profile 조회 성공:", profile)
+        except Exception as e:
+            print(f"Profile 조회 중 오류 발생: {e}")
+            profile = None
+        
+        # 프로필 이미지 설정
+        if profile:
+            print(f"Profile object found: {profile}")
+            profile_image = f"/static/uploads/{profile.profile_name}"
+        else:
+            print("Profile object not found, using default image.")
+            profile_image = "/static/uploads/basic.png"
+        
+        print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
+
+        # 템플릿 렌더링
+        try:
+            response = templates.TemplateResponse("profile.html", {
+                "request": request,
+                "user_info": user_info,
+                "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
+                "voices": user_voices,
+                "profile_image": profile_image,
+                "total_likes": total_likes,
+                "current_user_code": user_code  # 현재 사용자 코드 전달
+            })
+            print("템플릿 렌더링 성공")
+            return response
+        except Exception as e:
+            print(f"템플릿 렌더링 중 오류 발생: {e}")
+            raise
+        
+    except Exception as e:
+        print(f"전체 코드 실행 중 오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
 # 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
     profile_date = datetime.date.today()
@@ -186,6 +245,7 @@ async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: di
     db.commit()
     return {"likes_count": fairytale.ft_like}
 
+
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -209,7 +269,7 @@ async def login(request: Request):
 @app.get("/logout")
 async def logout(request: Request):
     request.session.pop('user', None)
-    return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
+    return RedirectResponse(url='/', status_code=303)
 
 @app.get("/auth")
 async def auth(request: Request, db: Session = Depends(get_db)):
@@ -227,7 +287,7 @@ async def auth(request: Request, db: Session = Depends(get_db)):
             "email": existing_user.email,
             "picture": existing_user.profile
         }
-        return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
+        return RedirectResponse(url='/', status_code=303)
     
     # 새 사용자를 데이터베이스에 추가
     new_user = User(
@@ -250,7 +310,7 @@ async def auth(request: Request, db: Session = Depends(get_db)):
         "picture": new_user.profile
     }
     
-    return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
+    return RedirectResponse(url='/', status_code=303)
 
 @app.get("/gudog", response_class=HTMLResponse)
 async def display_form(request: Request):
@@ -260,6 +320,7 @@ async def display_form(request: Request):
         print(f"Error rendering template: {e}")
         raise
 
+
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), selected_mood: str = Form(...), changeImg: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
@@ -268,6 +329,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             shutil.rmtree(img_dir)
         os.makedirs(img_dir, exist_ok=True)
 
+        # OpenAI를 사용하여 이야기 생성
         completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -298,6 +360,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         language = "KR"
         speed = 1.0
 
+        # TTS를 사용하여 오디오 생성
         if selected_voice in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
             audio_response = client.audio.speech.create(
                 model="tts-1",
@@ -305,22 +368,27 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 voice=selected_voice
             )
             audio_data = audio_response.content
-            audio_file_path = "static/audio/m1.mp3"
+            audio_file_path = f"static/audio/m1_{uuid.uuid4()}.mp3"
             with open(audio_file_path, "wb") as audio_file:
                 audio_file.write(audio_data)
         else:
-            predict.predict(selected_voice, story_content, language, speed)
-            audio_file_path = "static/audio/m1.mp3"
+            audio_file_path = predict.predict(selected_voice, story_content, language, speed)
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
             f"{changeImg} {paragraph}" for paragraph in paragraphs
         ]
         print("prompt_paragraphs : ",prompt_paragraphs)
+
+        # prompt_paragraphs = [
+        #     f"{changeImg} {paragraph}" for paragraph in paragraphs
+        # ]
+        # print("prompt_paragraphs : ",prompt_paragraphs)
+        # # {' '.join(prompt_paragraphs)}
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
-            "{changeImg} Create a 4-panel image with the same drawing style in a square , The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, the fourth section appears in the lower right corner."
+            {changeImg} please Create a 4-panel image with the same drawing style in a square , The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, bottom right captures the fourth part.
             {paragraphs},please {changeImg}
             """,
             size="1024x1024",
@@ -330,7 +398,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         if response.data:
             image_url = response.data[0].url
-            img_filename = "4cut_image.jpg"
+            img_filename = f"4cut_image_{uuid.uuid4()}.jpg"
             img_dest = os.path.join("static", "img", img_filename)
             if os.path.exists(img_dest):
                 os.remove(img_dest)
@@ -339,15 +407,18 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             img = Image.open(img_dest)
             crop_sizes = [(0, 0, 512, 512), (512, 0, 1024, 512), (0, 512, 512, 1024), (512, 512, 1024, 1024)]
 
+            image_files = []
             for idx, (left, upper, right, lower) in enumerate(crop_sizes):
                 cropped_image = img.crop((left, upper, right, lower))
-                panel_filename = f"a{idx + 1}.jpg"
+                panel_filename = f"a{idx + 1}_{uuid.uuid4()}.jpg"
                 panel_dest = os.path.join("static", "img", panel_filename)
-                if os.path.exists(panel_dest):
-                    os.remove(panel_dest)
                 cropped_image.save(panel_dest)
+                image_files.append(panel_dest)
 
-        final_output_file = await create_video(timestamp, selected_mood)
+
+        final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
+        if os.path.exists(audio_file_path):
+            os.remove(audio_file_path)
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
@@ -357,14 +428,15 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
         return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
 
-async def create_video(timestamp, selected_mood):
+
+
+async def create_video(timestamp, selected_mood, audio_file_path, image_files):
     try:
         def create_image(image_file, output_size=(512, 512)):
             image = Image.open(image_file)
             image = image.resize(output_size, Image.LANCZOS)
             return image
 
-        # 이미지 줌인 프레임 생성 함수
         def create_zoom_in_frames(image, duration=12, fps=24, final_scale=1.3):
             num_frames = int(duration * fps)
             zoomed_images = []
@@ -391,7 +463,6 @@ async def create_video(timestamp, selected_mood):
 
             return zoomed_images
 
-        # 이미지 줌아웃 프레임 생성 함수
         def create_zoom_out_frames(image, duration=12, fps=24, initial_scale=1.1):
             num_frames = int(duration * fps)
             zoomed_images = []
@@ -444,41 +515,29 @@ async def create_video(timestamp, selected_mood):
                 print(f"Error overlaying audio on video: {e}")
                 raise
 
-        base_path = 'static/img'
-        image_files = []
-        idx = 1
-        while True:
-            file_path = os.path.join(base_path, f'a{idx}.jpg')
-            if os.path.exists(file_path):
-                image_files.append(file_path)
-                idx += 1
-            else:
-                break
-
-        if not image_files:
-            print("No image files found.")
-            return
-
-        audio_clip = AudioFileClip('static/audio/m1.mp3')
-        total_duration = audio_clip.duration
-        duration_per_image = total_duration / len(image_files)
         all_zoomed_images = []
 
         for i, image_file in enumerate(image_files):
             image = create_image(image_file)
             if i % 2 == 0:  # 첫 번째와 세 번째 이미지는 줌인 효과
-                zoomed_images = create_zoom_in_frames(image, duration=duration_per_image, fps=24, final_scale=1.3)
+                zoomed_images = create_zoom_in_frames(image, duration=12, fps=24, final_scale=1.3)
             else:  # 두 번째와 네 번째 이미지는 10% 확대 상태에서 줌아웃 효과
-                zoomed_images = create_zoom_out_frames(image, duration=duration_per_image, fps=24, initial_scale=1.1)
+                zoomed_images = create_zoom_out_frames(image, duration=12, fps=24, initial_scale=1.1)
             all_zoomed_images.extend(zoomed_images)
 
-        output_video_file = f'static/output.mp4'
+        output_video_file = f'static/output_{uuid.uuid4()}.mp4'
         final_output_file = f'static/final_output{timestamp}.mp4'
 
         image_to_video(all_zoomed_images, output_video_file, fps=24)
 
         bgm_file = f'static/bgm/{selected_mood}.mp3'
-        overlay_image_and_audio_on_video(output_video_file, 'static/audio/m1.mp3', bgm_file, final_output_file)
+        overlay_image_and_audio_on_video(output_video_file, audio_file_path, bgm_file, final_output_file)
+
+        # 임시 파일 삭제
+        for image_file in image_files:
+            os.remove(image_file)
+        os.remove(output_video_file)
+        os.remove(audio_file_path)
 
         return final_output_file
     except Exception as e:
@@ -487,15 +546,13 @@ async def create_video(timestamp, selected_mood):
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
-    with open('video_url.json', 'w') as f:
-        json.dump({"video_url": video_url,"story_title": story_title}, f)
-
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
         "story_title": story_title,
         "story_content": story_content
     })
+
 
 @app.delete("/delete-video/{ft_code}")
 async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -548,6 +605,7 @@ async def unlike_video(ft_code: int, db: Session = Depends(get_db), user_info: d
     fairytale.ft_like -= 1
     db.commit()
     return {"success": True, "likes_count": fairytale.ft_like}
+
 
 @app.get("/check_voice_count")
 async def check_voice_count(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):

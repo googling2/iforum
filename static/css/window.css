@@ -7,12 +7,13 @@
   font-style: normal;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
     font-family: GmarketSansMedium;
+
   }
 
   :root {
@@ -39,8 +40,10 @@
   }
 
   .videos {
-    height: 100vh;
-    width: 100vw;
+    margin-right: 13%;
+    float: right;
+    height: 84vh;
+    width: 56vw;
   }
 
   .vdo-wrapper {
@@ -48,16 +51,15 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
-    scroll-snap-align: start;
-    background: black;
+    scroll-snap-align: center;
+    margin: 12%;
 
   }
 
   .vdo {
-    padding-top: 50%;
     pointer-events: none;
     position: absolute;
-    height: 69%;
+    height: 100%;
     width: 100%;
     object-fit: cover;
     object-position: center;
@@ -80,10 +82,10 @@
 
   .side-btns-wrapper {
     position: absolute;
-    right: 0;
-    bottom: 8rem;
+    right: 0rem;
+    bottom: -1rem;
     padding: 1rem;
-    z-index: 3;
+    z-index: 6;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -95,7 +97,6 @@
   }
 
   .info-wrapper {
-    border-top: solid #5f5353;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -105,7 +106,7 @@
     gap: 1rem;
     padding: 1rem;
     color: #fff;
-    background-color: black;
+    background-color: #131313;
   }
 
   .info-wrapper a img {
@@ -172,7 +173,7 @@
   }
 
   .hbody {
-
+    display: none;
     color: white;
     position: fixed;
     z-index: 9;
@@ -264,8 +265,7 @@
   .container .menu-bar ul {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-
+    justify-content: space-between;
   }
 
   .container .menu-bar ul li {
@@ -838,11 +838,11 @@
     width: 90%;
     padding: 10px;
     border: none;
-    background-color: #9a78ff;
+    background-color: #007bff;
     color: #fff;
     border-radius: 5px;
     margin-top: 30px;
-    margin-bottom: 200px;
+    margin-bottom: 40%;
   }
 
   .upload_btn {
@@ -858,16 +858,10 @@
 
   .cnImg {
     border-radius: 25%;
-    margin-top: 10%;
-    margin-left: 13%;
-    width: 70%;
-    height: 70%;
-  }
-
-  .story_text {
-    width: 111%;
-    margin-left: 10%;
-    margin-top: 15%;
+    margin-top: -2%;
+    margin-left: 54%;
+    width: 10%;
+    height: 10%;
   }
 
   .loader {
@@ -881,35 +875,6 @@
     animation: spin 2s linear infinite;
     margin: auto;
     margin-top: 20%;
-  }
-
-  .result_vdo {
-    margin-top: 25%;
-  }
-
-  .result_btn {
-    float: left;
-    margin-left: 25%;
-    width: 35%;
-    padding: 10px;
-    border: none;
-    background-color: #e13333;
-    color: #fff;
-    border-radius: 5px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-  }
-
-  .story_btn {
-    margin-left: 5%;
-    width: 35%;
-    padding: 10px;
-    border: none;
-    background-color: black;
-    color: #fff;
-    border-radius: 5px;
-    margin-top: 30px;
-    margin-bottom: 10px;
   }
 
   @keyframes spin {
@@ -1153,6 +1118,7 @@
 
   @media (orientation: portrait) {
     body {
+
       font-size: 4.5vw;
     }
   }
@@ -1210,20 +1176,259 @@
   }
 
   #myForm {
+
+    float: right;
+    width: 80%;
     background: linear-gradient(to top right, #c2ffef 10%, #f9aabe 65%, #ffb900 125%);
   }
 
-  /*여기서부터는 모바일*/
+  /* Google Font Link */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
-
-
-  /* 모바일 화면 크기에 맞추어 조정, 필요에 따라 크기 수정 가능 */
-  .profile .profile-videos .videos-container {
-    grid-template-columns: repeat(auto-fit, minmax(min(10.33rem, 100%), 1fr));
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 440px;
+    background: #11101D;
+    padding: 6px 14px;
+    z-index: 99;
+    transition: all 0.5s ease;
   }
 
-  .scene {
-
-    margin-top: -120%;
+  .sidebar .logo-details {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    position: relative;
   }
+
+  .sidebar .logo-details .icon,
+  .sidebar .logo-details .logo_name {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .sidebar .logo-details #btn {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size: 23px;
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .sidebar i {
+    color: #fff;
+    height: 60px;
+    min-width: 50px;
+    font-size: 28px;
+    text-align: center;
+    line-height: 60px;
+  }
+
+  .sidebar .nav-list {
+    margin-top: 20px;
+    height: 100%;
+  }
+
+  .sidebar li {
+    position: relative;
+    margin: 8px 0;
+    list-style: none;
+  }
+
+  .sidebar li .tooltip {
+    position: absolute;
+    top: -20px;
+    left: calc(100% + 15px);
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 400;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0s;
+  }
+
+  .sidebar li:hover .tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transition: all 0.4s ease;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .sidebar li .tooltip {
+    display: none;
+  }
+
+  .sidebar input {
+    font-size: 15px;
+    color: #FFF;
+    font-weight: 400;
+    outline: none;
+    height: 50px;
+    width: 100%;
+    width: 50px;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.5s ease;
+    background: #1d1b31;
+  }
+
+  .sidebar input {
+    padding: 0 20px 0 50px;
+    width: 100%;
+  }
+
+  .sidebar .bx-search {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    font-size: 22px;
+    background: #1d1b31;
+    color: #FFF;
+  }
+
+  .sidebar .bx-search:hover {
+    background: #FFF;
+    color: #11101d;
+  }
+
+  .sidebar li a {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    background: #11101D;
+  }
+
+  .sidebar li a:hover {
+    background: #FFF;
+  }
+
+  .sidebar li a .links_name {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 400;
+    white-space: nowrap;
+    opacity: 1;
+    pointer-events: auto;
+    transition: 0.4s;
+  }
+
+  .sidebar li a:hover .links_name,
+  .sidebar li a:hover i {
+    transition: all 0.5s ease;
+    color: #11101D;
+  }
+
+  .sidebar li i {
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    border-radius: 12px;
+  }
+
+  .sidebar li.profile {
+    position: fixed;
+    height: 300px;
+    width: 440px;
+
+    left: 0;
+    bottom: -8px;
+    padding: 10px 14px;
+    background: #1d1b31;
+    transition: all 0.5s ease;
+    overflow: hidden;
+  }
+
+  .sidebar li .profile-details {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .sidebar li img {
+    height: 270px;
+    width: 270px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 30px;
+  }
+
+  .sidebar li.profile .name,
+  .sidebar li.profile .job {
+    font-size: 35px;
+    font-weight: 400;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .sidebar li.profile .job {
+    font-size: 35px;
+  }
+
+  .sidebar .profile #log_out {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: #1d1b31;
+    width: 50px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 0px;
+    transition: all 0.5s ease;
+  }
+
+  .home-section {
+    position: relative;
+    background: #E4E9F7;
+    min-height: 100vh;
+    top: 0;
+    left: 250px;
+    width: calc(100% - 250px);
+    transition: all 0.5s ease;
+    z-index: 2;
+  }
+
+  .home-section .text {
+    display: inline-block;
+    color: #11101d;
+    font-size: 25px;
+    font-weight: 500;
+    margin: 18px;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

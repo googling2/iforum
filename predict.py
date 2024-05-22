@@ -6,6 +6,7 @@ from melo.api import TTS
 from openvoice import se_extractor
 from openvoice.api import ToneColorConverter
 import requests
+import uuid
 
 # 모델 설정 및 다운로드
 MODEL_URL = "https://weights.replicate.delivery/default/myshell-ai/OpenVoice-v2.tar"
@@ -30,9 +31,8 @@ def predict(audio, text, language="KR", speed=1.2):
     print(language, "languagelanguagelanguagelanguage")
     print(audio, "audioaudioaudioaudioaudioaudioaudioaudioaudioaudio")
     target_dir = "static/audio"
-    if os.path.exists(target_dir):
-        shutil.rmtree(target_dir)
-    os.makedirs(target_dir, exist_ok=True)
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir, exist_ok=True)
 
     target_se, audio_name = se_extractor.get_se(
         audio,
@@ -44,8 +44,10 @@ def predict(audio, text, language="KR", speed=1.2):
     model = TTS(language=language, device=device)
     speaker_ids = model.hps.data.spk2id
 
-    src_path = os.path.join(target_dir, "tmp.wav")
-    out_path = os.path.join(tempfile.gettempdir(), "out.wav")
+    # 고유한 파일 이름 생성
+    unique_id = str(uuid.uuid4())
+    src_path = os.path.join(target_dir, f"tmp_{unique_id}.wav")
+    out_path = os.path.join(tempfile.gettempdir(), f"out_{unique_id}.wav")
 
     for speaker_key in speaker_ids.keys():
         speaker_id = speaker_ids[speaker_key]
@@ -68,25 +70,9 @@ def predict(audio, text, language="KR", speed=1.2):
             message=encode_message,
         )
 
-    # 변환된 파일을 "static/audio/m1.mp3"로 저장
-    final_path = os.path.join(target_dir, "m1.mp3")
+    # 변환된 파일을 고유한 이름으로 저장
+    final_path = os.path.join(target_dir, f"m1_{unique_id}.mp3")
     shutil.copyfile(out_path, final_path)
+
+    
     return final_path
-
-
-# 인터페이스 코드
-# iface = gr.Interface(
-#     fn=predict,
-#     inputs=[
-#         gr.Audio(source="upload", type="filepath", label="Upload Audio"),
-#         gr.Textbox(lines=2, placeholder="Enter Text Here...", label="Input Text"),
-#         gr.Dropdown(choices=["EN_NEWEST", "EN", "ES", "FR", "ZH", "JP", "KR"], value="KR", label="Select Language"),
-#         gr.Slider(minimum=0.5, maximum=2.0, value=1.0, step=0.1, label="Speech Speed"),
-#     ],
-#     outputs=gr.Audio(label="Synthesised Audio", autoplay=True),
-#     title="OpenVoice Text-to-Speech",
-#     description="Convert your text to speech using OpenVoice enhanced by specific audio tones."
-# )
-
-# if __name__ == "__main__":
-#     iface.launch()
