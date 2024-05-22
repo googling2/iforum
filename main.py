@@ -343,7 +343,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             audio_file_path = predict.predict(selected_voice, story_content, language, speed)
 
         paragraphs = story_content.split('\n\n')
-<<<<<<< HEAD
+
         # prompt_paragraphs = [
         #     f"{changeImg} {paragraph}" for paragraph in paragraphs
         # ]
@@ -353,16 +353,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             model="dall-e-3",
             prompt=f"""
             {changeImg} please Create a 4-panel image with the same drawing style in a square , The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, bottom right captures the fourth part.
-=======
-        prompt_paragraphs = [
-            f"{changeImg} {paragraph}" for paragraph in paragraphs
-        ]
-
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"""
-            "{changeImg} Create a 4-panel image with the same drawing style in a square, The layout is as follows: top left captures the first part, top right captures the second part, and bottom left captures the third part, the fourth section appears in the lower right corner."
->>>>>>> 7853279ec75ca26edb86a4cfc828a53947d2cf3f
             {paragraphs},please {changeImg}
             """,
             size="1024x1024",
