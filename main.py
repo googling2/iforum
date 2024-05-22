@@ -157,15 +157,6 @@ def update_profile_image(db: Session, user_code: int, file_name: str):
     db.refresh(profile)
     return profile
 
-@app.post("/upload_profile_image")
-async def upload_profile_image(request: Request, profile_image: UploadFile = File(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    file_location = os.path.join(UPLOAD_FOLDER, profile_image.filename)
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(profile_image.file, buffer)
-    
-    update_profile_image(db, user_info['usercode'], profile_image.filename)
-    
-    return RedirectResponse(url="/profile", status_code=303)
 
 @app.post("/upload_profile_image")
 async def upload_profile_image(request: Request, profile_image: UploadFile = File(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
