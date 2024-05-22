@@ -54,6 +54,10 @@ UPLOAD_FOLDER = "static/uploads"
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+UPLOAD_FOLDER2 = "static/myvoice"
+if not os.path.exists(UPLOAD_FOLDER2):
+    os.makedirs(UPLOAD_FOLDER2)
+
 
 # 데이터베이스 세션을 반환하는 의존성
 def get_db():
@@ -108,9 +112,13 @@ async def upload_video(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/upload", response_class=HTMLResponse)
-async def display_form(request: Request):
+async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
-        return templates.TemplateResponse("upload.html", {"request": request})
+        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        return templates.TemplateResponse("upload.html", {
+            "request": request,
+            "user_voices": user_voices
+        })
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
@@ -127,6 +135,7 @@ async def display_profile(request: Request, db: Session = Depends(get_db), user_
         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
 
+        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
         # Profile 객체 가져오기
         try:
             profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
@@ -151,6 +160,7 @@ async def display_profile(request: Request, db: Session = Depends(get_db), user_
                 "request": request,
                 "user_info": user_info,
                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
+                "voices": user_voices,
                 "profile_image": profile_image,
                 "total_likes": total_likes
             })
@@ -379,6 +389,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         final_output_file = await create_video(timestamp, selected_mood)
 
+        
+
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
             status_code=303
@@ -587,6 +599,62 @@ async def unlike_video(ft_code: int, db: Session = Depends(get_db), user_info: d
 
 
 
+
+@app.get("/check_voice_count")
+async def check_voice_count(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
+    return {"voice_count": voice_count}
+
+@app.post("/upload_voice")
+async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
+    
+    if voice_count >= 1:
+        return JSONResponse(content={"message": "최대 1개까지만 업로드할 수 있습니다."}, status_code=400)
+
+    current_date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"{os.path.splitext(file.filename)[0]}_{current_date}{file_extension}"
+    file_location = os.path.join(UPLOAD_FOLDER2, unique_filename)
+    
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    new_voice = Voice(
+        user_code=user_code,
+        voice_name=voiceName,
+        voice_date=datetime.datetime.utcnow(),
+        voice_status="active",
+        voice_filename=unique_filename
+    )
+    db.add(new_voice)
+    db.commit()
+    db.refresh(new_voice)
+
+    return {"info": f"파일 '{file.filename}'이 '{unique_filename}'로 업로드되었습니다.", "voiceName": voiceName}
+
+@app.delete("/delete_voice/{voice_code}")
+async def delete_voice(voice_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice = db.query(Voice).filter(Voice.voice_code == voice_code, Voice.user_code == user_code).first()
+
+    if not voice:
+        raise HTTPException(status_code=404, detail="Voice not found")
+
+    # 파일 경로
+    file_path = os.path.join(UPLOAD_FOLDER2, voice.voice_filename)
+    
+    # 데이터베이스에서 삭제
+    db.delete(voice)
+    db.commit()
+
+    # 파일 시스템에서 삭제
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    return {"message": "목소리가 삭제되었습니다."}
 
 if __name__ == "__main__":
     import uvicorn

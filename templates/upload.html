@@ -58,7 +58,9 @@
         >
           shimmer
         </option>
-        <option value="exp_dir/LeeByongHun.m4a">내목소리</option>
+        {% for voice in user_voices %}
+        <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
+        {% endfor %}
       </select>
     </div>
     <div class="option-container">
