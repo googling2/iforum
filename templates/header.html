@@ -30,6 +30,12 @@
                   <span>Logout</span>
                 </li>
               </a>
+              <a href="/profile">
+                <li data-sec="profile">
+                  <i class="fa-regular fa-user"></i>
+                  <span>Profile</span>
+                </li>
+              </a>
               {% else %}
               <a href="/login">
                 <li data-sec="login">
@@ -37,17 +43,27 @@
                   <span>Login</span>
                 </li>
               </a>
-              {% endif %}
-              <a href="/profile">
+              <a href="javascript:void(0);" id="profile-link">
                 <li data-sec="profile">
                   <i class="fa-regular fa-user"></i>
                   <span>Profile</span>
                 </li>
               </a>
+              {% endif %}
             </ul>
           </div>
         </div>
       </article>
     </section>
+
+    <script>
+      const profileLink = document.getElementById("profile-link");
+      if (profileLink) {
+        profileLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
+    </script>
   </body>
 </html>

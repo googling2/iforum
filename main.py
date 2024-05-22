@@ -224,7 +224,8 @@ oauth.register(
     access_token_params=None,
     refresh_token_url=None,
     redirect_uri=os.getenv('GOOGLE_REDIRECT_URI'),
-    client_kwargs={'scope': 'openid email profile https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly'}
+    client_kwargs={'scope': 'openid email profile https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly'},
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs'  # JWKS URI 추가
 )
 
 @app.get("/login")
