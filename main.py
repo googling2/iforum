@@ -376,6 +376,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 image_files.append(panel_dest)
 
         final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
+        if os.path.exists(audio_file_path):
+            os.remove(audio_file_path)
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
