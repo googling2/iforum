@@ -1,54 +1,16 @@
-<!-- templates/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-
-<script src="/static/js/common.js"></script>
 
 <div class="videos"></div>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const headerElement = document.querySelector('header');
-
-    fetch('header.html')
-      .then(response => response.text())
-      .then(data => {
-        headerElement.innerHTML = data;
-        updateActiveLink();
-      });
-
-    function updateActiveLink() {
-      const currentPath = window.location.pathname;
-      const menuItems = document.querySelectorAll('.menu-bar ul li');
-
-      menuItems.forEach(item => {
-        if (item.querySelector('a') && item.querySelector('a').getAttribute('href') === currentPath) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
-      });
-    }
+    const userCode = "{{ user_code }}";  // 사용자 코드를 템플릿에서 가져옴
 
     const videosWrapper = document.querySelector(".videos");
 
     const vPlayer = (video) => {
       const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
-      console.log("비디오 URL: ", videoUrl);  // 비디오 URL 확인
-      if (!videoUrl) {
-        // 비디오 URL이 없는 경우 error.png 이미지를 표시
-        return `
-          <div class="vdo-wrapper">
-            <img src="/static/uploads/error.png" alt="Error" class="error-img" />
-            <div class="info-wrapper">
-              <a href="#"><img src="${video.img}" alt="profile" /></a>
-              <div>
-                <h3>${video.title}</h3>
-                <p>${video.name}</p>
-              </div>
-            </div>
-          </div>
-        `;
-      }
+      const likedClass = video.liked ? 'color-switch' : '';
       return `
         <div class="vdo-wrapper">
           <!-- video -->
@@ -61,14 +23,9 @@
 
           <!-- side btn -->
           <div class="side-btns-wrapper">
-            <button class="control-btn" id="like-btn">
+            <button class="control-btn like-btn ${likedClass}" data-video-id="${video.id}" data-liked="${video.liked}">
               <i class="fa-solid fa-thumbs-up"></i>
-            </button>
-            <button class="control-btn" id="dislike-btn">
-              <i class="fa-solid fa-thumbs-down"></i>
-            </button>
-            <button class="control-btn" id="comments-btn">
-              <i class="fa-solid fa-comment"></i>
+              <span class="like-count">${video.ft_like}</span>
             </button>
             <button class="control-btn" id="share-btn">
               <i class="fa-solid fa-share"></i>
@@ -98,9 +55,7 @@
     const videoData = JSON.parse('{{ videos | tojson | safe }}');
 
     function injectVideos() {
-      console.log("비디오 데이터 확인용 ", videoData);  // 비디오 데이터 확인
       videoData.forEach((video) => {
-        console.log("Processing video: ", video);  // 각 비디오 데이터 확인
         const videoElement = vPlayer(video);
         if (videoElement) {
           videosWrapper.innerHTML += videoElement;
@@ -141,24 +96,70 @@
           });
         }
 
-        const likeBtn = vid.querySelector("#like-btn");
+        const likeBtn = vid.querySelector(".like-btn");
+        const likeCountElement = likeBtn.querySelector(".like-count");
+
         likeBtn.addEventListener("click", () => {
-          likeBtn.classList.toggle("color-switch");
-          const dislikeBtn = vid.querySelector("#dislike-btn");
-          dislikeBtn.classList.remove("color-switch");
-        });
+          const videoId = likeBtn.getAttribute("data-video-id");
+          const liked = likeBtn.getAttribute("data-liked") === "true";
 
-        const dislikeBtn = vid.querySelector("#dislike-btn");
-        dislikeBtn.addEventListener("click", () => {
-          dislikeBtn.classList.toggle("color-switch");
-          const likeBtn = vid.querySelector("#like-btn");
-          likeBtn.classList.remove("color-switch");
-        });
+          console.log(`Like button clicked: videoId=${videoId}, liked=${liked}`);
+          console.log('Current like count element:', likeCountElement);
 
-        const commentsBtn = vid.querySelector("#comments-btn");
-        const comments = vid.querySelector(".comments");
-        commentsBtn.addEventListener("click", () => {
-          comments.classList.toggle("toggle-comments");
+          if (liked) {
+            console.log('Sending unlike request...');
+            fetch(`/unlike/${videoId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ user_code: userCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Unlike response:', data);
+              if (data.success) {
+                console.log('Before update (unlike):', likeCountElement.textContent);
+                likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                console.log('Updated like count (unlike):', likeCountElement.textContent);
+                likeBtn.setAttribute("data-liked", "false");
+                likeBtn.classList.remove("color-switch");
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+          } else {
+            console.log('Sending like request...');
+            fetch(`/like/${videoId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ user_code: userCode })
+            })
+            .then(response => {
+              console.log('Like request sent:', response);
+              return response.json();
+            })
+            .then(data => {
+              console.log('Like response:', data);
+              if (data.success) {
+                console.log('Before update (like):', likeCountElement.textContent);
+                likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                console.log('Updated like count (like):', likeCountElement.textContent);
+                likeBtn.setAttribute("data-liked", "true");
+                likeBtn.classList.add("color-switch");
+              } else {
+                console.log('Like request failed:', data.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+          }
         });
 
         const shareBtn = vid.querySelector("#share-btn");
