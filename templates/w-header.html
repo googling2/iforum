@@ -31,6 +31,12 @@
         <span class="links_name">좋아요 표시한 동영상</span>
       </a>
     </li>
+    <li>
+      <a href="/upload">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">동화 만들기</span>
+      </a>
+    </li>
     {% else %}
     <li>
       <a href="/login">
@@ -56,13 +62,13 @@
         <span class="links_name">좋아요 표시한 동영상</span>
       </a>
     </li>
-    {% endif %}
     <li>
-      <a href="/upload">
+      <a href="javascript:void(0);" id="upload-link">
         <i class="bx bx-chat"></i>
         <span class="links_name">동화 만들기</span>
       </a>
     </li>
+    {% endif %}
     <li>
       <a href="#">
         <i class="bx bx-chat"></i>
@@ -83,12 +89,15 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", (event) => {
-    const isLoggedIn = {{ user_info|tojson|safe }}; // 서버에서 user_info를 통해 로그인 여부 확인
+    const isLoggedIn = JSON.parse("{{ user_info|tojson|safe }}"); // 서버에서 user_info를 통해 로그인 여부 확인
 
     if (!isLoggedIn) {
       const profileLink = document.getElementById("profile-link1");
-      const subscriberListLink = document.getElementById("subscriber-list-link");
+      const subscriberListLink = document.getElementById(
+        "subscriber-list-link"
+      );
       const likedVideosLink = document.getElementById("liked-videos-link");
+      const uploadLink = document.getElementById("upload-link"); // 동화 만들기 링크 추가
 
       if (profileLink) {
         profileLink.addEventListener("click", function (event) {
@@ -106,6 +115,14 @@
 
       if (likedVideosLink) {
         likedVideosLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
+
+      if (uploadLink) {
+        // 동화 만들기 링크에 이벤트 리스너 추가
+        uploadLink.addEventListener("click", function (event) {
           event.preventDefault();
           alert("로그인이 필요합니다.");
         });
