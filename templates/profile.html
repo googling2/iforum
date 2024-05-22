@@ -150,7 +150,9 @@
       {% for voice in voices %}
       <div class="voice" id="voice-container-{{ voice.voice_code }}">
         <p>{{ voice.voice_name }}</p>
+        {% if voice.user_code == current_user_code %}
         <button class="delete-btn" onclick="confirmDeleteVoice('{{ voice.voice_code }}')">🗑️ 삭제</button>
+        {% endif %}
       </div>
       {% endfor %}
     </div>

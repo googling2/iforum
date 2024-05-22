@@ -124,14 +124,15 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
 async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         print("사용자 정보 나오는지 확인:", user_info)
+        user_code = user_info['usercode']
         # 동화의 좋아요 수 합산
-        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
+        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
         total_likes = sum(fairy.ft_like for fairy in user_fairytales)
         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
 
-        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
         try:
-            profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
+            profile = db.query(Profile).filter(Profile.user_code == user_code).first()
             print("Profile 조회 성공:", profile)
         except Exception as e:
             print(f"Profile 조회 중 오류 발생: {e}")
@@ -155,7 +156,8 @@ async def display_profile(request: Request, db: Session = Depends(get_db), user_
                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
                 "voices": user_voices,
                 "profile_image": profile_image,
-                "total_likes": total_likes
+                "total_likes": total_likes,
+                "current_user_code": user_code  # 현재 사용자 코드 전달
             })
             print("템플릿 렌더링 성공")
             return response
