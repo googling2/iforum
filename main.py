@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request, File, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse,JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
@@ -12,7 +12,7 @@ from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip,
 from moviepy.editor import AudioFileClip
 import predict
 import datetime
-from fastapi import FastAPI, Depends, Request, HTTPException
+from fastapi import Depends, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
 from models import User, Fairytale, Voice, Base, Profile, Like
@@ -24,7 +24,6 @@ from moviepy.audio.fx.all import audio_fadeout
 import json
 import numpy as np
 from sqlalchemy import and_
-import os
 from starlette.middleware.sessions import SessionMiddleware
 import time
 import upload
@@ -33,14 +32,12 @@ app = FastAPI()
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
 
-
 class CustomJinja2Templates(Jinja2Templates):
     def TemplateResponse(self, name: str, context: dict, **kwargs):
         request: Request = context.get("request")
         user_info = request.session.get('user')
         context["user_info"] = user_info
         return super().TemplateResponse(name, context, **kwargs)
-
 
 templates = CustomJinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -58,7 +55,6 @@ UPLOAD_FOLDER2 = "static/myvoice"
 if not os.path.exists(UPLOAD_FOLDER2):
     os.makedirs(UPLOAD_FOLDER2)
 
-
 # 데이터베이스 세션을 반환하는 의존성
 def get_db():
     db = SessionLocal()
@@ -66,7 +62,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 def get_current_user(request: Request):
     user_info = request.session.get('user')
@@ -86,6 +81,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
         User.profile.label("img"),
+        User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
     ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
 
@@ -97,82 +93,55 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "title": video.title if video.title else "",
             "ft_like": video.ft_like,
             "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
-            "liked": video.liked
+            "liked": video.liked,
+            "author_id": video.author_id
         }
         for video in videos
     ]
 
     return templates.TemplateResponse("index.html", {"request": request, "videos": video_data, "user_code": user_code})
 
-# 비디오 업로드 엔드포인트
-@app.post("/upload_video")
-async def upload_video(request: Request, db: Session = Depends(get_db)):
-    return await upload.upload_video(request, db)
+@app.get("/my_profile", response_class=HTMLResponse)
+async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    author_id = user_info['usercode']
+    return await get_profile(request, db, author_id, user_info)
 
+@app.get("/profile/{author_id}", response_class=HTMLResponse)
+async def display_profile(request: Request, author_id: int, db: Session = Depends(get_db)):
+    current_user_info = request.session.get('user')
+    return await get_profile(request, db, author_id, current_user_info)
 
+async def get_profile(request: Request, db: Session, author_id: int, current_user_info: dict = None):
+    profile_user_info = db.query(User).filter(User.user_code == author_id).first()
+    if not profile_user_info:
+        raise HTTPException(status_code=404, detail="User not found")
 
-@app.get("/upload", response_class=HTMLResponse)
-async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    try:
-        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
-        return templates.TemplateResponse("upload.html", {
-            "request": request,
-            "user_voices": user_voices
-        })
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
+    user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == author_id).all()
+    total_likes = sum(fairy.ft_like for fairy in user_fairytales)
+    user_voices = db.query(Voice).filter(Voice.user_code == author_id).all()
+    profile = db.query(Profile).filter(Profile.user_code == author_id).first()
+    
+    profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
 
-@app.get("/profile", response_class=HTMLResponse)
-async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    try:
-        print("사용자 정보 나오는지 확인:", user_info)
-                # 동화의 좋아요 수 합산
-        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
+    profile_user_info_dict = {
+        "user_code": profile_user_info.user_code,
+        "user_name": profile_user_info.user_name,
+        "email": profile_user_info.email,
+        "profile": profile_user_info.profile,
+    }
 
-        total_likes = sum(fairy.ft_like for fairy in user_fairytales)
-        # 현재 사용자 정보를 이용하여 사용자가 생성한 동화 목록을 가져옴
-        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_info['usercode']).all()
-        print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
+    print("profile_user_info_dict:", profile_user_info_dict)
+    print("current_user_info:", current_user_info)
 
-        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
-        # Profile 객체 가져오기
-        try:
-            profile = db.query(Profile).filter(Profile.user_code == user_info['usercode']).first()
-            print("Profile 조회 성공:", profile)
-        except Exception as e:
-            print(f"Profile 조회 중 오류 발생: {e}")
-            profile = None
-        
-        # 프로필 이미지 설정
-        if profile:
-            print(f"Profile object found: {profile}")
-            profile_image = f"/static/uploads/{profile.profile_name}"
-        else:
-            print("Profile object not found, using default image.")
-            profile_image = "/static/uploads/basic.png"
-        
-        print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
-
-        # 템플릿 렌더링
-        try:
-            response = templates.TemplateResponse("profile.html", {
-                "request": request,
-                "user_info": user_info,
-                "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-                "voices": user_voices,
-                "profile_image": profile_image,
-                "total_likes": total_likes
-            })
-            print("템플릿 렌더링 성공")
-            return response
-        except Exception as e:
-            print(f"템플릿 렌더링 중 오류 발생: {e}")
-            raise
-        
-    except Exception as e:
-        print(f"전체 코드 실행 중 오류 발생: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "profile_user_info": profile_user_info_dict,
+        "current_user_info": current_user_info,
+        "fairytales": user_fairytales,
+        "voices": user_voices,
+        "profile_image": profile_image,
+        "total_likes": total_likes
+    })
 
 # 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
@@ -198,6 +167,16 @@ async def upload_profile_image(request: Request, profile_image: UploadFile = Fil
     
     return RedirectResponse(url="/profile", status_code=303)
 
+@app.post("/upload_profile_image")
+async def upload_profile_image(request: Request, profile_image: UploadFile = File(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    file_location = os.path.join(UPLOAD_FOLDER, profile_image.filename)
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(profile_image.file, buffer)
+    
+    update_profile_image(db, user_info['usercode'], profile_image.filename)
+    
+    return RedirectResponse(url="/my_profile", status_code=303)
+
 @app.post("/prolike/{ft_code}")
 async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user = user_info['usercode']  # 사용자 인증 시스템에서 사용자 ID 가져오기
@@ -216,9 +195,6 @@ async def toggle_like(ft_code: int, db: Session = Depends(get_db), user_info: di
     db.commit()
     return {"likes_count": fairytale.ft_like}
 
-
-# =================================================================================
-
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -233,8 +209,6 @@ oauth.register(
     client_kwargs={'scope': 'openid email profile https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly'},
     jwks_uri='https://www.googleapis.com/oauth2/v3/certs'  # JWKS URI 추가
 )
-
-
 
 @app.get("/login")
 async def login(request: Request):
@@ -266,7 +240,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     # 새 사용자를 데이터베이스에 추가
     new_user = User(
-        
         user_name=user_info['name'],
         email=email,
         profile=user_info.get('picture', ''),
@@ -288,7 +261,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
-
 @app.get("/gudog", response_class=HTMLResponse)
 async def display_form(request: Request):
     try:
@@ -296,8 +268,6 @@ async def display_form(request: Request):
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
-
-
 
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), selected_mood: str = Form(...), changeImg: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -356,7 +326,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             f"{changeImg} {paragraph}" for paragraph in paragraphs
         ]
         print("prompt_paragraphs : ",prompt_paragraphs)
-        # {' '.join(prompt_paragraphs)}
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
@@ -389,8 +358,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         final_output_file = await create_video(timestamp, selected_mood)
 
-        
-
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
             status_code=303
@@ -398,8 +365,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     except Exception as e:
         print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
         return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
-
-
 
 async def create_video(timestamp, selected_mood):
     try:
@@ -529,13 +494,10 @@ async def create_video(timestamp, selected_mood):
         print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
         raise
 
-
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
-
-   
     with open('video_url.json', 'w') as f:
-     json.dump({"video_url": video_url,"story_title": story_title}, f)
+        json.dump({"video_url": video_url,"story_title": story_title}, f)
 
     return templates.TemplateResponse("story.html", {
         "request": request,
@@ -558,7 +520,6 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
         os.remove(video_path)
 
     return {"message": "비디오 삭제가 완료되었습니다!"}
-
 
 @app.post("/like/{ft_code}")
 async def like_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -596,9 +557,6 @@ async def unlike_video(ft_code: int, db: Session = Depends(get_db), user_info: d
     fairytale.ft_like -= 1
     db.commit()
     return {"success": True, "likes_count": fairytale.ft_like}
-
-
-
 
 @app.get("/check_voice_count")
 async def check_voice_count(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
