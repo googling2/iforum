@@ -430,6 +430,11 @@
     const imageSelectElement = document.getElementById("changeImg");
     const imageElement = document.getElementById("selectedImage");
 
+     // 페이지 로드 시 초기 이미지 설정
+    const initialSelectedOption = imageSelectElement.options[imageSelectElement.selectedIndex];
+    const initialImageUrl = initialSelectedOption.getAttribute("data-image");
+    imageElement.src = initialImageUrl;
+
     imageSelectElement.addEventListener("change", function () {
       const selectedOption = this.options[this.selectedIndex];
       const imageUrl = selectedOption.getAttribute("data-image");
