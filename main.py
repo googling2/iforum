@@ -138,7 +138,8 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "fairytales": user_fairytales,
         "voices": user_voices,
         "profile_image": profile_image,
-        "total_likes": total_likes
+        "total_likes": total_likes,
+        "current_user_code": current_user_info['usercode']
     })
 
 @app.get("/upload", response_class=HTMLResponse)
@@ -560,14 +561,39 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
     if not fairytale:
         raise HTTPException(status_code=404, detail="Video not found")
 
-    video_path = os.path.join('static', fairytale.ft_name)
+    # 좋아요 레코드 삭제
+    likes = db.query(Like).filter_by(ft_code=ft_code).all()
+    for like in likes:
+        db.delete(like)
+    
+    # 비디오 파일 경로
+    video_path = fairytale.ft_name
+
+    # 절대 경로로 변환
+    abs_video_path = os.path.abspath(video_path)
+
+    # 디버깅 정보 출력
+    print(f"video_path: {video_path}")
+    print(f"abs_video_path: {abs_video_path}")
+    print(f"Current working directory: {os.getcwd()}")
+
+    # 데이터베이스에서 비디오 레코드 삭제
     db.delete(fairytale)
     db.commit()
 
-    if os.path.exists(video_path):
-        os.remove(video_path)
-
-    return {"message": "비디오 삭제가 완료되었습니다!"}
+    # 파일 시스템에서 비디오 파일 삭제
+    if os.path.exists(abs_video_path):
+        print(f"File exists: {abs_video_path}, attempting to delete.")
+        try:
+            os.remove(abs_video_path)
+            print("File successfully deleted.")
+            return {"message": "비디오 및 관련 좋아요가 삭제되었습니다!"}
+        except Exception as e:
+            print(f"Error deleting video file: {e}")
+            raise HTTPException(status_code=500, detail=f"비디오 파일 삭제 중 오류가 발생했습니다: {str(e)}")
+    else:
+        print(f"File does not exist: {abs_video_path}")
+        return {"message": "비디오 및 관련 좋아요가 삭제되었습니다! (파일이 이미 존재하지 않음)"}
 
 @app.post("/like/{ft_code}")
 async def like_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):

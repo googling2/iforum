@@ -90,7 +90,6 @@
 <script>
   document.addEventListener("DOMContentLoaded", (event) => {
     const isLoggedIn = JSON.parse("{{ user_info|tojson|safe }}"); // 서버에서 user_info를 통해 로그인 여부 확인
-
     if (!isLoggedIn) {
       const profileLink = document.getElementById("profile-link1");
       const subscriberListLink = document.getElementById(
