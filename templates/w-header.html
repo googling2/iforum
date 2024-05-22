@@ -14,7 +14,7 @@
       </a>
     </li>
     <li>
-      <a href="/profile">
+      <a href="/my_profile" id="profile-link1">
         <i class="bx bx-user"></i>
         <span class="links_name">마이페이지</span>
       </a>
@@ -39,7 +39,7 @@
       </a>
     </li>
     <li>
-      <a href="javascript:void(0);" id="profile-link">
+      <a href="javascript:void(0);" id="profile-link1">
         <i class="bx bx-user"></i>
         <span class="links_name">마이페이지</span>
       </a>
@@ -83,29 +83,33 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", (event) => {
-    const profileLink = document.getElementById("profile-link");
-    const subscriberListLink = document.getElementById("subscriber-list-link");
-    const likedVideosLink = document.getElementById("liked-videos-link");
+    const isLoggedIn = {{ user_info|tojson|safe }}; // 서버에서 user_info를 통해 로그인 여부 확인
 
-    if (profileLink) {
-      profileLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        alert("로그인이 필요합니다.");
-      });
-    }
+    if (!isLoggedIn) {
+      const profileLink = document.getElementById("profile-link1");
+      const subscriberListLink = document.getElementById("subscriber-list-link");
+      const likedVideosLink = document.getElementById("liked-videos-link");
 
-    if (subscriberListLink) {
-      subscriberListLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        alert("로그인이 필요합니다.");
-      });
-    }
+      if (profileLink) {
+        profileLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
 
-    if (likedVideosLink) {
-      likedVideosLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        alert("로그인이 필요합니다.");
-      });
+      if (subscriberListLink) {
+        subscriberListLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
+
+      if (likedVideosLink) {
+        likedVideosLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
     }
   });
 </script>
