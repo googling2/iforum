@@ -1,63 +1,111 @@
 <div class="sidebar">
-
   <ul class="nav-list">
     <li>
       <a href="/">
-        <i class='bx bx-grid-alt'></i>
+        <i class="bx bx-grid-alt"></i>
         <span class="links_name">A-Iforum</span>
       </a>
-
     </li>
+    {% if user_info %}
     <li>
-      <a href="/login">
-        <i class='bx bx-grid-alt'></i>
-        <span class="links_name">Login</span>
+      <a href="/logout">
+        <i class="bx bx-grid-alt"></i>
+        <span class="links_name">Logout</span>
       </a>
-
     </li>
     <li>
       <a href="/profile">
-        <i class='bx bx-user'></i>
+        <i class="bx bx-user"></i>
         <span class="links_name">마이페이지</span>
       </a>
-
     </li>
     <li>
+      <a href="#">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">구독자목록</span>
+      </a>
+    </li>
+    <li>
+      <a href="#">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">좋아요 표시한 동영상</span>
+      </a>
+    </li>
+    {% else %}
+    <li>
+      <a href="/login">
+        <i class="bx bx-grid-alt"></i>
+        <span class="links_name">Login</span>
+      </a>
+    </li>
+    <li>
+      <a href="javascript:void(0);" id="profile-link">
+        <i class="bx bx-user"></i>
+        <span class="links_name">마이페이지</span>
+      </a>
+    </li>
+    <li>
+      <a href="javascript:void(0);" id="subscriber-list-link">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">구독자목록</span>
+      </a>
+    </li>
+    <li>
+      <a href="javascript:void(0);" id="liked-videos-link">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">좋아요 표시한 동영상</span>
+      </a>
+    </li>
+    {% endif %}
+    <li>
       <a href="/upload">
-        <i class='bx bx-chat'></i>
+        <i class="bx bx-chat"></i>
         <span class="links_name">동화 만들기</span>
       </a>
     </li>
     <li>
       <a href="#">
-        <i class='bx bx-chat'></i>
-        <span class="links_name">구독자목록</span>
-      </a>
-
-    </li>
-    <li>
-      <a href="#">
-        <i class='bx bx-chat'></i>
-        <span class="links_name">좋아요 표시한 동영상</span>
-      </a>
-
-    </li>
-    <li>
-      <a href="#">
-        <i class='bx bx-chat'></i>
+        <i class="bx bx-chat"></i>
         <span class="links_name">인기순</span>
       </a>
-
     </li>
     <li class="profile">
       <div class="profile-details">
-        <img src="../static/sample_img/2.png" alt="profileImg">
+        <img src="../static/sample_img/2.png" alt="profileImg" />
         <div class="name_job">
           <div class="name">조영강</div>
           <div class="job">작가님</div>
         </div>
       </div>
-
     </li>
   </ul>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", (event) => {
+    const profileLink = document.getElementById("profile-link");
+    const subscriberListLink = document.getElementById("subscriber-list-link");
+    const likedVideosLink = document.getElementById("liked-videos-link");
+
+    if (profileLink) {
+      profileLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        alert("로그인이 필요합니다.");
+      });
+    }
+
+    if (subscriberListLink) {
+      subscriberListLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        alert("로그인이 필요합니다.");
+      });
+    }
+
+    if (likedVideosLink) {
+      likedVideosLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        alert("로그인이 필요합니다.");
+      });
+    }
+  });
+</script>
