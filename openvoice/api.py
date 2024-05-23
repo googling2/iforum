@@ -158,6 +158,7 @@ class ToneColorConverter(OpenVoiceBaseClass):
                 return audio
             else:
                 soundfile.write(output_path, audio, hps.data.sampling_rate)
+                
     
     def add_watermark(self, audio, message):
         if self.watermark_model is None:
