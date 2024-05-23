@@ -84,9 +84,15 @@
     </ul>
 
     <div class="buttons">
+      {% if is_own_profile %}
       <button class="btn" id="profile-settings-button">프로필설정</button>
-      <button class="sbbtn" id="subscription-button">구독</button>
-      <button class="csbbtn" id="cancel-subscription-button">구독취소</button>
+      {% else %}
+        {% if is_following %}
+        <button class="btn" id="follow-button" onclick="unfollowUser({{ profile_user_info.user_code }})">팔로우 취소</button>
+        {% else %}
+        <button class="btn" id="follow-button" onclick="followUser({{ profile_user_info.user_code }})">팔로우</button>
+        {% endif %}
+      {% endif %}
     </div>
 
     <form id="uploadForm" onsubmit="uploadVoice(event)">
@@ -97,6 +103,7 @@
         <input type="text" id="voiceName" name="voiceName" required>
         <button type="submit" id="submitBtn">등록하기</button>
       </div>
+      
     </form>
 
     <div class="profile-img-upload" id="profile-img-upload">
@@ -117,7 +124,9 @@
           </video>
           <div class="video-controls">
             <button class="like-btn" id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">👍 Like</button>
+            {% if is_own_profile %}
             <button class="delete-btn" onclick="confirmDelete('{{ fairytale.ft_code }}')">🗑️</button>
+            {% endif %}
           </div>
         </div>
         {% endfor %}
@@ -125,18 +134,21 @@
     </div>
   </div>
 
-<!-- 목소리 목록 -->
-<div class="profile-voices">
-  <div class="content">
-    <div class="voices-container">
-      {% for voice in voices %}
-      <div class="voice" id="voice-container-{{ voice.voice_code }}">
-        <p>{{ voice.voice_name }}</p>
-        {% if voice.user_code == current_user_code %}
-        <button class="delete-btn" onclick="confirmDeleteVoice('{{ voice.voice_code }}')">🗑️ 삭제</button>
+  <!-- 목소리 목록 -->
+  <div class="profile-voices">
+    <div class="content">
+      <div class="voices-container">
+        {% for voice in voices %}
+        {% if voice.user_code == current_user_info.usercode %}
+        <div class="voice" id="voice-container-{{ voice.voice_code }}">
+          <p>{{ voice.voice_name }}</p>
+          {% if is_own_profile %}
+          <button class="delete-btn" onclick="confirmDeleteVoice('{{ voice.voice_code }}')">🗑️ 삭제</button>
+          {% endif %}
+        </div>
         {% endif %}
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
 </section>
@@ -242,6 +254,48 @@ function deleteVideo(ftCode) {
     console.error('오류 발생:', error);
     alert('비디오 삭제 중 오류가 발생했습니다.');  // 사용자에게 더 명확한 에러 메시지 제공
   });
+}
+
+async function followUser(user_code2) {
+  try {
+    const response = await fetch(`/follow/${user_code2}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('팔로우 중 오류가 발생했습니다.');
+    }
+    const data = await response.json();
+    alert(data.message);
+    document.getElementById('follow-button').innerText = '팔로우 취소';
+    document.getElementById('follow-button').setAttribute('onclick', `unfollowUser(${user_code2})`);
+  } catch (error) {
+    console.error('팔로우 중 오류가 발생하였습니다:', error);
+    alert(error.message);
+  }
+}
+
+async function unfollowUser(user_code2) {
+  try {
+    const response = await fetch(`/unfollow/${user_code2}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('언팔로우 중 오류가 발생했습니다.');
+    }
+    const data = await response.json();
+    alert(data.message);
+    document.getElementById('follow-button').innerText = '팔로우';
+    document.getElementById('follow-button').setAttribute('onclick', `followUser(${user_code2})`);
+  } catch (error) {
+    console.error('언팔로우 중 오류가 발생하였습니다:', error);
+    alert(error.message);
+  }
 }
 
 document.getElementById('profile-settings-button').addEventListener('click', function () {

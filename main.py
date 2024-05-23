@@ -14,7 +14,7 @@ import datetime
 from fastapi import Depends, HTTPException
 from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.orm import Session
-from models import User, Fairytale, Voice, Profile, Like
+from models import User, Fairytale, Voice, Profile, Like, Subscribe
 from db import SessionLocal
 import json
 import uuid
@@ -152,6 +152,8 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
     profile = db.query(Profile).filter(Profile.user_code == author_id).first()
     
     profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
+    is_own_profile = (current_user_info['usercode'] == profile_user_info.user_code) if current_user_info else False
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
 
     profile_user_info_dict = {
         "user_code": profile_user_info.user_code,
@@ -159,6 +161,7 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "email": profile_user_info.email,
         "profile": profile_user_info.profile,
     }
+
 
     print("profile_user_info_dict:", profile_user_info_dict)
     print("current_user_info:", current_user_info)
@@ -170,7 +173,10 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "fairytales": user_fairytales,
         "voices": user_voices,
         "profile_image": profile_image,
-        "total_likes": total_likes
+        "total_likes": total_likes,
+        "is_own_profile": is_own_profile,
+        "is_following": is_following
+
     })
 
 @app.get("/upload", response_class=HTMLResponse)
@@ -185,54 +191,54 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
         print(f"Error rendering template: {e}")
         raise
 
-@app.get("/profile", response_class=HTMLResponse)
-async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    try:
-        print("사용자 정보 나오는지 확인:", user_info)
-        user_code = user_info['usercode']
-        # 동화의 좋아요 수 합산
-        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
-        total_likes = sum(fairy.ft_like for fairy in user_fairytales)
-        print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
+# @app.get("/profile", response_class=HTMLResponse)
+# async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+#     try:
+#         print("사용자 정보 나오는지 확인:", user_info)
+#         user_code = user_info['usercode']
+#         # 동화의 좋아요 수 합산
+#         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
+#         total_likes = sum(fairy.ft_like for fairy in user_fairytales)
+#         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
 
-        user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
-        try:
-            profile = db.query(Profile).filter(Profile.user_code == user_code).first()
-            print("Profile 조회 성공:", profile)
-        except Exception as e:
-            print(f"Profile 조회 중 오류 발생: {e}")
-            profile = None
+#         user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
+#         try:
+#             profile = db.query(Profile).filter(Profile.user_code == user_code).first()
+#             print("Profile 조회 성공:", profile)
+#         except Exception as e:
+#             print(f"Profile 조회 중 오류 발생: {e}")
+#             profile = None
         
-        # 프로필 이미지 설정
-        if profile:
-            print(f"Profile object found: {profile}")
-            profile_image = f"/static/uploads/{profile.profile_name}"
-        else:
-            print("Profile object not found, using default image.")
-            profile_image = "/static/uploads/basic.png"
+#         # 프로필 이미지 설정
+#         if profile:
+#             print(f"Profile object found: {profile}")
+#             profile_image = f"/static/uploads/{profile.profile_name}"
+#         else:
+#             print("Profile object not found, using default image.")
+#             profile_image = "/static/uploads/basic.png"
         
-        print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
+#         print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
 
-        # 템플릿 렌더링
-        try:
-            response = templates.TemplateResponse("profile.html", {
-                "request": request,
-                "user_info": user_info,
-                "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-                "voices": user_voices,
-                "profile_image": profile_image,
-                "total_likes": total_likes,
-                "current_user_code": user_code  # 현재 사용자 코드 전달
-            })
-            print("템플릿 렌더링 성공")
-            return response
-        except Exception as e:
-            print(f"템플릿 렌더링 중 오류 발생: {e}")
-            raise
+#         # 템플릿 렌더링
+#         try:
+#             response = templates.TemplateResponse("profile.html", {
+#                 "request": request,
+#                 "user_info": user_info,
+#                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
+#                 "voices": user_voices,
+#                 "profile_image": profile_image,
+#                 "total_likes": total_likes,
+#                 "current_user_code": user_code  # 현재 사용자 코드 전달
+#             })
+#             print("템플릿 렌더링 성공")
+#             return response
+#         except Exception as e:
+#             print(f"템플릿 렌더링 중 오류 발생: {e}")
+#             raise
         
-    except Exception as e:
-        print(f"전체 코드 실행 중 오류 발생: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+#     except Exception as e:
+#         print(f"전체 코드 실행 중 오류 발생: {e}")
+#         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
@@ -592,14 +598,39 @@ async def delete_video(ft_code: int, db: Session = Depends(get_db), user_info: d
     if not fairytale:
         raise HTTPException(status_code=404, detail="Video not found")
 
-    video_path = os.path.join('static', fairytale.ft_name)
+    # 좋아요 레코드 삭제
+    likes = db.query(Like).filter_by(ft_code=ft_code).all()
+    for like in likes:
+        db.delete(like)
+    
+    # 비디오 파일 경로
+    video_path = fairytale.ft_name
+
+    # 절대 경로로 변환
+    abs_video_path = os.path.abspath(video_path)
+
+    # 디버깅 정보 출력
+    print(f"video_path: {video_path}")
+    print(f"abs_video_path: {abs_video_path}")
+    print(f"Current working directory: {os.getcwd()}")
+
+    # 데이터베이스에서 비디오 레코드 삭제
     db.delete(fairytale)
     db.commit()
 
-    if os.path.exists(video_path):
-        os.remove(video_path)
-
-    return {"message": "비디오 삭제가 완료되었습니다!"}
+    # 파일 시스템에서 비디오 파일 삭제
+    if os.path.exists(abs_video_path):
+        print(f"File exists: {abs_video_path}, attempting to delete.")
+        try:
+            os.remove(abs_video_path)
+            print("File successfully deleted.")
+            return {"message": "비디오 및 관련 좋아요가 삭제되었습니다!"}
+        except Exception as e:
+            print(f"Error deleting video file: {e}")
+            raise HTTPException(status_code=500, detail=f"비디오 파일 삭제 중 오류가 발생했습니다: {str(e)}")
+    else:
+        print(f"File does not exist: {abs_video_path}")
+        return {"message": "비디오 및 관련 좋아요가 삭제되었습니다! (파일이 이미 존재하지 않음)"}
 
 @app.post("/like/{ft_code}")
 async def like_video(ft_code: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -694,6 +725,33 @@ async def delete_voice(voice_code: int, db: Session = Depends(get_db), user_info
         os.remove(file_path)
 
     return {"message": "목소리가 삭제되었습니다."}
+
+
+@app.post("/follow/{user_code2}")
+async def follow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    
+    existing_subscription = db.query(Subscribe).filter_by(user_code=user_code, user_code2=user_code2).first()
+    if existing_subscription:
+        raise HTTPException(status_code=400, detail="Already following this user")
+
+    new_subscription = Subscribe(user_code=user_code, user_code2=user_code2)
+    db.add(new_subscription)
+    db.commit()
+    return {"message": "User followed successfully"}
+
+@app.post("/unfollow/{user_code2}")
+async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    
+    existing_subscription = db.query(Subscribe).filter_by(user_code=user_code, user_code2=user_code2).first()
+    if not existing_subscription:
+        raise HTTPException(status_code=400, detail="Not following this user")
+
+    db.delete(existing_subscription)
+    db.commit()
+    return {"message": "User unfollowed successfully"}
+
 
 if __name__ == "__main__":
     import uvicorn

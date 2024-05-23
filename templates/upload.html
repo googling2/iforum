@@ -1,6 +1,24 @@
 {% extends 'base.html' %} {% block content %}
 <!--마이페이지 시작-->
 
+<style>
+  .mic-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .mic-btn:active {
+            background-color: #45a049;
+        }
+        .listening {
+            background-color: red;
+        }
+</style>
 <form id="myForm" action="/story" method="post">
   <div class="story_container" style="display: flex">
     <div class="input_text" id="step1" style="flex: 1; padding: 20px">
@@ -9,7 +27,9 @@
         name="keywords"
         placeholder="예시)하늘을 나는 오리 이야기"
         class="input_story"
+        id="keywords"
       />
+      <button type="button" class="mic-btn" id="mic-btn">🎤</button>
     </div>
   </div>
   <div style="width: 100%">
@@ -20,43 +40,44 @@
           value="alloy"
           data-image="../static\profile_img/1.png"
           data-audio="../static/profile_audio/alloy.mp3"
+          selected
         >
-          alloy
+          시우
         </option>
         <option
           value="echo"
           data-image="../static\profile_img/2.png"
           data-audio="../static/profile_audio/echo.mp3"
         >
-          echo
+          예준
         </option>
         <option
           value="fable"
           data-image="../static\profile_img/3.png"
           data-audio="../static/profile_audio/fable.mp3"
         >
-          fable
+          민준
         </option>
         <option
           value="onyx"
           data-image="../static\profile_img/4.png"
           data-audio="../static/profile_audio/onyx.mp3"
         >
-          onyx
+          준호
         </option>
         <option
           value="nova"
           data-image="../static\profile_img/5.png"
           data-audio="../static/profile_audio/nova.mp3"
         >
-          nova
+          나연
         </option>
         <option
           value="shimmer"
           data-image="../static\profile_img/6.png"
           data-audio="../static/profile_audio/shimmer.mp3"
         >
-          shimmer
+          태민
         </option>
         {% for voice in user_voices %}
         <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
@@ -74,9 +95,9 @@
     </div>
   </div>
   <div>
-    <label for="voices" style="margin-left: 20px">분위기 선택:</label>
+    <label for="voices" style="margin-left: 20px">음악 선택:</label>
     <select name="selected_mood" id="selected_mood" class="select_mood1">
-      <option value="peaceful">평화로운</option>
+      <option value="peaceful" selected>평화로운</option>
 
       <option value="touching">신비롭고 감동적인</option>
 
@@ -90,11 +111,12 @@
     </select>
   </div>
   <div>
-    <label for="voices" style="margin-left: 20px">스타일 선택:</label>
+    <label for="voices" style="margin-left: 20px">그림체 선택:</label>
     <select name="changeImg" id="changeImg" class="select_mood1">
       <option
         value="animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere."
         data-image="../static/sample_img/anime.png"
+        selected
       >
         애니메이션
       </option>
@@ -408,6 +430,11 @@
     const imageSelectElement = document.getElementById("changeImg");
     const imageElement = document.getElementById("selectedImage");
 
+     // 페이지 로드 시 초기 이미지 설정
+    const initialSelectedOption = imageSelectElement.options[imageSelectElement.selectedIndex];
+    const initialImageUrl = initialSelectedOption.getAttribute("data-image");
+    imageElement.src = initialImageUrl;
+
     imageSelectElement.addEventListener("change", function () {
       const selectedOption = this.options[this.selectedIndex];
       const imageUrl = selectedOption.getAttribute("data-image");
@@ -453,6 +480,57 @@
         });
     });
   });
+  document.addEventListener('DOMContentLoaded', function() {
+    // 브라우저의 음성 인식 기능을 확인합니다.
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('이 브라우저는 Web Speech API를 지원하지 않습니다. 다른 브라우저를 사용해주세요.');
+        return;
+    }
+    const recognition = new SpeechRecognition();
+
+    const micBtn = document.getElementById('mic-btn');
+    const keywordsInput = document.getElementById('keywords');
+
+    recognition.lang = 'ko-KR'; // 언어 설정 (한국어)
+    recognition.interimResults = false; // 임시 결과를 허용하지 않음
+    recognition.maxAlternatives = 1; // 하나의 대안만 반환
+
+    // 음성 인식이 시작되면 호출됩니다.
+    recognition.onstart = function() {
+        console.log('음성 인식이 시작되었습니다.');
+        micBtn.textContent = '🎙️'; // 아이콘 변경
+        micBtn.classList.add('listening');
+    };
+
+    // 음성 인식 결과가 발생하면 호출됩니다.
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        console.log('음성 인식 결과:', transcript);
+        keywordsInput.value = transcript;
+    };
+
+    // 음성 인식이 종료되면 호출됩니다.
+    recognition.onspeechend = function() {
+        console.log('음성 인식이 종료되었습니다.');
+        recognition.stop();
+        micBtn.textContent = '🎤'; // 아이콘 변경
+        micBtn.classList.remove('listening');
+    };
+
+    // 음성 인식 중 오류가 발생하면 호출됩니다.
+    recognition.onerror = function(event) {
+        console.error('음성 인식 오류:', event.error);
+        alert('음성 인식 중 오류가 발생하였습니다: ' + event.error);
+        micBtn.textContent = '🎤'; // 아이콘 변경
+        micBtn.classList.remove('listening');
+    };
+
+    // 마이크 버튼 클릭 시 음성 인식을 시작합니다.
+    micBtn.addEventListener('click', function() {
+        recognition.start();
+    });
+});
 </script>
 
 {% endblock content %}
