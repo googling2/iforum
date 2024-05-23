@@ -15,7 +15,7 @@
     font-family: GmarketSansMedium;
   }
 
-  .sidebar{
+  .sidebar {
     display: none;
   }
 
@@ -1190,7 +1190,7 @@
   }
 
   .wall:nth-child(8) {
-    background-image: url("../static/sample_img/8.png");
+    background-image: url("../sample_img/8.png");
   }
 
   .wall:nth-child(9) {

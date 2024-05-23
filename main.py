@@ -81,7 +81,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.profile.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(30).all()
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(16).all()
 
     video_data = [
         {
