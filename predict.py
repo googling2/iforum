@@ -69,10 +69,14 @@ def predict(audio, text, language="KR", speed=1.2):
             output_path=out_path,
             message=encode_message,
         )
-
     # 변환된 파일을 고유한 이름으로 저장
     final_path = os.path.join(target_dir, f"m1_{unique_id}.mp3")
     shutil.copyfile(out_path, final_path)
-
     
-    return final_path
+    
+    print(audio_name, "audio_name")
+    print(src_path, "src_path")
+    
+    if os.path.exists(src_path):
+        os.remove(src_path)
+    return final_path, audio_name

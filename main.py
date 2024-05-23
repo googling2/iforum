@@ -26,7 +26,6 @@ import upload
 from moviepy.audio.fx.all import audio_fadeout
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
@@ -39,6 +38,7 @@ class CustomJinja2Templates(Jinja2Templates):
         return super().TemplateResponse(name, context, **kwargs)
 
 templates = CustomJinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 
@@ -81,7 +81,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.profile.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(16).all()
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(30).all()
 
     video_data = [
         {
@@ -154,6 +154,8 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
     profile = db.query(Profile).filter(Profile.user_code == author_id).first()
     
     profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
+    is_own_profile = (current_user_info['usercode'] == profile_user_info.user_code) if current_user_info else False
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
 
     profile_user_info_dict = {
         "user_code": profile_user_info.user_code,
@@ -162,12 +164,9 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile": profile_user_info.profile,
     }
 
-    # 팔로우 및 팔로워 수를 쿼리합니다.
-    follow_count = db.query(Subscribe).filter(Subscribe.user_code == author_id).count()
-    follower_count = db.query(Subscribe).filter(Subscribe.user_code2 == author_id).count()
 
-    is_own_profile = current_user_info['usercode'] == author_id if current_user_info else False
-    is_following = db.query(Subscribe).filter(Subscribe.user_code == current_user_info['usercode'], Subscribe.user_code2 == author_id).first() if current_user_info else False
+    print("profile_user_info_dict:", profile_user_info_dict)
+    print("current_user_info:", current_user_info)
 
     return templates.TemplateResponse("profile.html", {
         "request": request,
@@ -177,10 +176,9 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "voices": user_voices,
         "profile_image": profile_image,
         "total_likes": total_likes,
-        "follow_count": follow_count,
-        "follower_count": follower_count,
         "is_own_profile": is_own_profile,
         "is_following": is_following
+
     })
 
 @app.get("/upload", response_class=HTMLResponse)
@@ -194,10 +192,7 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
-# 비디오 업로드 엔드포인트
-@app.post("/upload_video")
-async def upload_video(request: Request, db: Session = Depends(get_db)):
-    return await upload.upload_video(request, db)
+
 # @app.get("/profile", response_class=HTMLResponse)
 # async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
 #     try:
@@ -357,6 +352,14 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     return RedirectResponse(url='/', status_code=303)
 
+@app.get("/gudog", response_class=HTMLResponse)
+async def display_form(request: Request):
+    try:
+        return templates.TemplateResponse("gudog.html", {"request": request})
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        raise
+
 
 @app.post("/story", response_class=HTMLResponse)
 async def create_story(request: Request, keywords: str = Form(...), selected_voice: str = Form(...), selected_mood: str = Form(...), changeImg: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -409,7 +412,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             with open(audio_file_path, "wb") as audio_file:
                 audio_file.write(audio_data)
         else:
-            audio_file_path = predict.predict(selected_voice, story_content, language, speed)
+            audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
@@ -451,11 +454,19 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 panel_dest = os.path.join("static", "img", panel_filename)
                 cropped_image.save(panel_dest)
                 image_files.append(panel_dest)
+        rmpath = f"static/audio/{audio_name}"
 
-
+        print(audio_name,"audio_name 여기는 메인입니다.")
+        print(rmpath,"rmpath 여기는 메인입니다.")
         final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
         if os.path.exists(audio_file_path):
             os.remove(audio_file_path)
+            
+        if os.path.exists(rmpath) and os.path.isdir(rmpath):
+            shutil.rmtree(rmpath)
+            print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
+        else:
+            print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
@@ -583,10 +594,6 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
-
-    with open('video_url.json', 'w') as f:
-     json.dump({"video_url": video_url,"story_title": story_title}, f)
-     
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
@@ -733,61 +740,28 @@ async def delete_voice(voice_code: int, db: Session = Depends(get_db), user_info
 @app.post("/follow/{user_code2}")
 async def follow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user_code = user_info['usercode']
-    if user_code == user_code2:
-        raise HTTPException(status_code=400, detail="You cannot follow yourself.")
     
     existing_subscription = db.query(Subscribe).filter_by(user_code=user_code, user_code2=user_code2).first()
     if existing_subscription:
-        raise HTTPException(status_code=400, detail="Already following this user.")
-    
+        raise HTTPException(status_code=400, detail="Already following this user")
+
     new_subscription = Subscribe(user_code=user_code, user_code2=user_code2)
     db.add(new_subscription)
     db.commit()
-    
-    return {"message": "팔로우 완료!"}
+    return {"message": "User followed successfully"}
 
 @app.post("/unfollow/{user_code2}")
 async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user_code = user_info['usercode']
+    
     existing_subscription = db.query(Subscribe).filter_by(user_code=user_code, user_code2=user_code2).first()
     if not existing_subscription:
-        raise HTTPException(status_code=400, detail="You are not following this user.")
-    
+        raise HTTPException(status_code=400, detail="Not following this user")
+
     db.delete(existing_subscription)
     db.commit()
-    
-    return {"message": "언팔로우 완료!"}
+    return {"message": "User unfollowed successfully"}
 
-
-@app.get("/gudog", response_class=HTMLResponse)
-async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    # 쿼리 매개변수에서 user_code를 가져옵니다.
-    user_code = request.query_params.get("user_code")
-    if not user_code:
-        # 쿼리 매개변수가 없으면 현재 로그인된 사용자의 user_code를 사용합니다.
-        user_code = user_info['usercode']
-    
-    print("Requested user_code:", user_code)
-    
-    # 팔로우한 사용자 목록을 쿼리합니다.
-    following = db.query(Subscribe).filter(Subscribe.user_code == user_code).all()
-    following_users = []
-    for follow in following:
-        user = db.query(User).filter(User.user_code == follow.user_code2).first()
-        profile = db.query(Profile).filter(Profile.user_code == user.user_code).first()
-        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
-        following_users.append({
-            "user_code": user.user_code,
-            "user_name": user.user_name,
-            "profile_image": profile_image
-        })
-    
-    print("Following users:", following_users)
-
-    return templates.TemplateResponse("gudog.html", {
-        "request": request,
-        "following_users": following_users
-    })
 
 if __name__ == "__main__":
     import uvicorn
