@@ -26,6 +26,7 @@ import upload
 from moviepy.audio.fx.all import audio_fadeout
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
@@ -38,7 +39,6 @@ class CustomJinja2Templates(Jinja2Templates):
         return super().TemplateResponse(name, context, **kwargs)
 
 templates = CustomJinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 
@@ -319,14 +319,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     }
     
     return RedirectResponse(url='/', status_code=303)
-
-@app.get("/gudog", response_class=HTMLResponse)
-async def display_form(request: Request):
-    try:
-        return templates.TemplateResponse("gudog.html", {"request": request})
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
 
 
 @app.post("/story", response_class=HTMLResponse)
@@ -729,19 +721,21 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
 @app.get("/gudog", response_class=HTMLResponse)
 async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     current_user_code = user_info['usercode']
-
+    print("이거 구독url에서ㅓ 뜨나 ",current_user_code)
     # 팔로우한 사용자 목록을 쿼리합니다.
     following = db.query(Subscribe).filter(Subscribe.user_code == current_user_code).all()
     following_users = []
     for follow in following:
         user = db.query(User).filter(User.user_code == follow.user_code2).first()
         profile = db.query(Profile).filter(Profile.user_code == user.user_code).first()
-        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/sample_img/1.png"
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
         following_users.append({
             "user_code": user.user_code,
             "user_name": user.user_name,
             "profile_image": profile_image
         })
+    
+    print("Following users:", following_users)
 
     return templates.TemplateResponse("gudog.html", {
         "request": request,

@@ -2,33 +2,30 @@
 
 {% block content %}
 
-<body>
-  <!-- CSS 파일을 올바르게 로드하는 코드 -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-
   <section id="inbox" class="box inbox">
     <div class="header-inbox">
       <h2>팔로우 목록</h2>
       <i class="fa-regular fa-comments"></i>
     </div>
-
+    <div>
+      안녕하세요
+    </div>
     <div class="data">
       <div class="main-inbox">
-        <!-- 팔로우한 사람 목록 반복 시작 -->
         {% for user in following_users %}
         <div class="msg-box" onclick="location.href='/profile/{{ user.user_code }}'">
           <div class="icon">
-            <img src="{{ user.profile_image or '/static/sample_img/1.png' }}" alt="">
+            <img src="{{ user.profile_image }}" alt="">
           </div>
           <div class="details">
             <h3>{{ user.user_name }}</h3>
           </div>
         </div>
         {% endfor %}
-        <!-- 팔로우한 사람 목록 반복 끝 -->
       </div>
     </div>
   </section>
-</body>
+
+
 
 {% endblock content %}
