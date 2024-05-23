@@ -81,7 +81,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.profile.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(30).all()
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(16).all()
 
     video_data = [
         {
@@ -192,7 +192,10 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
-
+# 비디오 업로드 엔드포인트
+@app.post("/upload_video")
+async def upload_video(request: Request, db: Session = Depends(get_db)):
+    return await upload.upload_video(request, db)
 # @app.get("/profile", response_class=HTMLResponse)
 # async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
 #     try:
@@ -413,6 +416,12 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 audio_file.write(audio_data)
         else:
             audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
+            rmpath = f"static/audio/{audio_name}"
+            if os.path.exists(rmpath) and os.path.isdir(rmpath):
+                shutil.rmtree(rmpath)
+                print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
+            else:
+                print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
@@ -454,19 +463,15 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 panel_dest = os.path.join("static", "img", panel_filename)
                 cropped_image.save(panel_dest)
                 image_files.append(panel_dest)
-        rmpath = f"static/audio/{audio_name}"
 
-        print(audio_name,"audio_name 여기는 메인입니다.")
-        print(rmpath,"rmpath 여기는 메인입니다.")
+        
         final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
         if os.path.exists(audio_file_path):
             os.remove(audio_file_path)
+
+
             
-        if os.path.exists(rmpath) and os.path.isdir(rmpath):
-            shutil.rmtree(rmpath)
-            print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
-        else:
-            print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
+        
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
@@ -594,6 +599,10 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+
+    with open('video_url.json', 'w') as f:
+        json.dump({"video_url": video_url,"story_title": story_title}, f)
+
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
