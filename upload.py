@@ -26,6 +26,7 @@ MAX_RETRIES = 5
 # @app.post("/upload_video")
 # async def upload_video(request: Request, db: Session = Depends(get_db)):
 async def upload_video(request, db):
+    print("video_url:")
     user = request.session.get("user")
     usercode = user.get("usercode") if user else None
     if not usercode:
@@ -37,7 +38,7 @@ async def upload_video(request, db):
     print(user_refresh_token)
     if not user_access_token or not user_refresh_token:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid user credentials")
-
+    print("video_url:")
     user_credentials = Credentials(
         token=user_access_token,
         refresh_token=user_refresh_token,
@@ -47,13 +48,13 @@ async def upload_video(request, db):
         scopes=['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.force-ssl']
     )
 
-
+    print("video_url:")
     with open('video_url.json', 'r') as f:
         data = json.load(f)
 
     video_url = data['video_url']
     story_title = data['story_title']
-    print(video_url)
+    print("video_url:",video_url)
 
 
     ft_title = get_ft_title_by_video_url(db, video_url)
@@ -73,10 +74,14 @@ async def upload_video(request, db):
         )
 
         initialize_upload(youtube, options)
-        return RedirectResponse(url="/profile", status_code=302)
+        return RedirectResponse(url="/my_profile", status_code=302)
         # return JSONResponse(status_code=200, content={"message": "Upload successful"})
+    except HttpError as e:
+        if e.resp.status == 400 and "uploadLimitExceeded" in e.content.decode():
+            return JSONResponse(status_code=400, content={"message": "The user has exceeded the number of videos they may upload."})
+        else:
+            return JSONResponse(status_code=500, content={"message": str(e)})
     except Exception as e:
-        print(f"An error occurred: {e}")
         return JSONResponse(status_code=500, content={"message": str(e)})
 
 def refresh_access_token(credentials: Credentials):

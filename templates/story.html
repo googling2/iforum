@@ -8,7 +8,7 @@
         Your browser does not support the video tag.
       </video>
     </div>
-    <form action="/upload_video" method="post">
+    <form id="uploadForm" action="/upload_video" method="post">
       <button type="submit" class="result_btn">유튜브 업로드</button>
     </form>
     <button type="button" class="story_btn" onclick="showStory()">
@@ -28,6 +28,28 @@
     document.getElementById("storyTitle").style.display = "block";
     document.getElementById("storyContent").style.display = "block";
   }
+
+  document.getElementById('uploadForm').onsubmit = async function(event) {
+    event.preventDefault();
+    try {
+      let response = await fetch('/upload_video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      });
+
+      if (!response.ok) {
+        let data = await response.json();
+        if (data.message.includes("uploadLimitExceeded")) {
+          alert("하루 유튜브 업로드 수를 초과했습니다. 내일 다시 시도해주세요.");
+          window.location.href = "/";
+        } else {
+          throw new Error('Upload failed');
+          window.location.href = "/";
+        }
+  };
 </script>
 
 {% endblock content %}
