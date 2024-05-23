@@ -17,7 +17,7 @@
                   <span>Home</span>
                 </li>
               </a>
-              <a href="/upload">
+              <a href="/upload" id="create-link">
                 <li data-sec="inbox">
                   <i class="fa-regular fa-message"></i>
                   <span>Create</span>
@@ -53,6 +53,14 @@
 
     <script>
       document.getElementById('profile-link').addEventListener('click', function(event) {
+        const isLoggedIn = {{ user_info|tojson|safe }}; // 서버에서 user_info를 통해 로그인 여부 확인
+        if (!isLoggedIn) {
+          event.preventDefault();
+          alert('로그인이 필요합니다.');
+        }
+      });
+
+      document.getElementById('create-link').addEventListener('click', function(event) {
         const isLoggedIn = {{ user_info|tojson|safe }}; // 서버에서 user_info를 통해 로그인 여부 확인
         if (!isLoggedIn) {
           event.preventDefault();

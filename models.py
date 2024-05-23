@@ -5,6 +5,18 @@ from db import Base
 import datetime
 
 
+
+class Subscribe(Base):
+    __tablename__ = 'subscribe'
+
+    user_code = Column(Integer, ForeignKey('user.user_code'), primary_key=True)
+    user_code2 = Column(Integer, ForeignKey('user.user_code'), primary_key=True)
+
+    subscriber = relationship("User", foreign_keys=[user_code], back_populates="subscriptions")
+    subscribed_to = relationship("User", foreign_keys=[user_code2], back_populates="subscribers")
+
+
+
 class Profile(Base):
     __tablename__ = 'profile'
 
@@ -42,6 +54,9 @@ class User(Base):
     voices = relationship("Voice", back_populates="user")
     profiles = relationship("Profile", back_populates="user")
     likes = relationship("Like", back_populates="user")
+
+    subscriptions = relationship("Subscribe", foreign_keys=[Subscribe.user_code], back_populates="subscriber")
+    subscribers = relationship("Subscribe", foreign_keys=[Subscribe.user_code2], back_populates="subscribed_to")
 
 
 
