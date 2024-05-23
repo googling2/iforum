@@ -818,11 +818,12 @@
   .option-image {
     border-radius: 100%;
     width: 53px;
-    margin-right: 15px
+    margin-top: -6%;
+    margin-right: -83%;
   }
 
   .input_story {
-    width: 100%;
+    width: 75%;
     padding: 30px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -837,35 +838,45 @@
     margin-top: 30px;
   }
 
+  .select_mood2 {
+    width: 38%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 30px;
+  }
+
   .base_btn {
+    position: absolute;
     margin-left: 5%;
-    width: 90%;
+    width: 60%;
     padding: 10px;
     border: none;
     background-color: #9a78ff;
     color: #fff;
     border-radius: 5px;
-    margin-top: 30px;
-    margin-bottom: 200px;
+    margin-top: 178%;
   }
 
   .upload_btn {
+    position: absolute;
     margin-left: 5%;
-    width: 90%;
+    width: 60%;
     padding: 10px;
     border: none;
-    background-color: #ff5e00;
+    background-color: #9a78ff;
     color: #fff;
     border-radius: 5px;
-    margin-top: 30px;
+    margin-top: 188%;
   }
 
   .cnImg {
     border-radius: 25%;
     margin-top: 10%;
     margin-left: 13%;
-    width: 70%;
-    height: 70%;
+    width: 55%;
+    height: 55%;
+
   }
 
   .story_text {
@@ -1213,8 +1224,23 @@
     z-index: 3;
   }
 
+  .mic-btn {
+    width: 205px;
+    background: plum;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 40.5%;
+    position: absolute;
+    margin-left: 8%;
+    border-radius: 20px;
+    padding: 2px;
+  }
+
   #myForm {
+    padding-left: 10%;
     background: linear-gradient(to top right, #c2ffef 10%, #f9aabe 65%, #ffb900 125%);
+    height: 1200px;
   }
 
   /*여기서부터는 모바일*/
