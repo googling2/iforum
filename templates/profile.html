@@ -69,12 +69,13 @@
 
     <ul>
       <li>
-        <h5>115</h5><a href="/gudog">
+        <h5>{{ follow_count }}</h5>
+        <a href="/gudog">
           <span>팔로우</span>
         </a>
       </li>
       <li>
-        <h5>3600</h5>
+        <h5>{{ follower_count }}</h5>
         <span>팔로워</span>
       </li>
       <li>
@@ -88,9 +89,9 @@
       <button class="btn" id="profile-settings-button">프로필설정</button>
       {% else %}
         {% if is_following %}
-        <button class="btn" id="follow-button" onclick="unfollowUser({{ profile_user_info.user_code }})">팔로우 취소</button>
+        <button class="btn" id="follow-button" onclick="unfollowUser('{{ profile_user_info.user_code }}')">팔로우 취소</button>
         {% else %}
-        <button class="btn" id="follow-button" onclick="followUser({{ profile_user_info.user_code }})">팔로우</button>
+        <button class="btn" id="follow-button" onclick="followUser('{{ profile_user_info.user_code }}')">팔로우</button>
         {% endif %}
       {% endif %}
     </div>
