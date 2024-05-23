@@ -3,92 +3,32 @@
 {% block content %}
 
 <body>
+  <!-- CSS 파일을 올바르게 로드하는 코드 -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='styles.css') }}">
 
   <section id="inbox" class="box inbox">
     <div class="header-inbox">
-      <h2>임시</h2>
+      <h2>팔로우 목록</h2>
       <i class="fa-regular fa-comments"></i>
     </div>
 
     <div class="data">
       <div class="main-inbox">
-        <!--반복시작-->
-
-        <div class="msg-box">
+        <!-- 팔로우한 사람 목록 반복 시작 -->
+        {% for user in following_users %}
+        <div class="msg-box" onclick="location.href='/profile/{{ user.user_code }}'">
           <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
+            <img src="{{ user.profile_image or '/static/sample_img/1.png' }}" alt="">
           </div>
           <div class="details">
-            <h3>엠마스톤</h3>
+            <h3>{{ user.user_name }}</h3>
           </div>
         </div>
-        <!--반복 끝-->
-
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-
-        <div class="msg-box">
-          <div class="icon">
-            <img src="../static/sample_img/1.png" alt="">
-          </div>
-          <div class="details">
-            <h3>엠마스톤</h3>
-          </div>
-        </div>
-
-
-
-
-
+        {% endfor %}
+        <!-- 팔로우한 사람 목록 반복 끝 -->
       </div>
     </div>
   </section>
+</body>
 
-  {% endblock content %}
+{% endblock content %}
