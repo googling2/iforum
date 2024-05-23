@@ -164,6 +164,12 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile": profile_user_info.profile,
     }
 
+    # 팔로우 및 팔로워 수를 쿼리합니다.
+    follow_count = db.query(Subscribe).filter(Subscribe.user_code == author_id).count()
+    follower_count = db.query(Subscribe).filter(Subscribe.user_code2 == author_id).count()
+
+    is_own_profile = current_user_info['usercode'] == author_id if current_user_info else False
+    is_following = db.query(Subscribe).filter(Subscribe.user_code == current_user_info['usercode'], Subscribe.user_code2 == author_id).first() if current_user_info else False
 
     print("profile_user_info_dict:", profile_user_info_dict)
     print("current_user_info:", current_user_info)
@@ -177,7 +183,9 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile_image": profile_image,
         "total_likes": total_likes,
         "is_own_profile": is_own_profile,
-        "is_following": is_following
+        "is_following": is_following,
+        "follow_count": follow_count,
+        "follower_count": follower_count
 
     })
 
