@@ -30,29 +30,36 @@
 
   }
 
+<<<<<<< HEAD
   document.getElementById('uploadForm').onsubmit = async function (event) {
+=======
+  document.getElementById("uploadForm").onsubmit = async function (event) {
+>>>>>>> 5e8624369e918cc459414cd198e7fb32dc6de8fd
     event.preventDefault();
     try {
-      let response = await fetch('/upload_video', {
-        method: 'POST',
+      let response = await fetch("/upload_video", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({})
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {
         let data = await response.json();
-        if (data.message.includes("uploadLimitExceeded")) {
-          alert("하루 유튜브 업로드 수를 초과했습니다. 내일 다시 시도해주세요.");
-          window.location.href = "/";
+        if (data.message && data.message.includes("uploadLimitExceeded")) {
+          alert(
+            "하루 유튜브 업로드 수를 초과했습니다. 내일 다시 시도해주세요."
+          );
         } else {
-          throw new Error('Upload failed');
+          throw new Error(data.message || "Upload failed");
         }
+      } else {
+        alert("Upload successful");
       }
     } catch (error) {
-      console.error('Error:', error);
-      window.location.href = "/";
+      console.error("Error:", error);
+      alert("Error: " + error.message);
     }
   };
 </script>

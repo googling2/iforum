@@ -164,6 +164,12 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile": profile_user_info.profile,
     }
 
+    # 팔로우 및 팔로워 수를 쿼리합니다.
+    follow_count = db.query(Subscribe).filter(Subscribe.user_code == author_id).count()
+    follower_count = db.query(Subscribe).filter(Subscribe.user_code2 == author_id).count()
+
+    is_own_profile = current_user_info['usercode'] == author_id if current_user_info else False
+    is_following = db.query(Subscribe).filter(Subscribe.user_code == current_user_info['usercode'], Subscribe.user_code2 == author_id).first() if current_user_info else False
 
     print("profile_user_info_dict:", profile_user_info_dict)
     print("current_user_info:", current_user_info)
@@ -177,7 +183,9 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile_image": profile_image,
         "total_likes": total_likes,
         "is_own_profile": is_own_profile,
-        "is_following": is_following
+        "is_following": is_following,
+        "follow_count": follow_count,
+        "follower_count": follower_count
 
     })
 
@@ -355,13 +363,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     return RedirectResponse(url='/', status_code=303)
 
-@app.get("/gudog", response_class=HTMLResponse)
-async def display_form(request: Request):
-    try:
-        return templates.TemplateResponse("gudog.html", {"request": request})
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
 
 
 @app.post("/story", response_class=HTMLResponse)
@@ -770,6 +771,34 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
     db.delete(existing_subscription)
     db.commit()
     return {"message": "User unfollowed successfully"}
+
+
+@app.get("/gudog", response_class=HTMLResponse)
+async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = request.query_params.get("user_code")
+    if not user_code:
+        user_code = user_info['usercode']
+    
+    print("Requested user_code:", user_code)
+    
+    following = db.query(Subscribe).filter(Subscribe.user_code == user_code).all()
+    following_users = []
+    for follow in following:
+        user = db.query(User).filter(User.user_code == follow.user_code2).first()
+        profile = db.query(Profile).filter(Profile.user_code == user.user_code).first()
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
+        following_users.append({
+            "user_code": user.user_code,
+            "user_name": user.user_name,
+            "profile_image": profile_image
+        })
+    
+    print("Following users:", following_users)
+
+    return templates.TemplateResponse("gudog.html", {
+        "request": request,
+        "following_users": following_users
+    })
 
 
 if __name__ == "__main__":
