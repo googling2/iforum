@@ -411,6 +411,12 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 audio_file.write(audio_data)
         else:
             audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
+            rmpath = f"static/audio/{audio_name}"
+            if os.path.exists(rmpath) and os.path.isdir(rmpath):
+                shutil.rmtree(rmpath)
+                print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
+            else:
+                print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
@@ -452,19 +458,15 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 panel_dest = os.path.join("static", "img", panel_filename)
                 cropped_image.save(panel_dest)
                 image_files.append(panel_dest)
-        rmpath = f"static/audio/{audio_name}"
 
-        print(audio_name,"audio_name 여기는 메인입니다.")
-        print(rmpath,"rmpath 여기는 메인입니다.")
+        
         final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
         if os.path.exists(audio_file_path):
             os.remove(audio_file_path)
+
+
             
-        if os.path.exists(rmpath) and os.path.isdir(rmpath):
-            shutil.rmtree(rmpath)
-            print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
-        else:
-            print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
+        
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",

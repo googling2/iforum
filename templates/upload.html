@@ -83,7 +83,7 @@
         <option value="shimmer" data-image="../static/profile_img/6.png"
           data-audio="../static/profile_audio/shimmer.mp3">태민</option>
         {% for voice in user_voices %}
-        <option value="{{ " static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
+        <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
         {% endfor %}
       </select>
     </div>
