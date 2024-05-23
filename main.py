@@ -129,6 +129,8 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         for video in videos
     ]
 
+    print("비디오 데이터 Index.html에서",video_data)  # 디버깅을 위해 출력합니다.
+
     return templates.TemplateResponse("index.html", {"request": request, "videos": video_data, "user_code": user_code})
 
 @app.get("/my_profile", response_class=HTMLResponse)
@@ -190,7 +192,10 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
-
+# 비디오 업로드 엔드포인트
+@app.post("/upload_video")
+async def upload_video(request: Request, db: Session = Depends(get_db)):
+    return await upload.upload_video(request, db)
 # @app.get("/profile", response_class=HTMLResponse)
 # async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
 #     try:
@@ -378,7 +383,7 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
 
         if completion.choices:
             story_content = completion.choices[0].message.content
-            story_title = story_content.split('\n')[0].replace("제목: ", "").replace("Title: ", "").strip()
+            story_title = story_content.split('\n')[0].replace("제목: ", "").replace("Title: ", "").replace('"', '').strip()
         else:
             story_content = "텍스트를 다시 입력해주세요!"
 
@@ -594,6 +599,10 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
 
 @app.get("/story_view", response_class=HTMLResponse)
 async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+
+    with open('video_url.json', 'w') as f:
+        json.dump({"video_url": video_url,"story_title": story_title}, f)
+
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,

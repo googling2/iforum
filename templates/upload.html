@@ -2,63 +2,20 @@
 <!--마이페이지 시작-->
 
 <style>
-  /* 좌측 컨테이너 스타일 */
-  .left-container,
-  .right-container {
-    flex: 1;
-    /* flex 비율 설정 */
-    padding: 20px;
-    /* 패딩 설정 */
-  }
 
-
-
-
-  /* 입력 텍스트 스타일 */
-  .input_text {
-    margin-bottom: 20px;
-    /* 아래 여백 설정 */
-  }
-
-  /* 우측 컨테이너 스타일 */
-  .right-container {
-    display: flex;
-    flex-direction: column;
-    /* 수직 방향으로 정렬 */
-    justify-content: center;
-    /* 수직 가운데 정렬 */
-  }
-
-  /* 우측 컨테이너 내부 div 스타일 */
-  .right-container>div {
-    margin-bottom: 20px;
-    /* 아래 여백 설정 */
-  }
-
-  /* 옵션 컨테이너 스타일 */
-  .option-container {
-    display: flex;
-    align-items: center;
-    /* 수직 가운데 정렬 */
-  }
-
-  /* 옵션 이미지 스타일 */
-  .option-container img {
-    margin-right: 10px;
-    /* 오른쪽 여백 설정 */
-  }
 </style>
 <form id="myForm" action="/story" method="post">
   <!-- 좌측 컨테이너 -->
 
   <div class="left-container">
     <h3 class="story-title">동화 제목을 입력해주세요.</h3>
+    <button type="button" class="mic-btn" id="mic-btn">🎤음성입력하기</button>
     <div class="story_container">
 
       <div class="input_text" id="step1">
 
         <input type="text" name="keywords" placeholder="예시)하늘을 나는 오리 이야기" class="input_story" id="keywords" />
-        <button type="button" class="mic-btn" id="mic-btn">🎤</button>
+
       </div>
       <button class="base_btn">딸깍</button>
     </div>
@@ -86,10 +43,11 @@
         <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
         {% endfor %}
       </select>
+      <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image">
     </div>
-    <div class="option-container">
-      <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image" />
-    </div>
+
+
+
     <div>
       <label for="voices">음악 선택:</label>
       <select name="selected_mood" id="selected_mood" class="select_mood1">
@@ -103,7 +61,7 @@
     </div>
     <div>
       <label for="voices">그림체 선택:</label>
-      <select name="changeImg" id="changeImg" class="select_mood1">
+      <select name="changeImg" id="changeImg" class="select_mood2">
         <option
           value="animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere."
           data-image="../static/sample_img/anime.png" selected>애니메이션</option>
