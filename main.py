@@ -363,13 +363,6 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     
     return RedirectResponse(url='/', status_code=303)
 
-@app.get("/gudog", response_class=HTMLResponse)
-async def display_form(request: Request):
-    try:
-        return templates.TemplateResponse("gudog.html", {"request": request})
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        raise
 
 
 @app.post("/story", response_class=HTMLResponse)
@@ -778,6 +771,34 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
     db.delete(existing_subscription)
     db.commit()
     return {"message": "User unfollowed successfully"}
+
+
+@app.get("/gudog", response_class=HTMLResponse)
+async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = request.query_params.get("user_code")
+    if not user_code:
+        user_code = user_info['usercode']
+    
+    print("Requested user_code:", user_code)
+    
+    following = db.query(Subscribe).filter(Subscribe.user_code == user_code).all()
+    following_users = []
+    for follow in following:
+        user = db.query(User).filter(User.user_code == follow.user_code2).first()
+        profile = db.query(Profile).filter(Profile.user_code == user.user_code).first()
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
+        following_users.append({
+            "user_code": user.user_code,
+            "user_name": user.user_name,
+            "profile_image": profile_image
+        })
+    
+    print("Following users:", following_users)
+
+    return templates.TemplateResponse("gudog.html", {
+        "request": request,
+        "following_users": following_users
+    })
 
 
 if __name__ == "__main__":
