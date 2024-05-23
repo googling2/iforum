@@ -752,10 +752,16 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
 
 @app.get("/gudog", response_class=HTMLResponse)
 async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    current_user_code = user_info['usercode']
-    print("이거 구독url에서ㅓ 뜨나 ",current_user_code)
+    # 쿼리 매개변수에서 user_code를 가져옵니다.
+    user_code = request.query_params.get("user_code")
+    if not user_code:
+        # 쿼리 매개변수가 없으면 현재 로그인된 사용자의 user_code를 사용합니다.
+        user_code = user_info['usercode']
+    
+    print("Requested user_code:", user_code)
+    
     # 팔로우한 사용자 목록을 쿼리합니다.
-    following = db.query(Subscribe).filter(Subscribe.user_code == current_user_code).all()
+    following = db.query(Subscribe).filter(Subscribe.user_code == user_code).all()
     following_users = []
     for follow in following:
         user = db.query(User).filter(User.user_code == follow.user_code2).first()
