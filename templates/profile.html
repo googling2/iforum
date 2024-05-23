@@ -74,6 +74,34 @@
   .audio-control {
     margin-top: 20px;
   }
+
+  .recording-indicator {
+    display: none;
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .recording .recording-indicator {
+    display: inline;
+  }
+
+  .recording .btn {
+    background-color: red;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      background-color: red;
+    }
+    50% {
+      background-color: darkred;
+    }
+    100% {
+      background-color: red;
+    }
+  }
 </style>
 
 <section id="profile" class="box profile">
@@ -125,6 +153,7 @@
         <button type="button" id="rec-btn" class="btn">녹음 시작</button>
         <button type="button" id="stop-rec-btn" class="btn" disabled>녹음 중지</button>
         <audio id="audio-playback" controls style="display:none;"></audio>
+        <div class="recording-indicator">녹음 중...</div>
       </div>
     </form>
 
@@ -336,15 +365,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const audioPlayback = document.getElementById('audio-playback');
   let mediaRecorder;
   let audioChunks = [];
+  let stream;
 
   navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
+    .then(str => {
+      stream = str;
       mediaRecorder = new MediaRecorder(stream);
 
       mediaRecorder.onstart = function() {
         audioChunks = [];
         console.log('녹음 시작');
         recBtn.classList.add('recording'); // 녹음 시작 시 버튼 색상 변경
+        document.querySelector('.recording-indicator').style.display = 'inline'; // 녹음 중 텍스트 표시
       };
 
       mediaRecorder.ondataavailable = function(event) {
@@ -360,6 +392,10 @@ document.addEventListener('DOMContentLoaded', function() {
         stopRecBtn.disabled = true;
         recBtn.disabled = false;
         recBtn.classList.remove('recording'); // 녹음 종료 시 버튼 색상 원래대로
+        document.querySelector('.recording-indicator').style.display = 'none'; // 녹음 중 텍스트 숨기기
+
+        // 스트림 종료
+        stream.getTracks().forEach(track => track.stop());
 
         // 녹음된 오디오를 파일 입력 필드에 추가
         const fileInput = document.getElementById('fileInput');
