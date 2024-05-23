@@ -727,12 +727,26 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
 
 
 @app.get("/gudog", response_class=HTMLResponse)
-async def display_following(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    user_code = user_info['usercode']
-    subscriptions = db.query(Subscribe).filter(Subscribe.user_code == user_code).all()
-    following_users = [db.query(User).filter(User.user_code == sub.user_code2).first() for sub in subscriptions]
-    return templates.TemplateResponse("gudog.html", {"request": request, "following_users": following_users})
+async def show_following_users(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    current_user_code = user_info['usercode']
 
+    # 팔로우한 사용자 목록을 쿼리합니다.
+    following = db.query(Subscribe).filter(Subscribe.user_code == current_user_code).all()
+    following_users = []
+    for follow in following:
+        user = db.query(User).filter(User.user_code == follow.user_code2).first()
+        profile = db.query(Profile).filter(Profile.user_code == user.user_code).first()
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/sample_img/1.png"
+        following_users.append({
+            "user_code": user.user_code,
+            "user_name": user.user_name,
+            "profile_image": profile_image
+        })
+
+    return templates.TemplateResponse("gudog.html", {
+        "request": request,
+        "following_users": following_users
+    })
 
 if __name__ == "__main__":
     import uvicorn
