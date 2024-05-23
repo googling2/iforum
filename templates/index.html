@@ -36,7 +36,13 @@
           <div class="info-wrapper">
             <a href="/profile/${video.author_id}"><img src="${video.img}" alt="profile" /></a>
             <div>
-              <h3>${video.title}</h3>
+              <h3 style="    width: 500px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;">${video.title}</h3>
               <p>${video.name}</p>
             </div>
           </div>
@@ -116,20 +122,20 @@
               },
               body: JSON.stringify({ user_code: userCode })
             })
-            .then(response => response.json())
-            .then(data => {
-              console.log('Unlike response:', data);
-              if (data.success) {
-                console.log('Before update (unlike):', likeCountElement.textContent);
-                likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
-                console.log('Updated like count (unlike):', likeCountElement.textContent);
-                likeBtn.setAttribute("data-liked", "false");
-                likeBtn.classList.remove("color-switch");
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
+              .then(response => response.json())
+              .then(data => {
+                console.log('Unlike response:', data);
+                if (data.success) {
+                  console.log('Before update (unlike):', likeCountElement.textContent);
+                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                  console.log('Updated like count (unlike):', likeCountElement.textContent);
+                  likeBtn.setAttribute("data-liked", "false");
+                  likeBtn.classList.remove("color-switch");
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
           } else {
             console.log('Sending like request...');
             fetch(`/like/${videoId}`, {
@@ -140,25 +146,25 @@
               },
               body: JSON.stringify({ user_code: userCode })
             })
-            .then(response => {
-              console.log('Like request sent:', response);
-              return response.json();
-            })
-            .then(data => {
-              console.log('Like response:', data);
-              if (data.success) {
-                console.log('Before update (like):', likeCountElement.textContent);
-                likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
-                console.log('Updated like count (like):', likeCountElement.textContent);
-                likeBtn.setAttribute("data-liked", "true");
-                likeBtn.classList.add("color-switch");
-              } else {
-                console.log('Like request failed:', data.message);
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
+              .then(response => {
+                console.log('Like request sent:', response);
+                return response.json();
+              })
+              .then(data => {
+                console.log('Like response:', data);
+                if (data.success) {
+                  console.log('Before update (like):', likeCountElement.textContent);
+                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                  console.log('Updated like count (like):', likeCountElement.textContent);
+                  likeBtn.setAttribute("data-liked", "true");
+                  likeBtn.classList.add("color-switch");
+                } else {
+                  console.log('Like request failed:', data.message);
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
           }
         });
 

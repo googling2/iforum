@@ -1186,12 +1186,13 @@
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
   .sidebar {
+    border-right: solid plum;
     position: fixed;
     left: 0;
     top: 0;
     height: 100%;
     width: 440px;
-    background: #11101D;
+    background: #181818;
     padding: 6px 14px;
     z-index: 99;
     transition: all 0.5s ease;
@@ -1296,7 +1297,7 @@
     left: 0;
     transform: translateY(-50%);
     font-size: 22px;
-    background: #1d1b31;
+    background: #181818;
     color: #FFF;
   }
 
@@ -1313,7 +1314,7 @@
     align-items: center;
     text-decoration: none;
     transition: all 0.4s ease;
-    background: #11101D;
+    background: #181818;
   }
 
   .sidebar li a:hover {
@@ -1333,11 +1334,11 @@
   .sidebar li a:hover .links_name,
   .sidebar li a:hover i {
     transition: all 0.5s ease;
-    color: #11101D;
+    color: #181818;
   }
 
   .sidebar li i {
-    height: 50px;
+    height: 65px;
     line-height: 50px;
     font-size: 18px;
     border-radius: 12px;
@@ -1346,12 +1347,12 @@
   .sidebar li.profile {
     position: fixed;
     height: 300px;
-    width: 440px;
 
+    width: 420px;
     left: 0;
     bottom: -8px;
     padding: 10px 14px;
-    background: #1d1b31;
+    background: #181818;
     transition: all 0.5s ease;
     overflow: hidden;
   }
@@ -1366,7 +1367,7 @@
     height: 270px;
     width: 270px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 20%;
     margin-right: 30px;
   }
 
@@ -1379,7 +1380,8 @@
   }
 
   .sidebar li.profile .job {
-    font-size: 35px;
+    font-size: 25px;
+    text-align: center;
   }
 
   .sidebar .profile #log_out {
@@ -1387,7 +1389,7 @@
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    background: #1d1b31;
+    background: #181818;
     width: 50px;
     height: 60px;
     line-height: 60px;
@@ -1408,7 +1410,7 @@
 
   .home-section .text {
     display: inline-block;
-    color: #11101d;
+    color: #181818;
     font-size: 25px;
     font-weight: 500;
     margin: 18px;

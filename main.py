@@ -67,6 +67,38 @@ def get_current_user(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return user_info
 
+@app.get("/main", response_class=HTMLResponse)
+async def display_form(request: Request, db: Session = Depends(get_db)):
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+
+    videos = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        User.profile.label("img"),
+        User.user_code.label("author_id"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(30).all()
+
+    video_data = [
+        {
+            "id": video.id,
+            "url": video.url if video.url else None,
+            "name": video.name if video.name else "",
+            "title": video.title if video.title else "",
+            "ft_like": video.ft_like,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "liked": video.liked,
+            "author_id": video.author_id
+        }
+        for video in videos
+    ]
+
+    return templates.TemplateResponse("main.html", {"request": request, "videos": video_data, "user_code": user_code})
+
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
