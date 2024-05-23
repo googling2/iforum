@@ -9,6 +9,7 @@
 
 @media (min-width: 768px) {
   * {
+    list-style-type: none;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -676,6 +677,11 @@
     margin-bottom: .5rem;
   }
 
+  .pro-h {
+    margin-left: 28%;
+    width: 70%;
+  }
+
   .profile .profile-info .profile-img .inner-img img {
     width: 100%;
   }
@@ -880,6 +886,10 @@
     margin-top: 30px;
     margin-bottom: 4%;
 
+  }
+
+  #uploadForm {
+    float: right;
   }
 
   .upload_btn {
@@ -1256,6 +1266,46 @@
 
   #resutvid {
     z-index: 3;
+  }
+
+  #story .container {
+
+    margin-top: 10%;
+    padding-left: 17%;
+  }
+
+  .story_text {
+    position: absolute;
+    width: 430px;
+    margin-left: 46%;
+    margin-top: 17%;
+  }
+
+  .result_btn {
+    position: absolute;
+    height: 50px;
+    margin-left: 6%;
+    width: 8%;
+    padding: 10px;
+    border: none;
+    background-color: red;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 10%;
+    margin-bottom: 10px;
+  }
+
+  .story_btn {
+    height: 50px;
+    margin-left: 18%;
+    width: 10%;
+    padding: 10px;
+    border: none;
+    background-color: black;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 12%;
+    margin-bottom: 10px;
   }
 
   .mic-btn {

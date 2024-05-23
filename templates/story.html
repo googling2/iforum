@@ -8,28 +8,29 @@
         Your browser does not support the video tag.
       </video>
     </div>
-    <form id="uploadForm" action="/upload_video" method="post">
-      <button type="submit" class="result_btn">유튜브 업로드</button>
-    </form>
-    <button type="button" class="story_btn" onclick="showStory()">
-      줄거리보기
-    </button>
-    <h1 id="storyTitle" style="margin-left: 5%; float: right; display: none">
-      {{ story_title }}
-    </h1>
-    <p id="storyContent" class="story_text" style="display: none">
-      {{ story_content }}
-    </p>
   </div>
+  <form id="uploadForm" action="/upload_video" method="post">
+    <button type="submit" class="result_btn">유튜브 업로드</button>
+  </form>
+  <button type="button" class="story_btn" onclick="showStory()">
+    줄거리보기
+  </button>
+  <h1 id="storyTitle" style="margin-left: 5%; float: right; display: none">
+    {{ story_title }}
+  </h1>
+  <p id="storyContent" class="story_text" style="display: none">
+    {{ story_content }}
+  </p>
 </section>
 
 <script>
   function showStory() {
-    document.getElementById("storyTitle").style.display = "block";
+
     document.getElementById("storyContent").style.display = "block";
+
   }
 
-  document.getElementById('uploadForm').onsubmit = async function(event) {
+  document.getElementById('uploadForm').onsubmit = async function (event) {
     event.preventDefault();
     try {
       let response = await fetch('/upload_video', {
