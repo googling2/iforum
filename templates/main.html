@@ -1,13 +1,15 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
-<link rel="stylesheet" href="../static/css/styles.css">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="../static/css/styles.css" />
+<link
+  href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+  rel="stylesheet"
+/>
 <div class="search-container">
-  <form action="">
-    <input type="text" placeholder="Search">
+  <form id="search-form" method="post" action="/search">
+    <input type="text" id="search-input" name="keyword" placeholder="Search" />
+    <button type="submit" class="search"><i class="ri-search-line"></i></button>
   </form>
-  <button class="search"><i class="ri-search-line"></i></button>
   <button class="mic"><i class="ri-mic-fill"></i></button>
 </div>
 <section class="main-page">
@@ -25,19 +27,50 @@
       </div>
     </div>
     <div class="video-container">
-      <!-- 여기 비디오 컨텐츠가 반복됨 -->
+      <!-- 검색 결과가 여기에 표시됨 -->
+      {% if videos %} {% for video in videos %}
+      <div class="video-content-cover">
+        <div class="video-content">
+          <a href="#" class="video-box">
+            <video controls class="m-vdo">
+              <source src="{{ video.url }}" type="video/mp4" />
+            </video>
+          </a>
+          <div class="video-details">
+            <div class="channel-logo">
+              <img src="{{ video.img }}" alt="" class="m-img" />
+            </div>
+            <div class="detail">
+              <h3 class="title">{{ video.title }}</h3>
+              <div class="channel-name">{{ video.name }}</div>
+              <div class="views-upload">
+                <div class="views">{{ video.ft_like }} like</div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-content">
+            <div class="btn">구독하기</div>
+            <div class="btn">프로필보기</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% endif %}
     </div>
   </div>
 </section>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const userCode = "{{ user_code }}";  // 사용자 코드를 템플릿에서 가져옴
+    const userCode = "{{ user_code }}"; // 사용자 코드를 템플릿에서 가져옴
     const videoContainer = document.querySelector(".video-container");
 
     const vPlayer = (video) => {
-      const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
-      const likedClass = video.liked ? 'color-switch' : '';
+      const videoUrl = video.url
+        ? video.url.startsWith("/")
+          ? video.url
+          : "/" + video.url
+        : null;
+      const likedClass = video.liked ? "color-switch" : "";
       return `
         <div class="video-content-cover">
           <div class="video-content">
@@ -67,7 +100,7 @@
       `;
     };
 
-    const videoData = JSON.parse('{{ videos | tojson | safe }}');
+    const videoData = JSON.parse("{{ videos | tojson | safe }}");
 
     function injectVideos() {
       videoData.forEach((video) => {
@@ -90,43 +123,43 @@
 
           if (liked) {
             fetch(`/unlike/${videoId}`, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                "Content-Type": "application/json",
+                Accept: "application/json",
               },
-              body: JSON.stringify({ user_code: userCode })
+              body: JSON.stringify({ user_code: userCode }),
             })
-              .then(response => response.json())
-              .then(data => {
+              .then((response) => response.json())
+              .then((data) => {
                 if (data.success) {
-                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                  likeCountElement.textContent = data.likes_count; // 서버 응답으로 좋아요 수 업데이트
                   likeBtn.setAttribute("data-liked", "false");
                   likeBtn.classList.remove("color-switch");
                 }
               })
-              .catch(error => {
-                console.error('Error:', error);
+              .catch((error) => {
+                console.error("Error:", error);
               });
           } else {
             fetch(`/like/${videoId}`, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                "Content-Type": "application/json",
+                Accept: "application/json",
               },
-              body: JSON.stringify({ user_code: userCode })
+              body: JSON.stringify({ user_code: userCode }),
             })
-              .then(response => response.json())
-              .then(data => {
+              .then((response) => response.json())
+              .then((data) => {
                 if (data.success) {
-                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
+                  likeCountElement.textContent = data.likes_count; // 서버 응답으로 좋아요 수 업데이트
                   likeBtn.setAttribute("data-liked", "true");
                   likeBtn.classList.add("color-switch");
                 }
               })
-              .catch(error => {
-                console.error('Error:', error);
+              .catch((error) => {
+                console.error("Error:", error);
               });
           }
         });

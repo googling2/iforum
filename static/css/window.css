@@ -9,6 +9,7 @@
 
 @media (min-width: 768px) {
   * {
+    list-style-type: none;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -33,7 +34,7 @@
     scroll-snap-type: y mandatory;
   }
 
-  button {
+  .side-btns-wrapper button {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -68,7 +69,7 @@
 
   #pause-play-btn {
     bottom: 6rem;
-    position: absolute;
+
     height: 100%;
     width: 100%;
     z-index: 2;
@@ -676,6 +677,11 @@
     margin-bottom: .5rem;
   }
 
+  .pro-h {
+    margin-left: 28%;
+    width: 70%;
+  }
+
   .profile .profile-info .profile-img .inner-img img {
     width: 100%;
   }
@@ -773,13 +779,23 @@
 
   .story_container {
 
-    flex-wrap: wrap;
+
     display: flex;
     flex-direction: column;
   }
 
   .input_text {
     margin-top: 2rem;
+    justify-content: flex-end;
+
+  }
+
+  .story-title {
+    font-size: 1.8rem;
+    margin-top: 12%;
+    position: absolute;
+    margin-left: 14%;
+
   }
 
   .story_video {
@@ -805,44 +821,75 @@
   .option-container {
     display: flex;
     align-items: center;
-    margin-right: 2rem;
-    float: right;
+    margin-right: -15rem;
     margin-top: -3rem;
     flex-direction: column;
   }
 
   .option-image {
+    margin-bottom: -18px;
     border-radius: 100%;
     width: 53px;
-    margin-right: 15px
+    margin-right: 15px;
+  }
+
+  .please {
+    margin: 0 10%;
+
   }
 
   .input_story {
-    width: 100%;
-    padding: 30px;
+    margin-left: 35%;
+    width: 52%;
+    padding: 75px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-top: 50px
+    margin-top: 41%;
   }
 
   .select_mood1 {
-    width: 38%;
+    margin-left: 13px;
+    width: 40.5%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 30px;
   }
 
+  .select_mood2 {
+    margin-left: 13px;
+    width: 38.5%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 30px;
+  }
+
+  .story_content {
+
+    margin-left: 20%;
+    width: 30%;
+    position: sticky;
+    margin-top: 3%;
+    border: solid 1px;
+  }
+
   .base_btn {
-    margin-left: 5%;
-    width: 90%;
+
+    margin-left: 42%;
+    width: 37%;
     padding: 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #9a78ff;
     color: #fff;
     border-radius: 5px;
     margin-top: 30px;
-    margin-bottom: 40%;
+    margin-bottom: 4%;
+
+  }
+
+  #uploadForm {
+    float: right;
   }
 
   .upload_btn {
@@ -857,12 +904,12 @@
   }
 
   .cnImg {
-    border-radius: 25%;
-    margin-top: -2%;
-    margin-left: 54%;
-    width: 10%;
-    height: 10%;
+    border-radius: 22%;
+    margin: 24px 10%;
+    width: 307px;
+    height: 307px;
   }
+
 
   .loader {
     border: 16px solid #f3f3f3;
@@ -907,6 +954,51 @@
     text-align: center;
     line-height: 30px;
     color: white;
+  }
+
+  .left-container,
+  .right-container {
+    flex: 1;
+    /* flex 비율 설정 */
+    padding: 20px;
+    /* 패딩 설정 */
+  }
+
+
+
+
+  /* 입력 텍스트 스타일 */
+  .input_text {
+    margin-bottom: 20px;
+    /* 아래 여백 설정 */
+  }
+
+  /* 우측 컨테이너 스타일 */
+  .right-container {
+    display: flex;
+    flex-direction: column;
+    /* 수직 방향으로 정렬 */
+    justify-content: center;
+    /* 수직 가운데 정렬 */
+  }
+
+  /* 우측 컨테이너 내부 div 스타일 */
+  .right-container>div {
+    margin-bottom: 20px;
+    /* 아래 여백 설정 */
+  }
+
+  /* 옵션 컨테이너 스타일 */
+  .option-container {
+    display: flex;
+    align-items: center;
+    /* 수직 가운데 정렬 */
+  }
+
+  /* 옵션 이미지 스타일 */
+  .option-container img {
+    margin-right: 10px;
+    /* 오른쪽 여백 설정 */
   }
 
   /*End Profile Section*/
@@ -1123,6 +1215,7 @@
     }
   }
 
+
   .wall:nth-child(1) {
     background-image: url("../sample_img/1.png");
   }
@@ -1152,7 +1245,7 @@
   }
 
   .wall:nth-child(8) {
-    background-image: url("../static/sample_img/8.png");
+    background-image: url("../sample_img/8.png");
   }
 
   .wall:nth-child(9) {
@@ -1175,15 +1268,84 @@
     z-index: 3;
   }
 
-  #myForm {
+  #story .container {
 
-    float: right;
-    width: 80%;
-    background: linear-gradient(to top right, #c2ffef 10%, #f9aabe 65%, #ffb900 125%);
+    margin-top: 10%;
+    padding-left: 17%;
   }
 
-  /* Google Font Link */
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+  .story_text {
+    position: absolute;
+    width: 430px;
+    margin-left: 46%;
+    margin-top: 17%;
+  }
+
+  .result_btn {
+    position: absolute;
+    height: 50px;
+    margin-left: 6%;
+    width: 8%;
+    padding: 10px;
+    border: none;
+    background-color: red;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 10%;
+    margin-bottom: 10px;
+  }
+
+  .story_btn {
+    height: 50px;
+    margin-left: 18%;
+    width: 10%;
+    padding: 10px;
+    border: none;
+    background-color: black;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 12%;
+    margin-bottom: 10px;
+  }
+
+  .mic-btn {
+    width: 205px;
+    background: plum;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15.5%;
+    position: absolute;
+    margin-left: 17%;
+    border-radius: 20px;
+    padding: 2px;
+  }
+
+  #myForm {
+    background-image: url(../sample_img/bg.png);
+    background-size: cover;
+    background-repeat: round;
+    width: 83vw;
+    height: 100vh;
+    z-index: -1;
+    margin: 0px 18%;
+    padding: 0px;
+    display: flex;
+  }
+
+  #story {
+    background-image: url(../sample_img/bg.png);
+    background-size: cover;
+    background-repeat: round;
+    width: 83vw;
+    height: 100vh;
+    z-index: -1;
+    margin: 0px 18%;
+    padding: 0px;
+    display: flex;
+  }
+
+
 
   .sidebar {
     border-right: solid plum;
@@ -1417,20 +1579,47 @@
   }
 
 
+  /* 좌측 컨테이너 스타일 */
+  .left-container,
+  .right-container {
+    flex: 1;
+    /* flex 비율 설정 */
+    padding: 20px;
+    /* 패딩 설정 */
+  }
 
 
 
 
+  /* 입력 텍스트 스타일 */
+  .input_text {
+    margin-bottom: 20px;
+    /* 아래 여백 설정 */
+  }
 
+  /* 우측 컨테이너 스타일 */
+  .right-container {
+    display: flex;
+    flex-direction: column;
+    /* 수직 방향으로 정렬 */
+    justify-content: center;
+    /* 수직 가운데 정렬 */
+  }
 
+  /* 우측 컨테이너 내부 div 스타일 */
+  .right-container>div {
+    margin-bottom: 20px;
+    /* 아래 여백 설정 */
+  }
 
+  /* 옵션 컨테이너 스타일 */
+  .option-container {
+    display: flex;
+    align-items: center;
+    /* 수직 가운데 정렬 */
+  }
 
-
-
-
-
-
-
+  /* 옵션 이미지 스타일 */
 
 
 }
