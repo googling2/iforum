@@ -5,12 +5,18 @@
   href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
   rel="stylesheet"
 />
+<style>
+  .mic.active {
+    background-color: #ffcc00;
+    color: white;
+  }
+</style>
 <div class="search-container">
   <form id="search-form" method="post" action="/search">
     <input type="text" id="search-input" name="keyword" placeholder="Search" />
     <button type="submit" class="search"><i class="ri-search-line"></i></button>
   </form>
-  <button class="mic"><i class="ri-mic-fill"></i></button>
+  <button class="mic" id="mic-button"><i class="ri-mic-fill"></i> </button>
 </div>
 <section class="main-page">
   <div class="space"></div>
@@ -60,123 +66,66 @@
 </section>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const userCode = "{{ user_code }}"; // 사용자 코드를 템플릿에서 가져옴
-    const videoContainer = document.querySelector(".video-container");
-
-    const vPlayer = (video) => {
-      const videoUrl = video.url
-        ? video.url.startsWith("/")
-          ? video.url
-          : "/" + video.url
-        : null;
-      const likedClass = video.liked ? "color-switch" : "";
-      return `
-        <div class="video-content-cover">
-          <div class="video-content">
-            <a href="#" class="video-box">
-              <video controls class="m-vdo">
-                <source src="${videoUrl}" type="video/mp4">
-              </video>
-            </a>
-            <div class="video-details">
-              <div class="channel-logo">
-                <img src="${video.img}" alt="" class="m-img">
-              </div>
-              <div class="detail">
-                <h3 class="title">${video.title}</h3>
-                <div class="channel-name">${video.name}</div>
-                <div class="views-upload">
-                  <div class="views">${video.ft_like} like</div>
-                </div>
-              </div>
-            </div>
-            <div class="hidden-content">
-              <div class="btn">구독하기</div>
-              <div class="btn">프로필보기</div>
-            </div>
-          </div>
-        </div>
-      `;
-    };
-
-    const videoData = JSON.parse("{{ videos | tojson | safe }}");
-
-    function injectVideos() {
-      videoData.forEach((video) => {
-        const videoElement = vPlayer(video);
-        if (videoElement) {
-          videoContainer.innerHTML += videoElement;
-        }
-      });
-
-      const vids = document.querySelectorAll(".video-content-cover");
-      vids.forEach((vid) => {
-        const vdo = vid.querySelector(".m-vdo");
-
-        const likeBtn = vid.querySelector(".like-btn");
-        const likeCountElement = likeBtn.querySelector(".like-count");
-
-        likeBtn.addEventListener("click", () => {
-          const videoId = likeBtn.getAttribute("data-video-id");
-          const liked = likeBtn.getAttribute("data-liked") === "true";
-
-          if (liked) {
-            fetch(`/unlike/${videoId}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify({ user_code: userCode }),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.success) {
-                  likeCountElement.textContent = data.likes_count; // 서버 응답으로 좋아요 수 업데이트
-                  likeBtn.setAttribute("data-liked", "false");
-                  likeBtn.classList.remove("color-switch");
-                }
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-          } else {
-            fetch(`/like/${videoId}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify({ user_code: userCode }),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.success) {
-                  likeCountElement.textContent = data.likes_count; // 서버 응답으로 좋아요 수 업데이트
-                  likeBtn.setAttribute("data-liked", "true");
-                  likeBtn.classList.add("color-switch");
-                }
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-          }
-        });
-
-        const shareBtn = vid.querySelector("#share-btn");
-        const vidTitle = vid.querySelector(".title");
-        shareBtn.addEventListener("click", () => {
-          navigator.share({
-            title: vidTitle.textContent,
-            text: "Check out this video!",
-            url: vdo.src,
-          });
-        });
-      });
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM fully loaded and parsed');
+    
+    const micButton = document.getElementById('mic-button');
+    const searchInput = document.getElementById('search-input');
+    const searchForm = document.getElementById('search-form');
+    
+    if (micButton) {
+      console.log('Mic button found:', micButton);
+    } else {
+      console.error('Mic button not found');
     }
-
-    injectVideos();
+    
+    if (searchInput) {
+      console.log('Search input found:', searchInput);
+    } else {
+      console.error('Search input not found');
+    }
+    
+    if (searchForm) {
+      console.log('Search form found:', searchForm);
+    } else {
+      console.error('Search form not found');
+    }
+    
+    if ('webkitSpeechRecognition' in window) {
+      console.log('webkitSpeechRecognition is supported');
+      
+      const recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'ko-KR';
+      
+      micButton.addEventListener('click', () => {
+        console.log('Mic button clicked');
+        recognition.start();
+        micButton.classList.add('active');
+        console.log('Speech recognition started');
+      });
+      
+      recognition.onresult = (event) => {
+        const speechResult = event.results[0][0].transcript;
+        searchInput.value = speechResult;
+        console.log('Recognized text:', speechResult);
+        micButton.classList.remove('active');
+        searchForm.submit(); // 폼 자동 제출
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        micButton.classList.remove('active');
+      };
+      
+      recognition.onend = () => {
+        micButton.classList.remove('active');
+        console.log('Speech recognition ended');
+      };
+    } else {
+      console.log('webkitSpeechRecognition is not supported in this browser.');
+    }
   });
 </script>
 
