@@ -75,7 +75,6 @@ async def upload_video(request, db):
 
         initialize_upload(youtube, options)
         return RedirectResponse(url="/my_profile", status_code=302)
-        # return JSONResponse(status_code=200, content={"message": "Upload successful"})
     except HttpError as e:
         if e.resp.status == 400 and "uploadLimitExceeded" in e.content.decode():
             return JSONResponse(status_code=400, content={"message": "The user has exceeded the number of videos they may upload."})
