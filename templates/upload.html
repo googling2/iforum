@@ -40,13 +40,11 @@
         <option value="shimmer" data-image="../static/profile_img/6.png"
           data-audio="../static/profile_audio/shimmer.mp3">태민</option>
         {% for voice in user_voices %}
-        <option value="{{ "static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
+        <option value="{{ " static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
         {% endfor %}
       </select>
       <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image">
     </div>
-
-
 
     <div>
       <label for="voices">음악 선택:</label>
@@ -313,7 +311,7 @@
     animateLoading();
   });
 
-  document.addEventListener("DOMContentLoaded", () => {
+  window.onload = function () {
     const selectElement = document.getElementById("selected_voice");
     const selectedImage = document.getElementById("selected_image");
     const selectedText = document.getElementById("selected_text");
@@ -387,8 +385,7 @@
           });
         });
     });
-  });
-  document.addEventListener('DOMContentLoaded', function () {
+
     // 브라우저의 음성 인식 기능을 확인합니다.
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -438,7 +435,7 @@
     micBtn.addEventListener('click', function () {
       recognition.start();
     });
-  });
+  };
 </script>
 
 {% endblock content %}

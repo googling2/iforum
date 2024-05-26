@@ -12,7 +12,7 @@
   <form id="uploadForm" action="/upload_video" method="post">
     <button type="submit" class="result_btn">유튜브 업로드</button>
   </form>
-  <button type="button" class="story_btn" onclick="showStory()">
+  <button type="button" class="story_btn" onclick="toggleStory()">
     줄거리보기
   </button>
   <h1 id="storyTitle" style="margin-left: 5%; float: right; display: none">
@@ -24,17 +24,16 @@
 </section>
 
 <script>
-  function showStory() {
-
-    document.getElementById("storyContent").style.display = "block";
-
+  function toggleStory() {
+    const storyContent = document.getElementById("storyContent");
+    if (storyContent.style.display === "block") {
+      storyContent.style.display = "none";
+    } else {
+      storyContent.style.display = "block";
+    }
   }
 
-<<<<<<< HEAD
-  document.getElementById('uploadForm').onsubmit = async function (event) {
-=======
   document.getElementById("uploadForm").onsubmit = async function (event) {
->>>>>>> 5e8624369e918cc459414cd198e7fb32dc6de8fd
     event.preventDefault();
     try {
       let response = await fetch("/upload_video", {

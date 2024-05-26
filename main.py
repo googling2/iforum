@@ -67,6 +67,24 @@ def get_current_user(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return user_info
 
+
+@app.post("/search", response_class=HTMLResponse)
+async def search_fairytales(request: Request, keyword: str = Form(...), db: Session = Depends(get_db)):
+    results = db.query(Fairytale).filter(Fairytale.ft_title.ilike(f'%{keyword}%')).all()
+    video_data = [
+        {
+            "id": result.ft_code,
+            "url": result.ft_name if result.ft_name else None,
+            "title": result.ft_title if result.ft_title else "",
+            "ft_like": result.ft_like,
+            "img": f"/static/uploads/{result.user.profile}" if result.user.profile else "/static/uploads/basic.png",
+            "name": result.user.user_name if result.user.user_name else "",
+        }
+        for result in results
+    ]
+    return templates.TemplateResponse("main.html", {"request": request, "videos": video_data})
+
+
 @app.get("/main", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
