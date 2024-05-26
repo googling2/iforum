@@ -81,14 +81,29 @@
         <span class="links_name">테스트</span>
       </a>
     </li>
+
+    <!-- <li class="profile">
+      <div class="profile-details">
+          <img src="{{ profile_image }}" alt="profileImg" />
+          <div class="name_job">
+              <div class="name" id="user-name">{{ profile_user_info.user_name }}</div>
+              <div class="job">팔로우:<span id="following-count">{{ follow_count }}</span></div>
+              <div class="job">팔로워:<span id="follower-count">{{ follower_count }}</span></div>
+              <div class="job">좋아요:<span id="like-count">{{ total_likes }}</span></div>
+          </div>
+      </div>
+  </li>
+</ul>
+</div> -->
+
     <li class="profile">
       <div class="profile-details">
-        <img src="../static/sample_img/2.png" alt="profileImg" />
+        <img src="{{ profile_image }}" alt="profileImg" />
         <div class="name_job">
-          <div class="name">조영강</div>
-          <div class="job">팔로우:2</div>
-          <div class="job">팔로워:3</div>
-          <div class="job">좋아요:4</div>
+          <!-- <div class="name">{{ profile_user_info.user_name }}</div> -->
+          <div class="job">팔로우: {{ follow_count }}</div>
+          <div class="job">팔로워: {{ follower_count }}</div>
+          <div class="job">좋아요: {{ total_likes }}</div>
         </div>
       </div>
     </li>
@@ -137,3 +152,18 @@
     }
   });
 </script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const userName = document.getElementById("user-name").textContent;
+      const followingCount = document.getElementById("following-count").textContent;
+      const followerCount = document.getElementById("follower-count").textContent;
+      const likeCount = document.getElementById("like-count").textContent;
+  
+      console.log("User Name:", userName);
+      console.log("Following Count:", followingCount);
+      console.log("Follower Count:", followerCount);
+      console.log("Like Count:", likeCount);
+  });
+  </script>

@@ -70,6 +70,9 @@ def get_current_user(request: Request):
 
 @app.post("/search", response_class=HTMLResponse)
 async def search_fairytales(request: Request, keyword: str = Form(...), db: Session = Depends(get_db)):
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+
     results = db.query(Fairytale).filter(Fairytale.ft_title.ilike(f'%{keyword}%')).all()
     video_data = [
         {
@@ -82,7 +85,20 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
         }
         for result in results
     ]
-    return templates.TemplateResponse("main.html", {"request": request, "videos": video_data})
+
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
+
+    return templates.TemplateResponse("main.html", {
+        "request": request,
+        "videos": video_data,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes
+    })
 
 
 @app.get("/main", response_class=HTMLResponse)
@@ -115,7 +131,20 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         for video in videos
     ]
 
-    return templates.TemplateResponse("main.html", {"request": request, "videos": video_data, "user_code": user_code})
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
+
+    return templates.TemplateResponse("main.html", {
+        "request": request,
+        "videos": video_data,
+        "user_code": user_code,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes
+    })
 
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
@@ -147,9 +176,55 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         for video in videos
     ]
 
-    print("비디오 데이터 Index.html에서",video_data)  # 디버깅을 위해 출력합니다.
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        user_code = user_info['usercode']
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
 
-    return templates.TemplateResponse("index.html", {"request": request, "videos": video_data, "user_code": user_code})
+    print("비디오 데이터 Index.html에서", video_data)  # 디버깅을 위해 출력합니다.
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "videos": video_data,
+        "user_code": user_code,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes
+    })
+
+async def get_profile_data(db: Session, user_code: int):
+    profile_user = db.query(User).filter(User.user_code == user_code).first()
+    profile_image = "/static/uploads/basic.png"
+    follow_count = 0
+    follower_count = 0
+    total_likes = 0
+
+    if profile_user:
+        profile_user_info = {
+            "user_code": profile_user.user_code,
+            "user_name": profile_user.user_name,
+            "email": profile_user.email,
+            "profile": profile_user.profile,
+        }
+        profile = db.query(Profile).filter(Profile.user_code == user_code).first()
+        profile_image = f"/static/uploads/{profile.profile_name}" if profile else profile_image
+        follow_count = db.query(Subscribe).filter(Subscribe.user_code == user_code).count()
+        follower_count = db.query(Subscribe).filter(Subscribe.user_code2 == user_code).count()
+        user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
+        total_likes = sum(fairy.ft_like for fairy in user_fairytales)
+    else:
+        profile_user_info = None
+
+    return profile_user_info, profile_image, follow_count, follower_count, total_likes
+
+
+# @app.get("/w_header", response_class=HTMLResponse)
+# async def w_header(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+#     author_id = user_info['usercode']
+#     return await get_profile(request, db, author_id, user_info)
+
 
 @app.get("/my_profile", response_class=HTMLResponse)
 async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -210,10 +285,22 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
 @app.get("/upload", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
-        user_voices = db.query(Voice).filter(Voice.user_code == user_info['usercode']).all()
+        user_code = user_info['usercode']
+        
+        # 기존 코드
+        user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
+
+        # 프로필 데이터 추가
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
+
         return templates.TemplateResponse("upload.html", {
             "request": request,
-            "user_voices": user_voices
+            "user_voices": user_voices,
+            "profile_user_info": profile_user_info,
+            "profile_image": profile_image,
+            "follow_count": follow_count,
+            "follower_count": follower_count,
+            "total_likes": total_likes
         })
     except Exception as e:
         print(f"Error rendering template: {e}")
