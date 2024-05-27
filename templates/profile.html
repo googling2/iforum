@@ -228,7 +228,7 @@
       }
     }).then(response => response.json())
       .then(data => {
-        alert(`이 영상의 좋아요 수: ${data.likes_count}`);
+        alert(`영상의 좋아요 수 : ${data.likes_count}`);
       }).catch(error => {
         console.error('오류가 발생하였습니다:', error);
       });
