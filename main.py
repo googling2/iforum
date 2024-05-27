@@ -106,29 +106,29 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
     order_by = request.query_params.get("order_by", "latest")
+    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
 
+    query = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        User.profile.label("img"),
+        User.user_code.label("author_id"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code)
+
+    if subscribed_videos and user_code:
+        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
+        query = query.filter(Fairytale.user_code.in_(subscriptions))
+    
     if order_by == "popular":
-        videos = db.query(
-            Fairytale.ft_code.label("id"),
-            Fairytale.ft_name.label("url"),
-            Fairytale.ft_title.label("title"),
-            Fairytale.ft_like.label("ft_like"),
-            User.user_name.label("name"),
-            User.profile.label("img"),
-            User.user_code.label("author_id"),
-            (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-        ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_like.desc()).limit(16).all()
-    else:  # default to latest
-        videos = db.query(
-            Fairytale.ft_code.label("id"),
-            Fairytale.ft_name.label("url"),
-            Fairytale.ft_title.label("title"),
-            Fairytale.ft_like.label("ft_like"),
-            User.user_name.label("name"),
-            User.profile.label("img"),
-            User.user_code.label("author_id"),
-            (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-        ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(16).all()
+        query = query.order_by(Fairytale.ft_like.desc())
+    else:
+        query = query.order_by(Fairytale.ft_code.desc())
+
+    videos = query.limit(16).all()
 
     video_data = [
         {
@@ -157,7 +157,8 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follow_count": follow_count,
         "follower_count": follower_count,
         "total_likes": total_likes,
-        "order_by": order_by
+        "order_by": order_by,
+        "subscribed_videos": subscribed_videos
     })
 
 @app.get("/", response_class=HTMLResponse)
