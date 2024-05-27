@@ -900,11 +900,17 @@ async def show_following_users(request: Request, db: Session = Depends(get_db), 
     
     print("Following users:", following_users)
 
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_info['usercode'])
+
     return templates.TemplateResponse("gudog.html", {
         "request": request,
-        "following_users": following_users
+        "following_users": following_users,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes
     })
-
 
 if __name__ == "__main__":
     import uvicorn
