@@ -52,8 +52,7 @@
             </div>
           </div>
           <div class="hidden-content">
-            <div class="btn">구독하기</div>
-            <div class="btn">프로필보기</div>
+            <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
           </div>
         </div>
       </div>
@@ -131,6 +130,15 @@
     document.getElementById('popular-chip').addEventListener('click', function () {
       window.location.href = "/main?order_by=popular";
     });
+
+    const profileButtons = document.querySelectorAll('.profile-btn');
+    profileButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const authorId = this.getAttribute('data-author-id');
+        window.location.href = `/profile/${authorId}`;
+      });
+    });
+
   });
 
   
