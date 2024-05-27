@@ -912,6 +912,27 @@ async def show_following_users(request: Request, db: Session = Depends(get_db), 
         "total_likes": total_likes
     })
 
+@app.delete("/delete_existing_voice")
+async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+    user_code = user_info['usercode']
+    voice = db.query(Voice).filter(Voice.user_code == user_code).first()
+
+    if not voice:
+        raise HTTPException(status_code=404, detail="Voice not found")
+
+    # 파일 경로
+    file_path = os.path.join(UPLOAD_FOLDER2, voice.voice_filename)
+    
+    # 데이터베이스에서 삭제
+    db.delete(voice)
+    db.commit()
+
+    # 파일 시스템에서 삭제
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    return {"message": "기존 목소리가 삭제되었습니다."}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host='127.0.0.1', port=8000)

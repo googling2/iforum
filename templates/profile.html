@@ -20,7 +20,6 @@
     position: absolute;
   }
 
-  /* 
   .rec-bg {
     z-index: 999;
     margin-top: -24%;
@@ -29,7 +28,7 @@
     position: absolute;
     width: 200%;
     height: 600%;
-  } */
+  }
 </style>
 
 <section class="pro-h">
@@ -76,10 +75,10 @@
         {% if is_own_profile %}
         <button class="btn" id="profile-settings-button">프로필 설정</button>
         <button class="btn" id="rec-btn">녹음 시작</button>
+        <button class="btn" id="stop-rec-btn" disabled style="display:none;">녹음 중지</button>
         {% else %}
         {% if is_following %}
-        <button class="btn" id="follow-button" onclick="unfollowUser('{{ profile_user_info.user_code }}')">팔로우
-          취소</button>
+        <button class="btn" id="follow-button" onclick="unfollowUser('{{ profile_user_info.user_code }}')">팔로우 취소</button>
         {% else %}
         <button class="btn" id="follow-button" onclick="followUser('{{ profile_user_info.user_code }}')">팔로우</button>
         {% endif %}
@@ -87,10 +86,8 @@
       </div>
 
       <div class="profile-img-upload" id="profile-img-upload">
-        <form id="uploadProfileImageForm" action="/upload_profile_image" method="post" enctype="multipart/form-data"
-          onsubmit="return confirm('업로드하시겠습니까?')">
-          <input type="file" id="profileImageInput" name="profile_image" accept="image/*" style="display: none;"
-            required>
+        <form id="uploadProfileImageForm" action="/upload_profile_image" method="post" enctype="multipart/form-data" onsubmit="return confirm('업로드하시겠습니까?')">
+          <input type="file" id="profileImageInput" name="profile_image" accept="image/*" style="display: none;" required>
         </form>
       </div>
 
@@ -102,8 +99,7 @@
           <input type="text" id="voiceName" name="voiceName" required>
           <button type="submit" id="submitBtn">등록하기</button>
         </div>
-        <div class="rec-bg">
-          <button type="button" id="stop-rec-btn" class="rec-stop" disabled style="display:none;">녹음 중지</button>
+        <div class="rec-bg" style="display:none;">
           <audio id="audio-playback" controls style="display:none;"></audio>
           <div class="recording-indicator" class="rec-ing">녹음 중...</div>
         </div>
@@ -119,8 +115,7 @@
               <source src="/{{ fairytale.ft_name }}" type="video/mp4">
             </video>
             <div class="video-controls">
-              <button class="like-btn" id="like-btn-{{ fairytale.ft_code }}"
-                onclick="toggleLike('{{ fairytale.ft_code }}')">👍 좋아요</button>
+              <button class="like-btn" id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">👍 좋아요</button>
               {% if is_own_profile %}
               <button class="delete-btn" onclick="confirmDelete('{{ fairytale.ft_code }}')">🗑️ 삭제</button>
               {% endif %}
@@ -130,9 +125,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 목소리 목록 -->
-
   </section>
 </section>
 <script>
@@ -146,7 +138,7 @@
 
       if (data.voice_count >= 1) {
         if (confirm('현재 저장된 목소리 파일이 있습니다. 삭제하시겠습니까?')) {
-          await deleteExistingVoice();
+          await fetch('/delete_existing_voice', { method: 'DELETE' });
         } else {
           return;
         }
@@ -252,8 +244,7 @@
       alert(data.message);
       document.getElementById(`video-container-${ftCode}`).remove();  // 정확한 ID 사용
     }).catch(error => {
-      console.error('오류 발생:', error);
-      alert('비디오 삭제 중 오류가 발생했습니다.');  // 사용자에게 더 명확한 에러 메시지 제공
+      alert('삭제 중 오류가 발생했습니다: ' + error.message);
     });
   }
 
@@ -262,40 +253,42 @@
       const response = await fetch(`/follow/${user_code2}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
       });
-      if (!response.ok) {
-        throw new Error('팔로우 중 오류가 발생했습니다.');
+
+      if (response.ok) {
+        alert("팔로우 되었습니다.");
+        location.reload(); // 팔로우 후 페이지 새로고침
+      } else {
+        alert("팔로우 중 오류가 발생했습니다.");
       }
-      const data = await response.json();
-      alert(data.message);
-      document.getElementById('follow-button').innerText = '팔로우 취소';
-      document.getElementById('follow-button').setAttribute('onclick', `unfollowUser(${user_code2})`);
     } catch (error) {
-      console.error('팔로우 중 오류가 발생하였습니다:', error);
-      alert(error.message);
+      console.error("팔로우 중 오류가 발생하였습니다:", error);
+      alert('팔로우 중 오류가 발생하였습니다.');
     }
   }
 
   async function unfollowUser(user_code2) {
     try {
       const response = await fetch(`/unfollow/${user_code2}`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
       });
-      if (!response.ok) {
-        throw new Error('언팔로우 중 오류가 발생했습니다.');
+
+      if (response.ok) {
+        alert("팔로우 취소되었습니다.");
+        location.reload(); // 팔로우 취소 후 페이지 새로고침
+      } else {
+        alert("팔로우 취소 중 오류가 발생했습니다.");
       }
-      const data = await response.json();
-      alert(data.message);
-      document.getElementById('follow-button').innerText = '팔로우';
-      document.getElementById('follow-button').setAttribute('onclick', `followUser(${user_code2})`);
     } catch (error) {
-      console.error('언팔로우 중 오류가 발생하였습니다:', error);
-      alert(error.message);
+      console.error("팔로우 취소 중 오류가 발생하였습니다:", error);
+      alert('팔로우 취소 중 오류가 발생하였습니다.');
     }
   }
 
@@ -309,7 +302,24 @@
     }
   });
 
-  document.getElementById('fileInput').addEventListener('change', function () {
+  document.getElementById('fileInput').addEventListener('change', async function () {
+    try {
+      const response = await fetch('/check_voice_count');
+      const data = await response.json();
+
+      if (data.voice_count >= 1) {
+        if (confirm('현재 저장된 목소리 파일이 있습니다. 삭제하시겠습니까?')) {
+          await fetch('/delete_existing_voice', { method: 'DELETE' });
+        } else {
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("Error checking voice count:", error);
+      alert('목소리 파일 개수 확인 중 오류가 발생했습니다.');
+      return;
+    }
+
     const voiceName = prompt("업로드할 파일의 이름을 입력하세요:", "파일 이름");
     if (voiceName) {
       document.getElementById('voiceName').value = voiceName;
@@ -351,29 +361,75 @@
     let stream;
 
     async function checkExistingVoice() {
-      const response = await fetch('/check_existing_voice');
+      const response = await fetch('/check_voice_count');
       if (response.ok) {
         const data = await response.json();
-        return data.voice_name;
+        if (data.voice_count > 0) {
+          return true;
+        }
       }
-      return null;
+      return false;
     }
 
     async function startRecording() {
-      const existingVoiceName = await checkExistingVoice();
-      if (existingVoiceName) {
-        recBtn.innerText = existingVoiceName;
-        if (!confirm('현재 저장된 목소리 파일이 있습니다. 삭제후 진행해주세요')) {
+      const hasExistingVoice = await checkExistingVoice();
+      if (hasExistingVoice) {
+        if (!confirm('현재 저장된 목소리 파일이 있습니다. 삭제 후 진행해주세요')) {
           return;
         } else {
           await deleteExistingVoice();
         }
       }
 
-      mediaRecorder.start();
-      recBtn.disabled = true;
-      stopRecBtn.disabled = false;
-      stopRecBtn.style.display = 'inline';
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(str => {
+          stream = str;
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.start();
+          recBtn.disabled = true;
+          stopRecBtn.disabled = false;
+          stopRecBtn.style.display = 'inline';
+
+          mediaRecorder.onstart = function () {
+            audioChunks = [];
+            console.log('녹음 시작');
+            recBtn.classList.add('recording');
+            document.querySelector('.recording-indicator').style.display = 'inline';
+          };
+
+          mediaRecorder.ondataavailable = function (event) {
+            audioChunks.push(event.data);
+          };
+
+          mediaRecorder.onstop = async function () {
+            console.log('녹음 종료');
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioPlayback.src = audioUrl;
+            audioPlayback.style.display = 'block';
+            stopRecBtn.disabled = true;
+            stopRecBtn.style.display = 'none';
+            recBtn.disabled = false;
+            recBtn.classList.remove('recording');
+            document.querySelector('.recording-indicator').style.display = 'none';
+
+            stream.getTracks().forEach(track => track.stop());
+
+            const voiceName = prompt("녹음 파일의 이름을 입력하세요:", "녹음 파일 이름");
+            if (voiceName) {
+              const fileInput = document.getElementById('fileInput');
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(new File([audioBlob], `${voiceName}.wav`, { type: 'audio/wav' }));
+              fileInput.files = dataTransfer.files;
+              voiceNameInput.value = voiceName;
+              submitBtn.click(); // 녹음이 중지되면 등록하기 버튼 클릭
+            } else {
+              alert('녹음 파일 이름을 입력하지 않았습니다. 녹음 파일이 저장되지 않습니다.');
+            }
+          };
+        })
+        .catch(error => console.error('미디어 접근 오류:', error));
     }
 
     async function handleRecBtnClick() {
@@ -385,61 +441,16 @@
       }
     }
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(str => {
-        stream = str;
-        mediaRecorder = new MediaRecorder(stream);
-
-        mediaRecorder.onstart = function () {
-          audioChunks = [];
-          console.log('녹음 시작');
-          recBtn.classList.add('recording');
-          document.querySelector('.recording-indicator').style.display = 'inline';
-        };
-
-        mediaRecorder.ondataavailable = function (event) {
-          audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = async function () {
-          console.log('녹음 종료');
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          audioPlayback.src = audioUrl;
-          audioPlayback.style.display = 'block';
-          stopRecBtn.disabled = true;
-          stopRecBtn.style.display = 'none';
-          recBtn.disabled = false;
-          recBtn.classList.remove('recording');
-          document.querySelector('.recording-indicator').style.display = 'none';
-
-          stream.getTracks().forEach(track => track.stop());
-
-          const voiceName = prompt("녹음 파일의 이름을 입력하세요:", "녹음 파일 이름");
-          if (voiceName) {
-            const fileInput = document.getElementById('fileInput');
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(new File([audioBlob], `${voiceName}.wav`, { type: 'audio/wav' }));
-            fileInput.files = dataTransfer.files;
-            voiceNameInput.value = voiceName;
-            submitBtn.click(); // 녹음이 중지되면 등록하기 버튼 클릭
-          } else {
-            alert('녹음 파일 이름을 입력하지 않았습니다. 녹음 파일이 저장되지 않습니다.');
-          }
-        };
-      })
-      .catch(error => console.error('미디어 접근 오류:', error));
-
     recBtn.addEventListener('click', handleRecBtnClick);
 
     stopRecBtn.addEventListener('click', function () {
       mediaRecorder.stop();
     });
 
-    const existingVoiceName = await checkExistingVoice();
-    if (existingVoiceName) {
-      recBtn.innerText = existingVoiceName;
+    const hasExistingVoice = await checkExistingVoice();
+    if (hasExistingVoice) {
+      recBtn.innerText = "기존 목소리 파일이 있습니다";
     }
   });
 </script>
-{% endblock content %}
+{% endblock %}
