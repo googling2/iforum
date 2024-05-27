@@ -84,6 +84,7 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
             "name": result.user.user_name if result.user.user_name else "",
         }
         for result in results
+        
     ]
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
@@ -114,10 +115,10 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        User.profile.label("img"),
+        Profile.profile_name.label("img"),  # User.profile -> Profile.profile_name으로 수정
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code)
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
 
     if subscribed_videos and user_code:
         subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
@@ -137,12 +138,15 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "name": video.name if video.name else "",
             "title": video.title if video.title else "",
             "ft_like": video.ft_like,
-            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "img": f"static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
             "liked": video.liked,
             "author_id": video.author_id
         }
         for video in videos
     ]
+
+    # for video in video_data:
+    #     print(f"Video ID: {video['id']}, Profile Image: {video['img']}")  # 디버깅을 위해 출력합니다.
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
@@ -161,6 +165,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "subscribed_videos": subscribed_videos
     })
 
+
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
@@ -172,11 +177,12 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        User.profile.label("img"),
+        Profile.profile_name.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
 
+    
     video_data = [
         {
             "id": video.id,
@@ -186,17 +192,20 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "ft_like": video.ft_like,
             "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
             "liked": video.liked,
-            "author_id": video.author_id
+            "author_id": video.author_id,
         }
         for video in videos
+        
     ]
+
+    # # 디버깅을 위해 비디오 데이터 출력
+    # for video in video_data:
+    #     print(f"Video ID 나오는지 확인 : {video['id']}, Profile Image: {video['profile_image']}")  # 디버깅을 위해 출력합니다.
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
         user_code = user_info['usercode']
         profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
-
-    print("비디오 데이터 Index.html에서", video_data)  # 디버깅을 위해 출력합니다.
 
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -208,6 +217,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follower_count": follower_count,
         "total_likes": total_likes
     })
+
 
 async def get_profile_data(db: Session, user_code: int):
     profile_user = db.query(User).filter(User.user_code == user_code).first()

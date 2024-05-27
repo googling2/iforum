@@ -1546,15 +1546,15 @@
 
   .sidebar li.profile .name,
   .sidebar li.profile .job {
-    font-size: 35px;
+    font-size: 22px;
     font-weight: 400;
     color: #fff;
     white-space: nowrap;
   }
 
   .sidebar li.profile .job {
-    font-size: 25px;
-    text-align: center;
+    font-size: 16px;
+
   }
 
   .sidebar .profile #log_out {

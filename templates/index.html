@@ -12,9 +12,17 @@
     const videoDataJson = '{{ videos | tojson | safe }}';
     console.log('videoData JSON:', videoDataJson);
 
+    const videoData = JSON.parse(videoDataJson);
+    console.log('Parsed video data:', videoData);
+
     const vPlayer = (video) => {
+      console.log('Video Data:', video);  // 각 비디오 데이터 확인
+
       const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
       const likedClass = video.liked ? 'color-switch' : '';
+      const imgSrc = video.img ? video.img : "/static/uploads/basic.png";  // 각 비디오의 프로필 이미지 사용
+      console.log('Image Source:', imgSrc);  // 이미지 경로 확인
+
       return `
         <div class="vdo-wrapper">
           <!-- video -->
@@ -38,15 +46,9 @@
 
           <!-- video info -->
           <div class="info-wrapper">
-            <a href="/profile/${video.author_id}"><img src="${video.img}" alt="profile" /></a>
+            <a href="/profile/${video.author_id}"><img src="${imgSrc}" alt="profile" /></a>
             <div>
-              <h3 style="    width: 500px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;">${video.title}</h3>
+              <h3 style="width: 500px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal;">${video.title}</h3>
               <p>${video.name}</p>
             </div>
           </div>
@@ -62,10 +64,9 @@
       `;
     };
 
-    const videoData = JSON.parse('{{ videos | tojson | safe }}');
-
     function injectVideos() {
       videoData.forEach((video) => {
+        console.log('Processing video:', video);  // 각 비디오 데이터 확인
         const videoElement = vPlayer(video);
         if (videoElement) {
           videosWrapper.innerHTML += videoElement;
