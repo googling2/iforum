@@ -19,13 +19,13 @@
   <div class="space"></div>
   <div class="content">
     <div class="chips-wrapper">
-      <div class="chip">
+      <div class="chip {{ 'active' if order_by == 'latest' else '' }}" id="latest-chip">
         <p>최신순</p>
       </div>
-      <div class="chip">
+      <div class="chip {{ 'active' if order_by == 'popular' else '' }}" id="popular-chip">
         <p>인기순</p>
       </div>
-      <div class="chip">
+      <div class="chip {{ 'active' if subscribed_videos else '' }}" id="subscribed-chip">
         <p>구독영상</p>
       </div>
     </div>
@@ -52,8 +52,7 @@
             </div>
           </div>
           <div class="hidden-content">
-            <div class="btn">구독하기</div>
-            <div class="btn">프로필보기</div>
+            <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
           </div>
         </div>
       </div>
@@ -123,7 +122,30 @@
     } else {
       console.log('webkitSpeechRecognition is not supported in this browser.');
     }
+
+    document.getElementById('latest-chip').addEventListener('click', function () {
+      window.location.href = "/main?order_by=latest";
+    });
+
+    document.getElementById('popular-chip').addEventListener('click', function () {
+      window.location.href = "/main?order_by=popular";
+    });
+
+    document.getElementById('subscribed-chip').addEventListener('click', function () {
+      window.location.href = "/main?subscribed=true";
+    });
+
+    const profileButtons = document.querySelectorAll('.profile-btn');
+    profileButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const authorId = this.getAttribute('data-author-id');
+        window.location.href = `/profile/${authorId}`;
+      });
+    });
+
   });
+
+  
 </script>
 
 {% endblock content %}

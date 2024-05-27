@@ -105,8 +105,10 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
+    order_by = request.query_params.get("order_by", "latest")
+    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
 
-    videos = db.query(
+    query = db.query(
         Fairytale.ft_code.label("id"),
         Fairytale.ft_name.label("url"),
         Fairytale.ft_title.label("title"),
@@ -115,7 +117,18 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.profile.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(16).all()
+    ).join(User, Fairytale.user_code == User.user_code)
+
+    if subscribed_videos and user_code:
+        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
+        query = query.filter(Fairytale.user_code.in_(subscriptions))
+    
+    if order_by == "popular":
+        query = query.order_by(Fairytale.ft_like.desc())
+    else:
+        query = query.order_by(Fairytale.ft_code.desc())
+
+    videos = query.limit(16).all()
 
     video_data = [
         {
@@ -143,7 +156,9 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "profile_image": profile_image,
         "follow_count": follow_count,
         "follower_count": follower_count,
-        "total_likes": total_likes
+        "total_likes": total_likes,
+        "order_by": order_by,
+        "subscribed_videos": subscribed_videos
     })
 
 @app.get("/", response_class=HTMLResponse)
@@ -704,16 +719,24 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
         raise
 
 @app.get("/story_view", response_class=HTMLResponse)
-async def story_view(request: Request, video_url: str, story_title: str, story_content: str):
+async def story_view(request: Request, video_url: str, story_title: str, story_content: str, db: Session = Depends(get_db)):
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
 
-    with open('video_url.json', 'w') as f:
-        json.dump({"video_url": video_url,"story_title": story_title}, f)
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
 
     return templates.TemplateResponse("story.html", {
         "request": request,
         "video_url": video_url,
         "story_title": story_title,
-        "story_content": story_content
+        "story_content": story_content,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes
     })
 
 
