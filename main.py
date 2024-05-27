@@ -548,13 +548,8 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
         prompt_paragraphs = [
             f"{changeImg} {paragraph}" for paragraph in paragraphs
         ]
-        print("prompt_paragraphs : ",prompt_paragraphs)
+        print("prompt_paragraphs : ", prompt_paragraphs)
 
-        # prompt_paragraphs = [
-        #     f"{changeImg} {paragraph}" for paragraph in paragraphs
-        # ]
-        # print("prompt_paragraphs : ",prompt_paragraphs)
-        # # {' '.join(prompt_paragraphs)}
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"""
@@ -585,14 +580,17 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
                 cropped_image.save(panel_dest)
                 image_files.append(panel_dest)
 
-        
         final_output_file = await create_video(timestamp, selected_mood, audio_file_path, image_files)
         if os.path.exists(audio_file_path):
             os.remove(audio_file_path)
 
-
-            
-        
+        # video_url.json 파일 업데이트
+        video_data = {
+            "video_url": final_output_file,
+            "story_title": story_title
+        }
+        with open('video_url.json', 'w') as f:
+            json.dump(video_data, f)
 
         return RedirectResponse(
             url=f"/story_view?video_url={final_output_file}&story_title={story_title}&story_content={story_content}",
@@ -601,7 +599,6 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
     except Exception as e:
         print(f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}")
         return HTMLResponse(content=f"스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: {e}", status_code=500)
-
 
 
 async def create_video(timestamp, selected_mood, audio_file_path, image_files):
@@ -713,6 +710,7 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
         os.remove(output_video_file)
         os.remove(audio_file_path)
 
+        print(f"Final video file 뜨냐: {final_output_file}") 
         return final_output_file
     except Exception as e:
         print(f"비디오 생성 중 오류가 발생하였습니다: {e}")
@@ -886,7 +884,7 @@ async def follow_user(user_code2: int, db: Session = Depends(get_db), user_info:
     new_subscription = Subscribe(user_code=user_code, user_code2=user_code2)
     db.add(new_subscription)
     db.commit()
-    return {"message": "User followed successfully"}
+    return {"message": "팔로우 되었습니다"}
 
 @app.post("/unfollow/{user_code2}")
 async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -898,7 +896,7 @@ async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_inf
 
     db.delete(existing_subscription)
     db.commit()
-    return {"message": "User unfollowed successfully"}
+    return {"message": "팔로우 취소 되었습니다"}
 
 
 @app.get("/gudog", response_class=HTMLResponse)
