@@ -19,10 +19,10 @@
   <div class="space"></div>
   <div class="content">
     <div class="chips-wrapper">
-      <div class="chip">
+      <div class="chip {{ 'active' if order_by == 'latest' else '' }}" id="latest-chip">
         <p>최신순</p>
       </div>
-      <div class="chip">
+      <div class="chip {{ 'active' if order_by == 'popular' else '' }}" id="popular-chip">
         <p>인기순</p>
       </div>
       <div class="chip">
@@ -123,7 +123,17 @@
     } else {
       console.log('webkitSpeechRecognition is not supported in this browser.');
     }
+
+    document.getElementById('latest-chip').addEventListener('click', function () {
+      window.location.href = "/main?order_by=latest";
+    });
+
+    document.getElementById('popular-chip').addEventListener('click', function () {
+      window.location.href = "/main?order_by=popular";
+    });
   });
+
+  
 </script>
 
 {% endblock content %}
