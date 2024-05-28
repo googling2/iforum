@@ -86,7 +86,7 @@
       </div>
 
       <div class="profile-img-upload" id="profile-img-upload">
-        <form id="uploadProfileImageForm" action="/upload_profile_image" method="post" enctype="multipart/form-data" onsubmit="return confirm('업로드하시겠습니까?')">
+        <form id="uploadProfileImageForm" action="/upload_profile_image" method="post" enctype="multipart/form-data" onsubmit="return confirm('프로필을 변경하시겠습니까?')">
           <input type="file" id="profileImageInput" name="profile_image" accept="image/*" style="display: none;" required>
         </form>
       </div>
@@ -297,7 +297,7 @@
   });
 
   document.getElementById('profileImageInput').addEventListener('change', function () {
-    if (confirm('업로드하시겠습니까?')) {
+    if (confirm('프로필을 변경하시겠습니까?')) {
       document.getElementById('uploadProfileImageForm').submit();
     }
   });

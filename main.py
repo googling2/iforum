@@ -84,6 +84,7 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
             "name": result.user.user_name if result.user.user_name else "",
         }
         for result in results
+        
     ]
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
@@ -114,10 +115,10 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        User.profile.label("img"),
+        Profile.profile_name.label("img"),  # User.profile -> Profile.profile_name으로 수정
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code)
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
 
     if subscribed_videos and user_code:
         subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
@@ -137,12 +138,13 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "name": video.name if video.name else "",
             "title": video.title if video.title else "",
             "ft_like": video.ft_like,
-            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "img": f"static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
             "liked": video.liked,
             "author_id": video.author_id
         }
         for video in videos
     ]
+
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
@@ -161,6 +163,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "subscribed_videos": subscribed_videos
     })
 
+
 @app.get("/", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
@@ -172,11 +175,12 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        User.profile.label("img"),
+        Profile.profile_name.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
 
+    
     video_data = [
         {
             "id": video.id,
@@ -186,17 +190,16 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "ft_like": video.ft_like,
             "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
             "liked": video.liked,
-            "author_id": video.author_id
+            "author_id": video.author_id,
         }
         for video in videos
+        
     ]
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
         user_code = user_info['usercode']
         profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
-
-    print("비디오 데이터 Index.html에서", video_data)  # 디버깅을 위해 출력합니다.
 
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -208,6 +211,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follower_count": follower_count,
         "total_likes": total_likes
     })
+
 
 async def get_profile_data(db: Session, user_code: int):
     profile_user = db.query(User).filter(User.user_code == user_code).first()
@@ -324,56 +328,8 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
 @app.post("/upload_video")
 async def upload_video(request: Request, db: Session = Depends(get_db)):
     return await upload.upload_video(request, db)
-# @app.get("/profile", response_class=HTMLResponse)
-# async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-#     try:
-#         print("사용자 정보 나오는지 확인:", user_info)
-#         user_code = user_info['usercode']
-#         # 동화의 좋아요 수 합산
-#         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
-#         total_likes = sum(fairy.ft_like for fairy in user_fairytales)
-#         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
 
-#         user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
-#         try:
-#             profile = db.query(Profile).filter(Profile.user_code == user_code).first()
-#             print("Profile 조회 성공:", profile)
-#         except Exception as e:
-#             print(f"Profile 조회 중 오류 발생: {e}")
-#             profile = None
-        
-#         # 프로필 이미지 설정
-#         if profile:
-#             print(f"Profile object found: {profile}")
-#             profile_image = f"/static/uploads/{profile.profile_name}"
-#         else:
-#             print("Profile object not found, using default image.")
-#             profile_image = "/static/uploads/basic.png"
-        
-#         print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
 
-#         # 템플릿 렌더링
-#         try:
-#             response = templates.TemplateResponse("profile.html", {
-#                 "request": request,
-#                 "user_info": user_info,
-#                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-#                 "voices": user_voices,
-#                 "profile_image": profile_image,
-#                 "total_likes": total_likes,
-#                 "current_user_code": user_code  # 현재 사용자 코드 전달
-#             })
-#             print("템플릿 렌더링 성공")
-#             return response
-#         except Exception as e:
-#             print(f"템플릿 렌더링 중 오류 발생: {e}")
-#             raise
-        
-#     except Exception as e:
-#         print(f"전체 코드 실행 중 오류 발생: {e}")
-#         raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
     profile_date = datetime.date.today()
     profile = db.query(Profile).filter(Profile.user_code == user_code).first()
