@@ -34,7 +34,7 @@
       {% if videos %} {% for video in videos %}
       <div class="video-content-cover">
         <div class="video-content">
-          <a href="#" class="video-box">
+          <a class="video-box">
             <video controls class="m-vdo">
               <source src="{{ video.url }}" type="video/mp4" />
             </video>
@@ -145,7 +145,7 @@
 
   });
 
-  
+
 </script>
 
 {% endblock content %}
