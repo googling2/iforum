@@ -79,9 +79,6 @@
     const isLoggedIn = JSON.parse("{{ user_info|tojson|safe }}"); // 서버에서 user_info를 통해 로그인 여부 확인
     if (!isLoggedIn) {
       const profileLink = document.getElementById("profile-link1");
-      const subscriberListLink = document.getElementById(
-        "subscriber-list-link"
-      );
       const likedVideosLink = document.getElementById("liked-videos-link");
       const iforum = document.getElementById("iforum");
       const uploadLink = document.getElementById("upload-link"); // 동화 만들기 링크 추가
@@ -95,13 +92,6 @@
 
       if (profileLink) {
         profileLink.addEventListener("click", function (event) {
-          event.preventDefault();
-          alert("로그인이 필요합니다.");
-        });
-      }
-
-      if (subscriberListLink) {
-        subscriberListLink.addEventListener("click", function (event) {
           event.preventDefault();
           alert("로그인이 필요합니다.");
         });
