@@ -9,7 +9,7 @@ from PIL import Image
 import urllib.request
 import shutil
 from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip, AudioFileClip
-import predict
+# import predict
 import datetime
 from fastapi import Depends, HTTPException
 from authlib.integrations.starlette_client import OAuth
@@ -535,14 +535,14 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             audio_file_path = f"static/audio/m1_{uuid.uuid4()}.mp3"
             with open(audio_file_path, "wb") as audio_file:
                 audio_file.write(audio_data)
-        else:
-            audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
-            rmpath = f"static/audio/{audio_name}"
-            if os.path.exists(rmpath) and os.path.isdir(rmpath):
-                shutil.rmtree(rmpath)
-                print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
-            else:
-                print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
+        # else:
+        #     audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
+        #     rmpath = f"static/audio/{audio_name}"
+        #     if os.path.exists(rmpath) and os.path.isdir(rmpath):
+        #         shutil.rmtree(rmpath)
+        #         print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
+        #     else:
+        #         print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
