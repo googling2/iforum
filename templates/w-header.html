@@ -7,7 +7,7 @@
       </a>
     </li>
     <li>
-      <a href="/main">
+      <a href="/main" id="iforum">
         <i class="bx bx-chat"></i>
         <span class="links_name">A-Iforum</span>
       </a>
@@ -25,18 +25,6 @@
         <span class="links_name">마이페이지</span>
       </a>
     </li>
-    <!-- <li>
-      <a href="#">
-        <i class="bx bx-chat"></i>
-        <span class="links_name">구독자목록</span>
-      </a>
-    </li> -->
-    <!-- <li>
-      <a href="#">
-        <i class="bx bx-chat"></i>
-        <span class="links_name">좋아요 표시한 동영상</span>
-      </a>
-    </li> -->
     <li>
       <a href="/upload">
         <i class="bx bx-chat"></i>
@@ -54,18 +42,6 @@
       <a href="javascript:void(0);" id="profile-link1">
         <i class="bx bx-user"></i>
         <span class="links_name">마이페이지</span>
-      </a>
-    </li>
-    <li>
-      <a href="javascript:void(0);" id="subscriber-list-link">
-        <i class="bx bx-chat"></i>
-        <span class="links_name">구독자목록</span>
-      </a>
-    </li>
-    <li>
-      <a href="javascript:void(0);" id="liked-videos-link">
-        <i class="bx bx-chat"></i>
-        <span class="links_name">좋아요 표시한 동영상</span>
       </a>
     </li>
     <li>
@@ -107,7 +83,15 @@
         "subscriber-list-link"
       );
       const likedVideosLink = document.getElementById("liked-videos-link");
+      const iforum = document.getElementById("iforum");
       const uploadLink = document.getElementById("upload-link"); // 동화 만들기 링크 추가
+
+      if (iforum) {
+        iforum.addEventListener("click", function (event) {
+          event.preventDefault();
+          alert("로그인이 필요합니다.");
+        });
+      }
 
       if (profileLink) {
         profileLink.addEventListener("click", function (event) {
