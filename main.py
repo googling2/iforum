@@ -145,8 +145,6 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         for video in videos
     ]
 
-    # for video in video_data:
-    #     print(f"Video ID: {video['id']}, Profile Image: {video['img']}")  # 디버깅을 위해 출력합니다.
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
@@ -197,10 +195,6 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         for video in videos
         
     ]
-
-    # # 디버깅을 위해 비디오 데이터 출력
-    # for video in video_data:
-    #     print(f"Video ID 나오는지 확인 : {video['id']}, Profile Image: {video['profile_image']}")  # 디버깅을 위해 출력합니다.
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
@@ -334,56 +328,8 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
 @app.post("/upload_video")
 async def upload_video(request: Request, db: Session = Depends(get_db)):
     return await upload.upload_video(request, db)
-# @app.get("/profile", response_class=HTMLResponse)
-# async def display_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-#     try:
-#         print("사용자 정보 나오는지 확인:", user_info)
-#         user_code = user_info['usercode']
-#         # 동화의 좋아요 수 합산
-#         user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == user_code).all()
-#         total_likes = sum(fairy.ft_like for fairy in user_fairytales)
-#         print("유저 동화 정보:", [f.ft_name for f in user_fairytales])  # 동화 이름을 출력
 
-#         user_voices = db.query(Voice).filter(Voice.user_code == user_code).all()
-#         try:
-#             profile = db.query(Profile).filter(Profile.user_code == user_code).first()
-#             print("Profile 조회 성공:", profile)
-#         except Exception as e:
-#             print(f"Profile 조회 중 오류 발생: {e}")
-#             profile = None
-        
-#         # 프로필 이미지 설정
-#         if profile:
-#             print(f"Profile object found: {profile}")
-#             profile_image = f"/static/uploads/{profile.profile_name}"
-#         else:
-#             print("Profile object not found, using default image.")
-#             profile_image = "/static/uploads/basic.png"
-        
-#         print(f"Profile image 경로 출력: {profile_image}")  # 프로필 이미지 경로를 출력합니다.
 
-#         # 템플릿 렌더링
-#         try:
-#             response = templates.TemplateResponse("profile.html", {
-#                 "request": request,
-#                 "user_info": user_info,
-#                 "fairytales": user_fairytales,  # 동화 목록을 템플릿에 전달
-#                 "voices": user_voices,
-#                 "profile_image": profile_image,
-#                 "total_likes": total_likes,
-#                 "current_user_code": user_code  # 현재 사용자 코드 전달
-#             })
-#             print("템플릿 렌더링 성공")
-#             return response
-#         except Exception as e:
-#             print(f"템플릿 렌더링 중 오류 발생: {e}")
-#             raise
-        
-#     except Exception as e:
-#         print(f"전체 코드 실행 중 오류 발생: {e}")
-#         raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# 사용자 정보를 업데이트하는 함수
 def update_profile_image(db: Session, user_code: int, file_name: str):
     profile_date = datetime.date.today()
     profile = db.query(Profile).filter(Profile.user_code == user_code).first()

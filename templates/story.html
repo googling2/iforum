@@ -1,4 +1,14 @@
-{% extends 'base.html' %} {% block content %}
+
+
+
+
+
+
+
+
+
+{% extends 'base.html' %} 
+{% block content %}
 
 <section id="story">
   <div class="container">
@@ -23,6 +33,11 @@
   </p>
 </section>
 
+<!-- 로딩 스피너 추가 -->
+<div id="loadingSpinner" style="display: none;">
+  <div class="spinner"></div>
+</div>
+
 <script>
   function toggleStory() {
     const storyContent = document.getElementById("storyContent");
@@ -35,6 +50,8 @@
 
   document.getElementById("uploadForm").onsubmit = async function (event) {
     event.preventDefault();
+    document.getElementById("loadingSpinner").style.display = "block"; // 로딩 스피너 표시
+    alert("업로드 중입니다... 잠시만 기다려주세요.");
     try {
       let response = await fetch("/upload_video", {
         method: "POST",
@@ -46,6 +63,7 @@
 
       if (!response.ok) {
         let data = await response.json();
+        document.getElementById("loadingSpinner").style.display = "none"; // 로딩 스피너 숨김
         if (data.message && data.message.includes("uploadLimitExceeded")) {
           alert(
             "하루 유튜브 업로드 수를 초과했습니다. 내일 다시 시도해주세요."
@@ -54,13 +72,48 @@
           throw new Error(data.message || "Upload failed");
         }
       } else {
-        alert("Upload successful");
+        document.getElementById("loadingSpinner").style.display = "none"; // 로딩 스피너 숨김
+        alert("업로드 성공!");
       }
     } catch (error) {
+      document.getElementById("loadingSpinner").style.display = "none"; // 로딩 스피너 숨김
       console.error("Error:", error);
-      alert("Error: " + error.message);
+      alert("오류: " + error.message);
     }
   };
 </script>
+
+<!-- 로딩 스피너 스타일 추가 -->
+<style>
+  .spinner {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -60px; /* width의 절반 */
+    margin-top: -60px;  /* height의 절반 */
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  #loadingSpinner {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+</style>
 
 {% endblock content %}
