@@ -7,7 +7,7 @@
   font-style: normal;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1050px) {
   * {
     list-style-type: none;
     padding: 0;
@@ -602,6 +602,8 @@
   }
 
   .inbox .main-inbox .msg-box {
+    margin-left: 32%;
+    width: 72%;
     padding: 1rem .5rem;
     display: flex;
     align-items: center;
@@ -662,6 +664,7 @@
   }
 
   .profile-info {
+    margin-top: 5%;
     margin-right: 15%;
   }
 
@@ -765,6 +768,13 @@
     height: 100%;
   }
 
+  .voice {
+    font-size: 15px;
+    width: 300px;
+    margin: 0px 30%;
+    position: absolute;
+  }
+
   .voice-n {
     margin-left: -115px;
     padding-right: 50px;
@@ -803,7 +813,7 @@
 
   .story-title {
     font-size: 1.8rem;
-    margin-top: 12%;
+    margin-top: 210px;
     position: absolute;
     margin-left: 14%;
 
@@ -855,8 +865,9 @@
     padding: 75px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-top: 41%;
+    margin-top: 300px;
   }
+
 
   .select_mood1 {
     margin-left: 13px;
@@ -1325,7 +1336,7 @@
     border: none;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 15.5%;
+    margin-top: 254px;
     position: absolute;
     margin-left: 17%;
     border-radius: 20px;
@@ -1364,7 +1375,7 @@
     left: 0;
     top: 0;
     height: 100%;
-    width: 440px;
+    width: 300px;
     background: #181818;
     padding: 6px 14px;
     z-index: 99;
@@ -1519,11 +1530,10 @@
 
   .sidebar li.profile {
     position: fixed;
-    height: 300px;
-
-    width: 420px;
+    height: 362px;
+    width: 295px;
     left: 0;
-    bottom: -8px;
+    bottom: 20px;
     padding: 10px 14px;
     background: #181818;
     transition: all 0.5s ease;
@@ -1532,13 +1542,15 @@
 
   .sidebar li .profile-details {
     display: flex;
-    align-items: center;
     flex-wrap: nowrap;
+    flex-direction: column;
+
   }
 
   .sidebar li img {
-    height: 270px;
-    width: 270px;
+    margin-left: 20px;
+    height: 220px;
+    width: 220px;
     object-fit: cover;
     border-radius: 20%;
     margin-right: 30px;
@@ -1546,7 +1558,8 @@
 
   .sidebar li.profile .name,
   .sidebar li.profile .job {
-    font-size: 22px;
+    text-align: center;
+    margin-top: 20px;
     font-size: 30px;
     font-weight: 400;
     color: #fff;
