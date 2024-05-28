@@ -67,6 +67,11 @@
     z-index: 1;
   }
 
+  .login-t {
+    margin-top: 180px;
+    margin-left: 30px;
+  }
+
   #pause-play-btn {
     bottom: 6rem;
 
@@ -516,6 +521,11 @@
     align-items: center;
     padding: 1rem;
     border-bottom: .1rem solid #f0f0f0;
+  }
+
+  .result_vdo {
+    margin-top: 30px;
+    width: 400px;
   }
 
   .inbox .header-inbox h2 {

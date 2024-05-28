@@ -350,6 +350,11 @@ hr {
     grid-template-columns: repeat(3, 1fr);
 
   }
+
+  .login-t {
+    margin-top: 0px;
+    margin-left: 0px;
+  }
 }
 
 
