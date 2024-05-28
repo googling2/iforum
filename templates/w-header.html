@@ -1,22 +1,25 @@
 <div class="sidebar">
   <ul class="nav-list">
     <li>
-      <a href="/">
-        <i class="bx bx-grid-alt"></i>
-        <span class="links_name">숏츠</span>
-      </a>
-    </li>
-    <li>
       <a href="/main" id="iforum">
         <i class="bx bx-chat"></i>
         <span class="links_name">A-Iforum</span>
       </a>
     </li>
+
+
+    <li>
+      <a href="/">
+        <i class="bx bx-grid-alt"></i>
+        <span class="links_name">Shorts</span>
+      </a>
+    </li>
+
     {% if user_info %}
     <li>
-      <a href="/logout">
-        <i class="bx bx-grid-alt"></i>
-        <span class="links_name">Logout</span>
+      <a href="/upload">
+        <i class="bx bx-chat"></i>
+        <span class="links_name">동화 만들기</span>
       </a>
     </li>
     <li>
@@ -25,17 +28,18 @@
         <span class="links_name">마이페이지</span>
       </a>
     </li>
+
     <li>
-      <a href="/upload">
-        <i class="bx bx-chat"></i>
-        <span class="links_name">동화 만들기</span>
+      <a href="/logout">
+        <i class="bx bx-grid-alt"></i>
+        <span class="links_name login-t">Logout</span>
       </a>
     </li>
     {% else %}
     <li>
       <a href="/login">
         <i class="bx bx-grid-alt"></i>
-        <span class="links_name">Login</span>
+        <span class="links_name login-t">Login</span>
       </a>
     </li>
     <li>
@@ -65,9 +69,9 @@
         <img src="{{ profile_image }}" alt="profileImg" />
         <div class="name_job">
           <div class="name">{{ profile_user_info.user_name }}</div>
-          <div class="job">팔로우: {{ follow_count }}</div>
-          <div class="job">팔로워: {{ follower_count }}</div>
-          <div class="job">좋아요: {{ total_likes }}</div>
+          <div class="job">팔로우: {{ follow_count }}
+            팔로워: {{ follower_count }}
+            좋아요: {{ total_likes }}</div>
         </div>
       </div>
     </li>
@@ -117,15 +121,15 @@
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      const userName = document.getElementById("user-name").textContent;
-      const followingCount = document.getElementById("following-count").textContent;
-      const followerCount = document.getElementById("follower-count").textContent;
-      const likeCount = document.getElementById("like-count").textContent;
-  
-      console.log("User Name:", userName);
-      console.log("Following Count:", followingCount);
-      console.log("Follower Count:", followerCount);
-      console.log("Like Count:", likeCount);
+  document.addEventListener("DOMContentLoaded", function () {
+    const userName = document.getElementById("user-name").textContent;
+    const followingCount = document.getElementById("following-count").textContent;
+    const followerCount = document.getElementById("follower-count").textContent;
+    const likeCount = document.getElementById("like-count").textContent;
+
+    console.log("User Name:", userName);
+    console.log("Following Count:", followingCount);
+    console.log("Follower Count:", followerCount);
+    console.log("Like Count:", likeCount);
   });
-  </script>
+</script>

@@ -7,7 +7,7 @@
   font-style: normal;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1050px) {
   * {
     padding: 0;
     margin: 0;
@@ -17,6 +17,17 @@
 
   .sidebar {
     display: none;
+  }
+
+
+
+
+
+  .voice {
+    font-size: 15px;
+    width: 200px;
+    margin: 0 40%;
+    position: absolute;
   }
 
   :root {
@@ -57,16 +68,7 @@
 
   }
 
-  .vdo {
-    padding-top: 50%;
-    pointer-events: none;
-    position: absolute;
-    height: 69%;
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-    z-index: 1;
-  }
+
 
   #pause-play-btn {
     bottom: 6rem;
@@ -321,6 +323,9 @@
   }
 
   /*Start Home Section*/
+  .right-container {
+    font-size: 20px;
+  }
 
   .content .home video,
   .content .friends video {
@@ -522,11 +527,12 @@
   }
 
   .inbox .header-inbox h2 {
+
     position: relative;
     text-align: center;
     text-transform: capitalize;
     width: fit-content;
-    margin: 0 auto;
+    margin: 100px auto;
   }
 
   .inbox .header-inbox h2::before {
@@ -798,7 +804,7 @@
   }
 
   .select_v {
-    width: 40%;
+    width: 38%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -816,6 +822,7 @@
   }
 
   .option-image {
+    margin-bottom: -26px;
     border-radius: 100%;
     width: 53px;
     margin-top: -6%;
@@ -831,6 +838,7 @@
   }
 
   .select_mood1 {
+    margin-left: 5px;
     width: 38%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -848,14 +856,14 @@
 
   .base_btn {
     position: absolute;
-    margin-left: 5%;
-    width: 60%;
+    margin-left: 4%;
+    width: 50%;
     padding: 10px;
     border: none;
     background-color: #9a78ff;
     color: #fff;
     border-radius: 5px;
-    margin-top: 178%;
+    margin-top: 700px;
   }
 
   .upload_btn {
@@ -874,15 +882,16 @@
     border-radius: 25%;
     margin-top: 10%;
     margin-left: 13%;
-    width: 55%;
-    height: 55%;
+    width: 200px;
+    height: 200px;
 
   }
 
   .story_text {
-    width: 111%;
+    font-size: 13px;
+    width: 69%;
     margin-left: 10%;
-    margin-top: 15%;
+    margin-top: 5%;
   }
 
   .loader {
@@ -898,14 +907,17 @@
     margin-top: 20%;
   }
 
+
   .result_vdo {
+    width: 74%;
+    margin-left: 3%;
     margin-top: 25%;
   }
 
   .result_btn {
     float: left;
-    margin-left: 25%;
-    width: 35%;
+    margin-left: 8%;
+    width: 27%;
     padding: 10px;
     border: none;
     background-color: #e13333;
@@ -917,7 +929,7 @@
 
   .story_btn {
     margin-left: 5%;
-    width: 35%;
+    width: 27%;
     padding: 10px;
     border: none;
     background-color: black;
@@ -1225,20 +1237,19 @@
   }
 
   .mic-btn {
-    width: 205px;
+    width: 152px;
     background: plum;
     border: none;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 40.5%;
+    margin-top: 135px;
     position: absolute;
-    margin-left: 8%;
-    border-radius: 20px;
+    margin-left: 0%;
     padding: 2px;
   }
 
   #myForm {
-    padding-left: 10%;
+    padding-left: 20%;
     background: linear-gradient(to top right, #c2ffef 10%, #f9aabe 65%, #ffb900 125%);
     height: 1200px;
   }
@@ -1255,5 +1266,32 @@
   .scene {
 
     margin-top: -120%;
+  }
+}
+
+@media (max-width: 1050px) {
+  .vdo {
+    padding-top: 20%;
+    pointer-events: none;
+    position: absolute;
+    height: 80%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 1;
+
+  }
+}
+
+@media (max-width: 620px) {
+  .vdo {
+    padding-top: 35%;
+    pointer-events: none;
+    position: absolute;
+    height: 700px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 1;
   }
 }
