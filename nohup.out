@@ -1,0 +1,974 @@
+INFO:     Started server process [14845]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 13] error while attempting to bind on address ('0.0.0.0', 80): permission denied
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [14940]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 13] error while attempting to bind on address ('0.0.0.0', 80): permission denied
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [15880]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 13] error while attempting to bind on address ('0.0.0.0', 80): permission denied
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [15964]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     52.167.144.58:12676 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     40.77.167.243:51797 - "GET / HTTP/1.1" 200 OK
+INFO:     40.77.188.148:7168 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     40.77.188.248:14208 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     40.77.190.159:36608 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     Started server process [16432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     211.106.99.33:55406 - "GET / HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55407 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55406 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55408 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55410 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55410 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55407 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55407 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64217 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64217 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64216 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64217 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64218 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64218 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64217 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64217 - "GET /static/final_output1716880016.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64217 - "GET /static/final_output1716879880.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64219 - "GET /static/final_output1716876425.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64219 - "GET /static/final_output1716865219.mp4 HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64219 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64219 - "GET /static/final_output1716865051.mp4 HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64219 - "GET /static/final_output1716787318.mp4 HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64219 - "GET /static/final_output1716786282.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64222 - "GET /static/final_output1716785971.mp4 HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64222 - "GET /static/final_output1716783051.mp4 HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:64229 - "GET /upload HTTP/1.1" 401 Unauthorized
+INFO:     59.10.8.230:50361 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:50364 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50361 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50367 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50368 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50361 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50364 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50364 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50364 - "GET /static/final_output1716876425.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50364 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716865219.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50372 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716865051.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716787318.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716786282.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716785971.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50372 - "GET /static/final_output1716783051.mp4 HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55451 - "GET / HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55451 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55452 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55453 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55454 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55454 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55453 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55452 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55452 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     Started server process [16688]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 13] error while attempting to bind on address ('0.0.0.0', 80): permission denied
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [1509]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:50712 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50712 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50713 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50714 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50715 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50714 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50715 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50715 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:62569 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:62571 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62569 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62574 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62575 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62575 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62574 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:62571 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50729 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50729 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50730 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50731 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50732 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:50732 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50730 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50731 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:57607 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57607 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57609 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57611 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57610 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57610 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57609 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57611 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57611 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:57636 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57636 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57640 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57639 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57641 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57640 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57641 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57639 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57639 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     Started server process [1829]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:57662 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50796 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57668 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:63306 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     59.10.8.230:50797 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57679 - "GET /static/final_output1716865051.mp4 HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55572 - "GET / HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55572 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55592 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55594 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55593 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55594 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55593 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     211.106.99.33:55592 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57679 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:57679 - "GET /static/final_output1716787318.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50828 - "GET /login HTTP/1.1" 302 Found
+INFO:     59.10.8.230:57685 - "GET /static/final_output1716786282.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57685 - "GET /static/final_output1716865219.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57687 - "GET /static/final_output1716876425.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50832 - "GET /static/final_output1716865219.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50832 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50832 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50832 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50848 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50849 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50850 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50848 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50850 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50848 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50850 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50850 - "GET /login HTTP/1.1" 302 Found
+INFO:     59.10.8.230:50860 - "GET /static/final_output1716865051.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50860 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50860 - "GET /static/final_output1716876425.mp4 HTTP/1.1" 404 Not Found
+INFO:     211.106.99.33:55624 - "GET / HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55625 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55624 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55628 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55627 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55627 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55625 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55624 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+INFO:     211.106.99.33:55625 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:57708 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57708 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57710 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57711 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57712 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57711 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57712 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:57710 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:50882 - "GET /profile/10 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 256, in display_profile
+    return await get_profile(request, db, author_id, current_user_info)
+  File "/home/ubuntu/iforum/main.py", line 270, in get_profile
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+TypeError: 'NoneType' object is not subscriptable
+INFO:     59.10.8.230:50883 - "GET /profile/9 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 256, in display_profile
+    return await get_profile(request, db, author_id, current_user_info)
+  File "/home/ubuntu/iforum/main.py", line 270, in get_profile
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+TypeError: 'NoneType' object is not subscriptable
+INFO:     59.10.8.230:50887 - "GET /profile/9 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 256, in display_profile
+    return await get_profile(request, db, author_id, current_user_info)
+  File "/home/ubuntu/iforum/main.py", line 270, in get_profile
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+TypeError: 'NoneType' object is not subscriptable
+INFO:     59.10.8.230:50890 - "GET /static/final_output1716787318.mp4 HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50890 - "GET /profile/9 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 256, in display_profile
+    return await get_profile(request, db, author_id, current_user_info)
+  File "/home/ubuntu/iforum/main.py", line 270, in get_profile
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+TypeError: 'NoneType' object is not subscriptable
+INFO:     211.106.99.33:55650 - "GET / HTTP/1.1" 200 OK
+INFO:     Started server process [2017]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:63528 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:57775 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50947 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50948 - "GET /static/final_output1716876425.mp4 HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50948 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:50973 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:50975 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:51065 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:51066 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:51067 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:63698 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63698 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63700 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63701 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63702 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63698 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63702 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63700 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:63702 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64695 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64695 - "GET /static/css/window.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64694 - "GET /static/css/app.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64697 - "GET /static/css/styles.css HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64698 - "GET /static/uploads/basic.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64698 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64694 - "GET /static/uploads/green.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64697 - "GET /static/uploads/red.png HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64698 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     Started server process [4835]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:64530 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64531 - "GET /static/css/window.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64530 - "GET /static/css/app.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64534 - "GET /static/css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64533 - "GET /static/uploads/basic.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64530 - "GET /static/uploads/green.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64533 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64534 - "GET /static/uploads/red.png HTTP/1.1" 304 Not Modified
+INFO:     59.10.8.230:64534 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     59.10.8.230:64777 - "GET / HTTP/1.1" 200 OK
+INFO:     59.10.8.230:64974 - "GET / HTTP/1.1" 200 OK
+INFO:     Started server process [5301]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:43330 - "GET / HTTP/1.0" 200 OK
+INFO:     127.0.0.1:43338 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     127.0.0.1:43348 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     127.0.0.1:43350 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     127.0.0.1:43354 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     127.0.0.1:35384 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     127.0.0.1:35376 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     127.0.0.1:35360 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     127.0.0.1:35390 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     49.51.179.103:0 - "GET / HTTP/1.0" 200 OK
+INFO:     Started server process [8282]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865051.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /my_profile HTTP/1.0" 401 Unauthorized
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /upload HTTP/1.0" 401 Unauthorized
+INFO:     106.101.67.163:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     106.101.67.163:0 - "GET /static/final_output1716787318.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET / HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716787318.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716787318.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716785971.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716783051.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716535560.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716523081.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716782731.mp4 HTTP/1.0" 200 OK
+INFO:     106.101.67.163:0 - "GET /static/final_output1716786282.mp4 HTTP/1.0" 200 OK
+INFO:     Started server process [13788]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started server process [14008]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     207.241.236.84:0 - "GET / HTTP/1.0" 200 OK
+INFO:     Started server process [15010]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     66.102.6.9:0 - "GET /auth HTTP/1.0" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 403, in auth
+    token = await oauth.google.authorize_access_token(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/authlib/integrations/starlette_client/apps.py", line 80, in authorize_access_token
+    params = self._format_state_params(state_data, params)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/authlib/integrations/base_client/sync_app.py", line 234, in _format_state_params
+    raise MismatchingStateError()
+authlib.integrations.base_client.errors.MismatchingStateError: mismatching_state: CSRF Warning! State not equal in request and response.
+INFO:     66.102.6.9:0 - "GET /upload HTTP/1.0" 401 Unauthorized
+INFO:     66.102.6.1:0 - "GET /story HTTP/1.0" 405 Method Not Allowed
+INFO:     Started server process [15184]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     206.217.205.66:0 - "GET / HTTP/1.0" 200 OK
+INFO:     206.217.205.66:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /auth?state=yD2vGg9OY5usD9Q5Yh2259NtmzXm5w&code=4/0AdLIrYeEf2R7s39niziCLbhbf_tnaULPujAf2FkzChsHIun3-jNaGsyTXrh44Pfve9U5kA&scope=email%20profile%20openid%20https://www.googleapis.com/auth/youtube.force-ssl%20https://www.googleapis.com/auth/youtube.upload%20https://www.googleapis.com/auth/youtube.readonly%20https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email&authuser=0&prompt=consent HTTP/1.0" 303 See Other
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /main HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716787318.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716865051.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716785971.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716786282.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716783051.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716782731.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716535560.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716523081.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522846.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522805.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522316.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522090.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716521644.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716521494.mp4 HTTP/1.0" 200 OK
+profile_user_info_dict: {'user_code': 8, 'user_name': '백종환', 'email': 'baekfive12@gmail.com', 'profile': 0}
+current_user_info: {'usercode': 8, 'name': '백종환', 'email': 'baekfive12@gmail.com', 'picture': 0}
+INFO:     59.10.8.230:0 - "GET /my_profile HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1715934396.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716174700.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1715934930.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716181436.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716175843.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716175687.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /check_voice_count HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716181502.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716182430.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716182542.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716183767.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716184318.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716184963.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716186090.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716191290.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716191600.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716191773.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716191923.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716192121.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716198998.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716257477.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716257678.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716258184.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716258642.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716259045.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716259446.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716259776.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716259853.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716259941.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716260026.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716260806.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716260926.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716261072.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716261702.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716261843.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716262445.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716263400.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716275193.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716275734.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716276939.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716279889.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716279996.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716280306.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716280531.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716280690.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716282399.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716282674.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716283113.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716283409.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716435002.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716435340.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716435534.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716435661.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716436185.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716436289.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716436753.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716436991.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716437845.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716438570.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716439172.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716439548.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716441799.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716442806.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716443641.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716449701.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716449846.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716461373.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716461893.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716463079.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716463522.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716463841.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/profile_img/1.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/bg.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/anime.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /main HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
+profile_user_info_dict: {'user_code': 8, 'user_name': '백종환', 'email': 'baekfive12@gmail.com', 'profile': 0}
+current_user_info: {'usercode': 8, 'name': '백종환', 'email': 'baekfive12@gmail.com', 'picture': 0}
+INFO:     59.10.8.230:0 - "GET /my_profile HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /check_voice_count HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716182430.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716257678.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716257477.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716435661.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716436991.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716463079.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522846.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /main HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522846.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /null HTTP/1.0" 404 Not Found
+prompt_paragraphs :  ['animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere. 제목:진짜 끝난 이야기\n한 때 소중했던 사랑은 슬픔 속 끝났다. 서로의 마음을 잊지 못한 채 시간이 흘러도 이별의 상처는 남아있다. 어쩌면 그것이 운명이었을지도 모른다. 과거의 추억은 더 이상 돌이켜볼 수 없는 보물로 남았다.', 'animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere. 상처를 치유하려 애를 쓰던 그들은 서서히 두 발 가로막힌 길을 헤매기 시작했다. 그저 서로를 지키기 위한 감정이었던 것일까? 아니면 가슴 깊이 사랑하고 있는 것일까? 마침내 그들은 자신들이 진정한 사랑이었음을 깨달았다. 하지만 이미 너무 늦었고, 진짜 끝난 이야기였다.', 'animation style, face and features vibrant and detailed artwork with a serene and warm atmosphere. 잊을 수 없는 추억은 서러움을 남기고, 미련속에 서로를 떠올리게 되었다. 그러나 이미 끝난 이야기는 다시 되살릴 수 없었다. 그저 그들은 서로를 잊고 새로운 시작을 꿈꿨다. 서로의 마음을 떠올릴 때마다 눈물이 흐를 뿐, 그들의 사랑은 영원히 끝난 것이다.']
+스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: local variable 'audio_file_path' referenced before assignment
+INFO:     59.10.8.230:0 - "GET /static/sample_img/1.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "POST /story HTTP/1.0" 500 Internal Server Error
+INFO:     59.10.8.230:0 - "GET /static/sample_img/9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/10.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/8.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/7.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/6.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/12.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/11.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/2.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/3.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/4.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/5.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716888453.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+Downloading tokenizer_config.json:   0%|          | 0.00/251 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 251/251 [00:00<00:00, 26.7kB/s]
+Downloading vocab.txt:   0%|          | 0.00/231k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 231k/231k [00:00<00:00, 1.23MB/s]Downloading vocab.txt: 100%|██████████| 231k/231k [00:00<00:00, 1.23MB/s]
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/ubuntu/nltk_data...
+[nltk_data]   Unzipping taggers/averaged_perceptron_tagger.zip.
+[nltk_data] Downloading package cmudict to /home/ubuntu/nltk_data...
+[nltk_data]   Unzipping corpora/cmudict.zip.
+Downloading tokenizer_config.json:   0%|          | 0.00/48.0 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 48.0/48.0 [00:00<00:00, 4.80kB/s]
+Downloading config.json:   0%|          | 0.00/570 [00:00<?, ?B/s]Downloading config.json: 100%|██████████| 570/570 [00:00<00:00, 267kB/s]
+Downloading vocab.txt:   0%|          | 0.00/232k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 232k/232k [00:00<00:00, 40.5MB/s]
+Downloading tokenizer.json:   0%|          | 0.00/466k [00:00<?, ?B/s]Downloading tokenizer.json: 100%|██████████| 466k/466k [00:00<00:00, 832kB/s]Downloading tokenizer.json: 100%|██████████| 466k/466k [00:00<00:00, 831kB/s]
+Downloading tokenizer_config.json:   0%|          | 0.00/48.0 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 48.0/48.0 [00:00<00:00, 23.0kB/s]
+Downloading config.json:   0%|          | 0.00/625 [00:00<?, ?B/s]Downloading config.json: 100%|██████████| 625/625 [00:00<00:00, 367kB/s]
+Downloading vocab.txt:   0%|          | 0.00/872k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 872k/872k [00:00<00:00, 4.51MB/s]Downloading vocab.txt: 100%|██████████| 872k/872k [00:00<00:00, 4.45MB/s]
+Downloading tokenizer.json:   0%|          | 0.00/1.72M [00:00<?, ?B/s]Downloading tokenizer.json: 100%|██████████| 1.72M/1.72M [00:00<00:00, 4.61MB/s]Downloading tokenizer.json: 100%|██████████| 1.72M/1.72M [00:00<00:00, 4.59MB/s]
+Downloading tokenizer_config.json:   0%|          | 0.00/80.0 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 80.0/80.0 [00:00<00:00, 44.4kB/s]
+Downloading config.json:   0%|          | 0.00/725 [00:00<?, ?B/s]Downloading config.json: 100%|██████████| 725/725 [00:00<00:00, 434kB/s]
+Downloading vocab.txt:   0%|          | 0.00/344k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 344k/344k [00:00<00:00, 103MB/s]
+Downloading tokenizer_config.json:   0%|          | 0.00/83.0 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 83.0/83.0 [00:00<00:00, 8.85kB/s]
+Downloading config.json:   0%|          | 0.00/420 [00:00<?, ?B/s]Downloading config.json: 100%|██████████| 420/420 [00:00<00:00, 191kB/s]
+Downloading vocab.txt:   0%|          | 0.00/227k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 227k/227k [00:00<00:00, 40.3MB/s]
+Downloading tokenizer_config.json:   0%|          | 0.00/310 [00:00<?, ?B/s]Downloading tokenizer_config.json: 100%|██████████| 310/310 [00:00<00:00, 51.8kB/s]
+Downloading config.json:   0%|          | 0.00/650 [00:00<?, ?B/s]Downloading config.json: 100%|██████████| 650/650 [00:00<00:00, 268kB/s]
+Downloading vocab.txt:   0%|          | 0.00/248k [00:00<?, ?B/s]Downloading vocab.txt: 100%|██████████| 248k/248k [00:00<00:00, 108MB/s]
+Downloading tokenizer.json:   0%|          | 0.00/486k [00:00<?, ?B/s]Downloading tokenizer.json: 100%|██████████| 486k/486k [00:00<00:00, 80.7MB/s]
+Downloading (…)cial_tokens_map.json:   0%|          | 0.00/134 [00:00<?, ?B/s]Downloading (…)cial_tokens_map.json: 100%|██████████| 134/134 [00:00<00:00, 72.5kB/s]
+Downloading (…)81_std1.81.model.pkl:   0%|          | 0.00/10.0M [00:00<?, ?B/s]Downloading (…)81_std1.81.model.pkl: 100%|██████████| 10.0M/10.0M [00:00<00:00, 81.2MB/s]Downloading (…)81_std1.81.model.pkl: 100%|██████████| 10.0M/10.0M [00:00<00:00, 75.3MB/s]
+INFO:     Started server process [15340]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+Loaded checkpoint 'model_cache/checkpoints_v2/converter/checkpoint.pth'
+missing/unexpected keys: [] []
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/profile_img/1.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/bg.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/anime.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /null HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     192.87.174.28:0 - "GET / HTTP/1.0" 200 OK
+INFO:     192.87.174.28:0 - "GET / HTTP/1.0" 200 OK
+INFO:     192.87.174.28:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/1.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/9.png HTTP/1.0" 200 OK
+KR languagelanguagelanguagelanguage
+ static/myvoice/recording_20240527162317.wav audioaudioaudioaudioaudioaudioaudioaudioaudioaudio
+OpenVoice version: v2
+스토리 생성 및 비디오 생성 중 오류가 발생하였습니다: [Errno 2] No such file or directory: ' static/myvoice/recording_20240527162317.wav'
+INFO:     59.10.8.230:0 - "GET /static/sample_img/7.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/6.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/10.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "POST /story HTTP/1.0" 500 Internal Server Error
+INFO:     59.10.8.230:0 - "GET /static/sample_img/12.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/11.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/2.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/8.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/3.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/4.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/5.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     223.38.51.244:0 - "GET / HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/css/window.css HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/css/app.css HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/css/styles.css HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/uploads/red.png HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /static/uploads/green.png HTTP/1.0" 200 OK
+INFO:     223.38.51.244:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     223.38.51.244:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716888790.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 401 Unauthorized
+INFO:     59.10.8.230:0 - "GET /main HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716888790.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716888453.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716865051.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716865219.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716787318.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716786282.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716785971.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716783051.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716782731.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716535560.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716523081.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522846.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522805.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522316.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716522090.mp4 HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 401 Unauthorized
+INFO:     59.10.8.230:0 - "GET /profile/9 HTTP/1.0" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/protocols/http/httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+  File "/home/ubuntu/miniconda3/envs/fa_venv/lib/python3.9/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/ubuntu/iforum/main.py", line 257, in display_profile
+    return await get_profile(request, db, author_id, current_user_info)
+  File "/home/ubuntu/iforum/main.py", line 271, in get_profile
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+TypeError: 'NoneType' object is not subscriptable
+INFO:     59.10.8.230:0 - "GET /profile/1 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /static/final_output1716876425.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
+INFO:     Started server process [2573]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Loaded checkpoint 'model_cache/checkpoints_v2/converter/checkpoint.pth'
+missing/unexpected keys: [] []
+INFO:     223.38.51.244:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
+INFO:     223.38.51.244:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     59.10.8.230:0 - "GET /logout HTTP/1.0" 303 See Other
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/uploads/basic.png HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716889090.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     223.38.51.244:0 - "GET /static/final_output1716888790.mp4 HTTP/1.0" 404 Not Found
+INFO:     223.38.51.244:0 - "GET /static/final_output1716889090.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /auth?state=hd6YItNX64TKb0evz6nKbCjX62aYol&code=4/0AdLIrYezfKMcEBhyGxMJeUnzY8XHbUn9yDxeBoyzL8oKzflhnIUwdxP6vbghaA6Ky05mmA&scope=email%20profile%20openid%20https://www.googleapis.com/auth/youtube.force-ssl%20https://www.googleapis.com/auth/youtube.upload%20https://www.googleapis.com/auth/youtube.readonly%20https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email&authuser=0&prompt=consent HTTP/1.0" 303 See Other
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /logout HTTP/1.0" 303 See Other
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/final_output1716889090.mp4 HTTP/1.0" 404 Not Found
+INFO:     59.10.8.230:0 - "GET /login HTTP/1.0" 302 Found
+INFO:     59.10.8.230:0 - "GET /auth?state=cyyeMZXCGFURbnYFqyLx1DGDST7Z01&code=4/0AdLIrYcyCYjuHCuT4SV3lU_S_lqv-0kWUWhv6XmDhO0IwFPU2yA7UvgaHRnUWIrGv70FWg&scope=email%20profile%20openid%20https://www.googleapis.com/auth/youtube.force-ssl%20https://www.googleapis.com/auth/youtube.upload%20https://www.googleapis.com/auth/youtube.readonly%20https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email&authuser=1&prompt=consent HTTP/1.0" 303 See Other
+INFO:     59.10.8.230:0 - "GET / HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/css/window.css HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /static/css/app.css HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /static/css/styles.css HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /static/uploads/red.png HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /static/uploads/green.png HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /static/uploads/381aebc242ae78a93cf284277a41f0b3382247a9.png HTTP/1.0" 304 Not Modified
+INFO:     59.10.8.230:0 - "GET /upload HTTP/1.0" 200 OK
+INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTTP/1.0" 404 Not Found
