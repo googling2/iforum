@@ -20,6 +20,10 @@
   }
 
 
+  .login-t {
+    margin-top: 0px;
+    margin-left: 0px;
+  }
 
 
   .voice {
@@ -887,9 +891,10 @@
   }
 
   .story_text {
-    width: 111%;
+    font-size: 13px;
+    width: 69%;
     margin-left: 10%;
-    margin-top: 15%;
+    margin-top: 5%;
   }
 
   .loader {
@@ -905,14 +910,17 @@
     margin-top: 20%;
   }
 
+
   .result_vdo {
+    width: 74%;
+    margin-left: 3%;
     margin-top: 25%;
   }
 
   .result_btn {
     float: left;
-    margin-left: 25%;
-    width: 35%;
+    margin-left: 8%;
+    width: 27%;
     padding: 10px;
     border: none;
     background-color: #e13333;
@@ -924,7 +932,7 @@
 
   .story_btn {
     margin-left: 5%;
-    width: 35%;
+    width: 27%;
     padding: 10px;
     border: none;
     background-color: black;
@@ -1275,6 +1283,12 @@
     object-position: center;
     z-index: 1;
 
+  }
+
+  .video-container {
+    margin-left: 2.5%;
+    width: 95%;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

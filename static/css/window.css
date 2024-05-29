@@ -41,7 +41,7 @@
   }
 
   .videos {
-    margin-right: 13%;
+    margin-right: 20%;
     float: right;
     height: 84vh;
     width: 56vw;
@@ -65,6 +65,11 @@
     object-fit: cover;
     object-position: center;
     z-index: 1;
+  }
+
+  .login-t {
+    margin-top: 180px;
+    margin-left: 30px;
   }
 
   #pause-play-btn {
@@ -516,6 +521,11 @@
     align-items: center;
     padding: 1rem;
     border-bottom: .1rem solid #f0f0f0;
+  }
+
+  .result_vdo {
+    margin-top: 30px;
+    width: 400px;
   }
 
   .inbox .header-inbox h2 {
@@ -1501,9 +1511,9 @@
     background: #181818;
   }
 
-  .sidebar li a:hover {
+  /* .sidebar li a:hover {
     background: #FFF;
-  }
+  } */
 
   .sidebar li a .links_name {
     color: #fff;
@@ -1518,7 +1528,7 @@
   .sidebar li a:hover .links_name,
   .sidebar li a:hover i {
     transition: all 0.5s ease;
-    color: #181818;
+    color: #dab334;
   }
 
   .sidebar li i {

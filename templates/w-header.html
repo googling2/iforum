@@ -32,16 +32,11 @@
     <li>
       <a href="/logout">
         <i class="bx bx-grid-alt"></i>
-        <span class="links_name" style="margin-top: 180px; margin-left: 30px;">Logout</span>
+        <span class="links_name login-t">Logout</span>
       </a>
     </li>
     {% else %}
-    <li>
-      <a href="/login">
-        <i class="bx bx-grid-alt"></i>
-        <span class="links_name">Login</span>
-      </a>
-    </li>
+
     <li>
       <a href="javascript:void(0);" id="profile-link1">
         <i class="bx bx-user"></i>
@@ -52,6 +47,12 @@
       <a href="javascript:void(0);" id="upload-link">
         <i class="bx bx-chat"></i>
         <span class="links_name">동화 만들기</span>
+      </a>
+    </li>
+    <li>
+      <a href="/login">
+        <i class="bx bx-grid-alt"></i>
+        <span class="links_name login-t">Login</span>
       </a>
     </li>
     {% endif %}
