@@ -18,6 +18,7 @@ from models import User, Fairytale, Voice, Profile, Like, Subscribe
 from db import SessionLocal
 import json
 import uuid
+import predict
 import numpy as np
 from sqlalchemy.sql import exists
 from starlette.middleware.sessions import SessionMiddleware
@@ -491,14 +492,14 @@ async def create_story(request: Request, keywords: str = Form(...), selected_voi
             audio_file_path = f"static/audio/m1_{uuid.uuid4()}.mp3"
             with open(audio_file_path, "wb") as audio_file:
                 audio_file.write(audio_data)
-        # else:
-        #     audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
-        #     rmpath = f"static/audio/{audio_name}"
-        #     if os.path.exists(rmpath) and os.path.isdir(rmpath):
-        #         shutil.rmtree(rmpath)
-        #         print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
-        #     else:
-        #         print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
+        else:
+            audio_file_path, audio_name = predict.predict(selected_voice, story_content, language, speed)
+            rmpath = f"static/audio/{audio_name}"
+            if os.path.exists(rmpath) and os.path.isdir(rmpath):
+                shutil.rmtree(rmpath)
+                print(f"폴더 {rmpath}이(가) 삭제되었습니다.")
+            else:
+                print(f"폴더 {rmpath}이(가) 존재하지 않거나 디렉토리가 아닙니다.")
 
         paragraphs = story_content.split('\n\n')
         prompt_paragraphs = [
@@ -910,6 +911,12 @@ async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict =
 
     return {"message": "기존 목소리가 삭제되었습니다."}
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+#     # 클라이언트에서 인터넷으로 다이렉트 요청할 때
+#     import uvicorn
+#     uvicorn.run(app, host='0.0.0.0', port=8000
+#     )
+    # nginx가 앞단에 있으면
     import uvicorn
-    uvicorn.run(app, host='127.0.0.1', port=8000)
+    uvicorn.run(app, port=8000
+    )

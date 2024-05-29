@@ -20,7 +20,10 @@
   }
 
 
-
+  .login-t {
+    margin-top: 0px;
+    margin-left: 0px;
+  }
 
 
   .voice {
@@ -1280,6 +1283,12 @@
     object-position: center;
     z-index: 1;
 
+  }
+
+  .video-container {
+    margin-left: 2.5%;
+    width: 95%;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
