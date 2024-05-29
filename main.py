@@ -65,7 +65,7 @@ def get_current_user(request: Request):
     user_info = request.session.get('user')
     if not user_info:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    return user_info
+    return user_info 
 
 
 @app.post("/search", response_class=HTMLResponse)
