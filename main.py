@@ -120,7 +120,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
     ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         
     if subscribed_videos and user_code:
         subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
         query = query.filter(Fairytale.user_code.in_(subscriptions))
