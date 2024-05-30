@@ -324,6 +324,18 @@ hr {
   z-index: -5;
 }
 
+.sidebar li.profile {
+  position: fixed;
+  height: 300px;
+  width: 295px;
+  left: 0;
+  bottom: 20px;
+  padding: 10px 14px;
+  background: #181818;
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
+
 @media (max-width:1600px) {
   .sidebar {
     width: 250px;

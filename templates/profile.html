@@ -135,6 +135,7 @@
       <div class="content">
         <div class="videos-container">
           {% for fairytale in fairytales %}
+
           <div class="video" id="video-container-{{ fairytale.ft_code }}">
             <video controls id="video-{{ fairytale.ft_code }}">
               <source src="/{{ fairytale.ft_name }}" type="video/mp4">

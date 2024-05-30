@@ -696,9 +696,9 @@
       event.preventDefault(); // 폼의 기본 제출 동작 방지
       loadingContainer.style.display = "block";
       form.style.display = "none";
-      document.querySelectorAll(".hbody").forEach((element) => {
-        element.style.display = "none";
-      });
+      // document.querySelectorAll(".hbody").forEach((element) => {
+      //   element.style.display = "none";
+      // });
 
       // 폼 데이터를 수집합니다.
       const formData = new FormData(form);
@@ -720,7 +720,7 @@
         })
         .catch((error) => {
           console.error("오류:", error);
-          loadingContainer.style.display = "none";
+
           form.style.display = "block";
           document.querySelectorAll(".hbody").forEach((element) => {
             element.style.display = "block";

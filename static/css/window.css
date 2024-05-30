@@ -1014,10 +1014,10 @@
     background-image: url(../sample_img/bg.png);
     background-size: cover;
     background-repeat: round;
-    width: 83vw;
+    width: 85vw;
     height: 100vh;
     z-index: -1;
-    margin: 0px 18%;
+    margin: 0px 15%;
     padding: 0px;
     display: flex;
   }

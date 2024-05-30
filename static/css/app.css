@@ -1042,10 +1042,7 @@
     grid-template-columns: repeat(auto-fit, minmax(min(10.33rem, 100%), 1fr));
   }
 
-  .scene {
 
-    margin-top: -120%;
-  }
 }
 
 @media (max-width: 1050px) {
