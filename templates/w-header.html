@@ -1,7 +1,7 @@
 <div class="sidebar">
   <ul class="nav-list">
     <li>
-      <a href="/main" id="iforum">
+      <a href="/main">
         <i class="bx bx-chat"></i>
         <span class="links_name">A-Iforum</span>
       </a>
@@ -85,15 +85,7 @@
     if (!isLoggedIn) {
       const profileLink = document.getElementById("profile-link1");
       const likedVideosLink = document.getElementById("liked-videos-link");
-      const iforum = document.getElementById("iforum");
       const uploadLink = document.getElementById("upload-link"); // 동화 만들기 링크 추가
-
-      if (iforum) {
-        iforum.addEventListener("click", function (event) {
-          event.preventDefault();
-          alert("로그인이 필요합니다.");
-        });
-      }
 
       if (profileLink) {
         profileLink.addEventListener("click", function (event) {

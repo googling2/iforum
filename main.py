@@ -911,12 +911,13 @@ async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict =
 
     return {"message": "기존 목소리가 삭제되었습니다."}
 
-# if __name__ == "__main__":
-#     # 클라이언트에서 인터넷으로 다이렉트 요청할 때
-#     import uvicorn
-#     uvicorn.run(app, host='0.0.0.0', port=8000
-#     )
+if __name__ == "__main__":
+    # 클라이언트에서 인터넷으로 다이렉트 요청할 때
+    import uvicorn
+    uvicorn.run(app, host='127.0.0.1', port=8000
+    )
     # nginx가 앞단에 있으면
     import uvicorn
     uvicorn.run(app, port=8000
     )
+
