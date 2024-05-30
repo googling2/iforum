@@ -45,13 +45,19 @@
             </div>
             <div class="detail">
               <h3 class="title">{{ video.title }}</h3>
-              <div class="channel-name">{{ video.name }}</div>
+              <div class="channel-name">{{ video.name }} <i class="fa-solid fa-thumbs-up" style="   font-size: 20px;
+                  margin-top: -21px;
+                  margin-right: 26px;
+                  color: white;
+                  float: right;"></i>
+              </div>
               <div class="views-upload">
                 <div class="views">{{ video.ft_like }} like</div>
               </div>
             </div>
           </div>
           <div class="hidden-content">
+
             <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
           </div>
         </div>
