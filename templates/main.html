@@ -25,9 +25,11 @@
       <div class="chip {{ 'active' if order_by == 'popular' else '' }}" id="popular-chip">
         <p>인기순</p>
       </div>
+      {% if user_logged_in %}
       <div class="chip {{ 'active' if subscribed_videos else '' }}" id="subscribed-chip">
         <p>구독영상</p>
       </div>
+    {% endif %}
     </div>
     <div class="video-container">
       <!-- 검색 결과가 여기에 표시됨 -->
