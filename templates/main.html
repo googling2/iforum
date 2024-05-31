@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% block content %}
 
 <link rel="stylesheet" href="../static/css/styles.css" />
@@ -8,15 +8,21 @@
     background-color: #ffcc00;
     color: white;
   }
+
   .like-button {
     cursor: pointer;
   }
+
   .liked {
-    color: red; /* 좋아요를 눌렀을 때 색상 변경 */
+    color: red;
+    /* 좋아요를 눌렀을 때 색상 변경 */
   }
+
   .disabled {
-    pointer-events: none; /* 클릭 비활성화 */
-    opacity: 0.5; /* 비활성화 시 반투명하게 */
+    pointer-events: none;
+    /* 클릭 비활성화 */
+    opacity: 0.5;
+    /* 비활성화 시 반투명하게 */
   }
 </style>
 <div class="search-container">
@@ -58,10 +64,10 @@
             </div>
             <div class="detail">
               <h3 class="title">{{ video.title }}</h3>
-              <div class="channel-name">{{ video.name }} 
-                <i class="fa-solid fa-thumbs-up like-button {{ 'liked' if video.liked else '' }}" 
-                   data-video-id="{{ video.id }}" 
-                   style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
+              <div class="channel-name">{{ video.name }}
+                <i class="fa-solid fa-thumbs-up like-button {{ 'liked' if video.liked else '' }}"
+                  data-video-id="{{ video.id }}"
+                  style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
                 </i>
               </div>
               <div class="views-upload">
@@ -149,36 +155,37 @@
       window.location.href = "/main?order_by=popular";
     });
 
-    const userLoggedIn = {{ 'true' if user_logged_in else 'false' }};
-    
-    // const userLoggedIn = {user_logged_in} ? 'true' : 'false';
-    // console.log("확인ㅇㅇ",{{user_logged_in}})
-    // const userLoggedIn = {{ user_logged_in | tojson }};
-    
+    const userLoggedIn = {{ 'true' if user_logged_in else 'false' }
+  };
 
-    if (userLoggedIn) {
-      document.getElementById('subscribed-chip').addEventListener('click', function () {
-        window.location.href = "/main?subscribed=true";
-      });
+  // const userLoggedIn = {user_logged_in} ? 'true' : 'false';
+  // console.log("확인ㅇㅇ",{{user_logged_in}})
+  // const userLoggedIn = {{ user_logged_in | tojson }};
+
+
+  if (userLoggedIn) {
+    document.getElementById('subscribed-chip').addEventListener('click', function () {
+      window.location.href = "/main?subscribed=true";
+    });
+  }
+
+  const likeButtons = document.querySelectorAll('.like-button');
+  likeButtons.forEach(button => {
+    if (!userLoggedIn) {
+      button.classList.add('disabled');
+      return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
     }
+    button.addEventListener('click', function () {
+      const videoId = this.getAttribute('data-video-id');
+      const isLiked = this.classList.contains('liked');
 
-    const likeButtons = document.querySelectorAll('.like-button');
-    likeButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const videoId = this.getAttribute('data-video-id');
-        const isLiked = this.classList.contains('liked');
-        
-        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+      const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
         .then(response => response.json())
         .then(data => {
           if (data.success) {
@@ -196,22 +203,22 @@
         .catch(error => {
           console.error('Error:', error);
         });
-      });
     });
-
-    const profileButtons = document.querySelectorAll('.profile-btn');
-    profileButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const authorId = this.getAttribute('data-author-id');
-        window.location.href = `/profile/${authorId}`;
-      });
-    });
-
   });
+
+  const profileButtons = document.querySelectorAll('.profile-btn');
+  profileButtons.forEach(button => {
+    if (!userLoggedIn) {
+      button.classList.add('disabled');
+      return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+    }
+    button.addEventListener('click', function () {
+      const authorId = this.getAttribute('data-author-id');
+      window.location.href = `/profile/${authorId}`;
+    });
+  });
+
+
 </script>
 
 {% endblock content %}

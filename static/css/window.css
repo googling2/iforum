@@ -117,6 +117,7 @@
 
   .info-wrapper a img {
     width: 80px;
+    height: 80px;
     border-radius: 100%;
   }
 
@@ -1205,6 +1206,19 @@
     background: #181818;
     transition: all 0.5s ease;
     overflow: hidden;
+  }
+
+  .video-title {
+    margin-left: 23%;
+    width: 52%;
+    margin-top: -23px;
+    background: black;
+    color: white;
+    text-align: center;
+    margin-bottom: -64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .sidebar li .profile-details {
