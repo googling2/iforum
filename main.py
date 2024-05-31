@@ -9,7 +9,6 @@ from PIL import Image
 import urllib.request
 import shutil
 from moviepy.editor import ImageSequenceClip, VideoFileClip, CompositeVideoClip, CompositeAudioClip, AudioFileClip
-# import predict
 import datetime
 from fastapi import Depends, HTTPException
 from authlib.integrations.starlette_client import OAuth
@@ -778,23 +777,19 @@ async def check_voice_count(db: Session = Depends(get_db), user_info: dict = Dep
     user_code = user_info['usercode']
     voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
     return {"voice_count": voice_count}
-
+    
 @app.post("/upload_voice")
 async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...), db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user_code = user_info['usercode']
     voice_count = db.query(Voice).filter(Voice.user_code == user_code).count()
-    
     if voice_count >= 1:
         return JSONResponse(content={"message": "최대 1개까지만 업로드할 수 있습니다."}, status_code=400)
-
     current_date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     file_extension = os.path.splitext(file.filename)[1]
     unique_filename = f"{os.path.splitext(file.filename)[0]}_{current_date}{file_extension}"
     file_location = os.path.join(UPLOAD_FOLDER2, unique_filename)
-    
     with open(file_location, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-
     new_voice = Voice(
         user_code=user_code,
         voice_name=voiceName,
@@ -805,7 +800,6 @@ async def upload_voice(file: UploadFile = File(...), voiceName: str = Form(...),
     db.add(new_voice)
     db.commit()
     db.refresh(new_voice)
-
     return {"info": f"파일 '{file.filename}'이 '{unique_filename}'로 업로드되었습니다.", "voiceName": voiceName}
 
 @app.delete("/delete_voice/{voice_code}")
@@ -911,13 +905,12 @@ async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict =
 
     return {"message": "기존 목소리가 삭제되었습니다."}
 
-if __name__ == "__main__":
-    # 클라이언트에서 인터넷으로 다이렉트 요청할 때
-    import uvicorn
-    uvicorn.run(app, host='127.0.0.1', port=8000
-    )
+# if __name__ == "__main__":
+#     # 클라이언트에서 인터넷으로 다이렉트 요청할 때
+#     import uvicorn
+#     uvicorn.run(app, host='127.0.0.1', port=8000
+#     )
     # nginx가 앞단에 있으면
     import uvicorn
     uvicorn.run(app, port=8000
     )
-

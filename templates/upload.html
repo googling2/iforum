@@ -382,7 +382,7 @@
         <option value="shimmer" data-image="../static/profile_img/6.png"
           data-audio="../static/profile_audio/shimmer.mp3">태민</option>
         {% for voice in user_voices %}
-        <option value="{{ " static/myvoice/" + voice.voice_filename }}">{{ voice.voice_name }}</option>
+        <option value="{{ 'static/myvoice/' + voice.voice_filename }}">{{ voice.voice_name }}</option>
         {% endfor %}
       </select>
       <img src="../static/profile_img/1.png" alt="선택된 이미지" id="selected_image" class="option-image">
@@ -696,9 +696,9 @@
       event.preventDefault(); // 폼의 기본 제출 동작 방지
       loadingContainer.style.display = "block";
       form.style.display = "none";
-      document.querySelectorAll(".hbody").forEach((element) => {
-        element.style.display = "none";
-      });
+      // document.querySelectorAll(".hbody").forEach((element) => {
+      //   element.style.display = "none";
+      // });
 
       // 폼 데이터를 수집합니다.
       const formData = new FormData(form);
@@ -712,15 +712,17 @@
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
+          console.log(response.url, "response.url")
           return response.url; // 리디렉션된 URL을 받음
         })
         .then((redirectedUrl) => {
           // 페이지를 리디렉션된 URL로 이동
+          console.log(redirectedUrl, "response.url")
           window.location.href = redirectedUrl;
         })
         .catch((error) => {
           console.error("오류:", error);
-          loadingContainer.style.display = "none";
+
           form.style.display = "block";
           document.querySelectorAll(".hbody").forEach((element) => {
             element.style.display = "block";
