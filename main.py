@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request, File, UploadFile
+from fastapi import FastAPI, Form, Request, File, UploadFile, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -25,6 +25,8 @@ from starlette.middleware.sessions import SessionMiddleware
 import time
 import upload
 from moviepy.audio.fx.all import audio_fadeout
+from typing import List
+from schemas import VideoResponse
 
 app = FastAPI()
 
@@ -102,75 +104,8 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
         "total_likes": total_likes
     })
 
-
-@app.get("/main", response_class=HTMLResponse)
-async def display_form(request: Request, db: Session = Depends(get_db)):
-    user_info = request.session.get('user')
-    user_code = user_info['usercode'] if user_info else None
-    user_logged_in = user_info is not None  # user_logged_in 변수 추가
-
-    order_by = request.query_params.get("order_by", "latest")
-    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
-
-    query = db.query(
-        Fairytale.ft_code.label("id"),
-        Fairytale.ft_name.label("url"),
-        Fairytale.ft_title.label("title"),
-        Fairytale.ft_like.label("ft_like"),
-        User.user_name.label("name"),
-        Profile.profile_name.label("img"),  # User.profile -> Profile.profile_name으로 수정
-        User.user_code.label("author_id"),
-        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
-
-    if subscribed_videos and user_code:
-        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
-        query = query.filter(Fairytale.user_code.in_(subscriptions))
-    
-    if order_by == "popular":
-        query = query.order_by(Fairytale.ft_like.desc())
-    else:
-        query = query.order_by(Fairytale.ft_code.desc())
-
-    videos = query.limit(16).all()
-
-    video_data = [
-        {
-            "id": video.id,
-            "url": video.url if video.url else None,
-            "name": video.name if video.name else "",
-            "title": video.title if video.title else "",
-            "ft_like": video.ft_like,
-            "img": f"static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
-            "liked": video.liked,
-            "author_id": video.author_id
-        }
-        for video in videos
-    ]
-
-
-    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
-    if user_info:
-        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
-
-    return templates.TemplateResponse("main.html", {
-        "request": request,
-        "videos": video_data,
-        "user_code": user_code,
-        "profile_user_info": profile_user_info,
-        "profile_image": profile_image,
-        "follow_count": follow_count,
-        "follower_count": follower_count,
-        "total_likes": total_likes,
-        "order_by": order_by,
-        "subscribed_videos": subscribed_videos,
-        "user_logged_in": user_logged_in  # user_logged_in 변수 추가
-
-    })
-
-
 @app.get("/", response_class=HTMLResponse)
-async def display_form(request: Request, db: Session = Depends(get_db)):
+async def index(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
 
@@ -183,9 +118,8 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         Profile.profile_name.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).order_by(Fairytale.ft_code.desc()).offset(0).limit(8).all()
 
-    
     video_data = [
         {
             "id": video.id,
@@ -198,7 +132,6 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
             "author_id": video.author_id,
         }
         for video in videos
-        
     ]
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
@@ -216,6 +149,115 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follower_count": follower_count,
         "total_likes": total_likes
     })
+
+@app.get("/main", response_class=HTMLResponse)
+async def main(request: Request, db: Session = Depends(get_db)):
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+    user_logged_in = user_info is not None
+
+    order_by = request.query_params.get("order_by", "latest")
+    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
+
+    query = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        Profile.profile_name.label("img"),
+        User.user_code.label("author_id"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
+
+    if subscribed_videos and user_code:
+        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
+        query = query.filter(Fairytale.user_code.in_(subscriptions))
+
+    if order_by == "popular":
+        query = query.order_by(Fairytale.ft_like.desc())
+    else:
+        query = query.order_by(Fairytale.ft_code.desc())
+
+    videos = query.offset(0).limit(8).all()
+
+    video_data = [
+        {
+            "id": video.id,
+            "url": video.url if video.url else None,
+            "name": video.name if video.name else "",
+            "title": video.title if video.title else "",
+            "ft_like": video.ft_like,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "liked": video.liked,
+            "author_id": video.author_id
+        }
+        for video in videos
+    ]
+
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
+
+    return templates.TemplateResponse("main.html", {
+        "request": request,
+        "videos": video_data,
+        "user_code": user_code,
+        "profile_user_info": profile_user_info,
+        "profile_image": profile_image,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
+        "total_likes": total_likes,
+        "order_by": order_by,
+        "subscribed_videos": subscribed_videos,
+        "user_logged_in": user_logged_in
+    })
+
+@app.get("/videos", response_model=List[VideoResponse])
+async def get_videos(request: Request, db: Session = Depends(get_db), offset: int = 0, limit: int = 8):
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+
+    order_by = request.query_params.get("order_by", "latest")
+    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
+
+    query = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        Profile.profile_name.label("img"),
+        User.user_code.label("author_id"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
+
+    if subscribed_videos and user_code:
+        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
+        query = query.filter(Fairytale.user_code.in_(subscriptions))
+
+    if order_by == "popular":
+        query = query.order_by(Fairytale.ft_like.desc())
+    else:
+        query = query.order_by(Fairytale.ft_code.desc())
+
+    videos = query.offset(offset).limit(limit).all()
+
+    video_data = [
+        {
+            "id": video.id,
+            "url": video.url if video.url else None,
+            "name": video.name if video.name else "",
+            "title": video.title if video.title else "",
+            "ft_like": video.ft_like,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
+            "liked": video.liked,
+            "author_id": video.author_id
+        }
+        for video in videos
+    ]
+
+    return video_data
 
 
 async def get_profile_data(db: Session, user_code: int):
