@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% block content %}
 
 <link rel="stylesheet" href="../static/css/styles.css" />
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
@@ -6,6 +7,16 @@
   .mic.active {
     background-color: #ffcc00;
     color: white;
+  }
+  .like-button {
+    cursor: pointer;
+  }
+  .liked {
+    color: red; /* 좋아요를 눌렀을 때 색상 변경 */
+  }
+  .disabled {
+    pointer-events: none; /* 클릭 비활성화 */
+    opacity: 0.5; /* 비활성화 시 반투명하게 */
   }
 </style>
 <div class="search-container">
@@ -29,7 +40,7 @@
       <div class="chip {{ 'active' if subscribed_videos else '' }}" id="subscribed-chip">
         <p>구독영상</p>
       </div>
-    {% endif %}
+      {% endif %}
     </div>
     <div class="video-container">
       <!-- 검색 결과가 여기에 표시됨 -->
@@ -47,19 +58,18 @@
             </div>
             <div class="detail">
               <h3 class="title">{{ video.title }}</h3>
-              <div class="channel-name">{{ video.name }} <i class="fa-solid fa-thumbs-up" style="   font-size: 20px;
-                  margin-top: -21px;
-                  margin-right: 26px;
-                  color: white;
-                  float: right;"></i>
+              <div class="channel-name">{{ video.name }} 
+                <i class="fa-solid fa-thumbs-up like-button {{ 'liked' if video.liked else '' }}" 
+                   data-video-id="{{ video.id }}" 
+                   style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
+                </i>
               </div>
               <div class="views-upload">
-                <div class="views">{{ video.ft_like }} like</div>
+                <div class="views">{{ video.ft_like or 0 }} like</div>
               </div>
             </div>
           </div>
           <div class="hidden-content">
-
             <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
           </div>
         </div>
@@ -139,12 +149,62 @@
       window.location.href = "/main?order_by=popular";
     });
 
-    document.getElementById('subscribed-chip').addEventListener('click', function () {
-      window.location.href = "/main?subscribed=true";
+    const userLoggedIn = {{ 'true' if user_logged_in else 'false' }};
+    
+    // const userLoggedIn = {user_logged_in} ? 'true' : 'false';
+    // console.log("확인ㅇㅇ",{{user_logged_in}})
+    // const userLoggedIn = {{ user_logged_in | tojson }};
+    
+
+    if (userLoggedIn) {
+      document.getElementById('subscribed-chip').addEventListener('click', function () {
+        window.location.href = "/main?subscribed=true";
+      });
+    }
+
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+      }
+      button.addEventListener('click', function () {
+        const videoId = this.getAttribute('data-video-id');
+        const isLiked = this.classList.contains('liked');
+        
+        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (isLiked) {
+              this.classList.remove('liked');
+            } else {
+              this.classList.add('liked');
+            }
+            const likeCountElement = this.closest('.video-details').querySelector('.views');
+            likeCountElement.textContent = `${data.likes_count} like`;
+          } else {
+            console.error('Failed to update like status');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
     });
 
     const profileButtons = document.querySelectorAll('.profile-btn');
     profileButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+      }
       button.addEventListener('click', function () {
         const authorId = this.getAttribute('data-author-id');
         window.location.href = `/profile/${authorId}`;
@@ -152,8 +212,6 @@
     });
 
   });
-
-
 </script>
 
 {% endblock content %}
