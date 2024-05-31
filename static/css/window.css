@@ -793,12 +793,22 @@
 
   .profile .profile-videos .videos-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(15.33rem, 100%), 1fr));
+
+    grid-template-columns: repeat(auto-fill, 17.33rem);
+
     gap: .8rem;
+
     background-color: var(--whiteColor);
+
     position: relative;
+    top: 0;
+
+    left: 0;
+
     height: 100%;
+
     overflow-y: auto;
+
   }
 
   .profile .profile-videos .videos-container::-webkit-scrollbar {
@@ -806,6 +816,7 @@
   }
 
   .profile .profile-videos .videos-container .video video {
+
     height: 90%;
     width: 100%;
   }
@@ -1210,7 +1221,7 @@
 
   .video-title {
     margin-left: 23%;
-    width: 52%;
+    width: 60%;
     margin-top: -23px;
     background: black;
     color: white;

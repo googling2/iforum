@@ -253,17 +253,17 @@ async def get_profile_data(db: Session, user_code: int):
 
 
 @app.get("/my_profile", response_class=HTMLResponse)
-async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user), page: int = Query(1), per_page: int = Query(6)):
+async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user), page: int = Query(1), per_page: int = Query(8)):
     author_id = user_info['usercode']
     return await get_profile(request, db, author_id, user_info, page, per_page)
 
 
 @app.get("/profile/{author_id}", response_class=HTMLResponse)
-async def display_profile(request: Request, author_id: int, db: Session = Depends(get_db), page: int = Query(1), per_page: int = Query(6)):
+async def display_profile(request: Request, author_id: int, db: Session = Depends(get_db), page: int = Query(1), per_page: int = Query(8)):
     current_user_info = request.session.get('user')
     return await get_profile(request, db, author_id, current_user_info, page, per_page)
 
-async def get_profile(request: Request, db: Session, author_id: int, current_user_info: dict = None, page: int = 1, per_page: int = 6):
+async def get_profile(request: Request, db: Session, author_id: int, current_user_info: dict = None, page: int = 1, per_page: int = 8):
     profile_user_info = db.query(User).filter(User.user_code == author_id).first()
     if not profile_user_info:
         raise HTTPException(status_code=404, detail="User not found")
