@@ -78,19 +78,31 @@ def get_current_user(request: Request):
 async def search_fairytales(request: Request, keyword: str = Form(...), db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
+    user_logged_in = user_info is not None
 
-    results = db.query(Fairytale).filter(Fairytale.ft_title.ilike(f'%{keyword}%')).all()
+    results = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        Profile.profile_name.label("img"),
+        User.user_code.label("author_id"),
+        (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).filter(Fairytale.ft_title.ilike(f'%{keyword}%')).all()
+
     video_data = [
         {
-            "id": result.ft_code,
-            "url": result.ft_name if result.ft_name else None,
-            "title": result.ft_title if result.ft_title else "",
+            "id": result.id,
+            "url": result.url if result.url else None,
+            "title": result.title if result.title else "",
             "ft_like": result.ft_like,
-            "img": f"/static/uploads/{result.user.profile}" if result.user.profile else "/static/uploads/basic.png",
-            "name": result.user.user_name if result.user.user_name else "",
+            "img": f"/static/uploads/{result.img}" if result.img else "/static/uploads/basic.png",
+            "name": result.name if result.name else "",
+            "liked": result.liked,
+            "author_id": result.author_id
         }
         for result in results
-        
     ]
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
@@ -100,11 +112,16 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
     return templates.TemplateResponse("main.html", {
         "request": request,
         "videos": video_data,
+        "user_code": user_code,
         "profile_user_info": profile_user_info,
         "profile_image": profile_image,
         "follow_count": follow_count,
         "follower_count": follower_count,
-        "total_likes": total_likes
+        "total_likes": total_likes,
+        "order_by": "latest",
+        "subscribed_videos": False,
+        "user_logged_in": user_logged_in,
+        "keyword": keyword
     })
 
 
@@ -218,12 +235,9 @@ async def main(request: Request, db: Session = Depends(get_db)):
     })
 
 @app.get("/videos", response_model=List[VideoResponse])
-async def get_videos(request: Request, db: Session = Depends(get_db), offset: int = 0, limit: int = 8):
+async def get_videos(request: Request, db: Session = Depends(get_db), offset: int = 0, limit: int = 8, order_by: str = "latest", subscribed: bool = False, keyword: str = None):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
-
-    order_by = request.query_params.get("order_by", "latest")
-    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
 
     query = db.query(
         Fairytale.ft_code.label("id"),
@@ -236,9 +250,12 @@ async def get_videos(request: Request, db: Session = Depends(get_db), offset: in
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
     ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
 
-    if subscribed_videos and user_code:
+    if subscribed and user_code:
         subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
         query = query.filter(Fairytale.user_code.in_(subscriptions))
+
+    if keyword:
+        query = query.filter(Fairytale.ft_title.contains(keyword))
 
     if order_by == "popular":
         query = query.order_by(Fairytale.ft_like.desc())

@@ -24,7 +24,7 @@
 
 <div class="search-container">
   <form id="search-form" method="post" action="/search">
-    <input type="text" id="search-input" name="keyword" placeholder="Search" />
+    <input type="text" id="search-input" name="keyword" placeholder="Search" value="{{ keyword or '' }}" />
     <button type="submit" class="search"><i class="ri-search-line"></i></button>
   </form>
   <button class="mic" id="mic-button"><i class="ri-mic-fill"></i> </button>
@@ -48,6 +48,37 @@
     </div>
     <div class="video-container" id="video-container">
       <!-- 초기 비디오가 여기에 로드됨 -->
+      {% for video in videos %}
+      <div class="video-content-cover">
+        <div class="video-content">
+          <a class="video-box">
+            <video controls class="m-vdo">
+              <source src="{{ video.url }}" type="video/mp4" />
+            </video>
+          </a>
+          <div class="video-details">
+            <div class="channel-logo">
+              <a href="/profile/{{ video.author_id }}"><img src="{{ video.img }}" alt="" class="m-img" /></a>
+            </div>
+            <div class="detail">
+              <h3 class="title">{{ video.title }}</h3>
+              <div class="channel-name">{{ video.name }}
+                <i class="fa-solid fa-thumbs-up like-button {{ 'liked' if video.liked else '' }}"
+                  data-video-id="{{ video.id }}"
+                  style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
+                </i>
+              </div>
+              <div class="views-upload">
+                <div class="views">{{ video.ft_like or 0 }} like</div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-content">
+            <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -124,58 +155,9 @@
 
     if (userLoggedIn) {
       document.getElementById('subscribed-chip').addEventListener('click', function () {
-        window.location.href = "/main?subscribed=true";
+        window.location.href = "/main?order_by={{ order_by }}&subscribed=true";
       });
     }
-
-    const likeButtons = document.querySelectorAll('.like-button');
-    likeButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const videoId = this.getAttribute('data-video-id');
-        const isLiked = this.classList.contains('liked');
-
-        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              if (isLiked) {
-                this.classList.remove('liked');
-              } else {
-                this.classList.add('liked');
-              }
-              const likeCountElement = this.closest('.video-details').querySelector('.views');
-              likeCountElement.textContent = `${data.likes_count} like`;
-            } else {
-              console.error('Failed to update like status');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-      });
-    });
-
-    const profileButtons = document.querySelectorAll('.profile-btn');
-    profileButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const authorId = this.getAttribute('data-author-id');
-        window.location.href = `/profile/${authorId}`;
-      });
-    });
 
     let currentPage = 0; // 초기 페이지를 0으로 설정
     const perPage = 8;
@@ -205,92 +187,108 @@
     }
 
     function renderVideos(videos) {
-  videos.forEach(video => {
-    const videoContent = document.createElement('div');
-    videoContent.className = 'video-content-cover';
-    videoContent.innerHTML = `
-      <div class="video-content">
-        <a class="video-box">
-          <video controls class="m-vdo">
-            <source src="${video.url}" type="video/mp4" />
-          </video>
-        </a>
-        <div class="video-details">
-          <div class="channel-logo">
-            <img src="${video.img}" alt="" class="m-img" />
-          </div>
-          <div class="detail">
-            <h3 class="title">${video.title}</h3>
-            <div class="channel-name">${video.name}
-              <i class="fa-solid fa-thumbs-up like-button ${video.liked ? 'liked' : ''}"
-                data-video-id="${video.id}"
-                style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
-              </i>
+      videos.forEach(video => {
+        const videoContent = document.createElement('div');
+        videoContent.className = 'video-content-cover';
+        videoContent.innerHTML = `
+          <div class="video-content">
+            <a class="video-box">
+              <video controls class="m-vdo">
+                <source src="${video.url}" type="video/mp4" />
+              </video>
+            </a>
+            <div class="video-details">
+              <div class="channel-logo">
+                <a href="/profile/${video.author_id}"><img src="${video.img}" alt="" class="m-img" /></a>
+              </div>
+              <div class="detail">
+                <h3 class="title">${video.title}</h3>
+                <div class="channel-name">${video.name}
+                  <i class="fa-solid fa-thumbs-up like-button ${video.liked ? 'liked' : ''}"
+                    data-video-id="${video.id}"
+                    style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
+                  </i>
+                </div>
+                <div class="views-upload">
+                  <div class="views">${video.ft_like || 0} like</div>
+                </div>
+              </div>
             </div>
-            <div class="views-upload">
-              <div class="views">${video.ft_like || 0} like</div>
+            <div class="hidden-content">
+              <div class="btn profile-btn" data-author-id="${video.author_id}">프로필보기</div>
             </div>
           </div>
-        </div>
-        <div class="hidden-content">
-          <div class="btn profile-btn" data-author-id="${video.author_id}">프로필보기</div>
-        </div>
-      </div>
-    `;
-    videoContainer.appendChild(videoContent);
-  });
-
-  // 새로 로드된 비디오에도 이벤트 리스너 추가
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach(button => {
-    if (!userLoggedIn) {
-      button.classList.add('disabled');
-      return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-    }
-    button.addEventListener('click', function () {
-      const videoId = this.getAttribute('data-video-id');
-      const isLiked = this.classList.contains('liked');
-
-      const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          if (isLiked) {
-            this.classList.remove('liked');
-          } else {
-            this.classList.add('liked');
-          }
-          const likeCountElement = this.closest('.video-details').querySelector('.views');
-          likeCountElement.textContent = `${data.likes_count} like`;
-        } else {
-          console.error('Failed to update like status');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
+        `;
+        videoContainer.appendChild(videoContent);
       });
-    });
-  });
-}
+
+      // 새로 로드된 비디오에도 이벤트 리스너 추가
+      const likeButtons = document.querySelectorAll('.like-button');
+      likeButtons.forEach(button => {
+        if (!userLoggedIn) {
+          button.classList.add('disabled');
+          return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+        }
+        button.addEventListener('click', function () {
+          const videoId = this.getAttribute('data-video-id');
+          const isLiked = this.classList.contains('liked');
+
+          const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (isLiked) {
+                this.classList.remove('liked');
+              } else {
+                this.classList.add('liked');
+              }
+              const likeCountElement = this.closest('.video-details').querySelector('.views');
+              likeCountElement.textContent = `${data.likes_count} like`;
+            } else {
+              console.error('Failed to update like status');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        });
+      });
+
+      const profileButtons = document.querySelectorAll('.profile-btn');
+      profileButtons.forEach(button => {
+        if (!userLoggedIn) {
+          button.classList.add('disabled');
+          return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+        }
+        button.addEventListener('click', function () {
+          const authorId = this.getAttribute('data-author-id');
+          window.location.href = `/profile/${authorId}`;
+        });
+      });
+    }
 
     function handleScroll() {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading) {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= documentHeight - 100 && !loading) {
         loading = true;
-        currentPage++;
+        currentPage += 1;
         fetchVideos(currentPage);
       }
     }
 
     window.addEventListener('scroll', handleScroll);
-
-    // 초기 로드
-    fetchVideos(currentPage);
+    fetchVideos(currentPage); // 초기 비디오 로드
   });
 </script>
-{% endblock content %}
+
+{% endblock %}
+
