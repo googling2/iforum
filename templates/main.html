@@ -155,7 +155,9 @@
       window.location.href = "/main?order_by=popular";
     });
 
-    const userLoggedIn = {{ 'true' if user_logged_in else 'false' }};
+    const userLoggedIn = '{{ 'true' if user_logged_in else 'false' }}' === 'true';
+
+    // const userLoggedIn = context.userLoggedIn === true;
 
     if (userLoggedIn) {
       document.getElementById('subscribed-chip').addEventListener('click', function () {
