@@ -45,6 +45,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 
+
 api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=api_key)
 
