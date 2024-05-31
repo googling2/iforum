@@ -64,6 +64,7 @@ def get_db():
     finally:
         db.close()
 
+
 def get_current_user(request: Request):
     user_info = request.session.get('user')
     if not user_info:
@@ -244,12 +245,6 @@ async def get_profile_data(db: Session, user_code: int):
         profile_user_info = None
 
     return profile_user_info, profile_image, follow_count, follower_count, total_likes
-
-
-# @app.get("/w_header", response_class=HTMLResponse)
-# async def w_header(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-#     author_id = user_info['usercode']
-#     return await get_profile(request, db, author_id, user_info)
 
 
 @app.get("/my_profile", response_class=HTMLResponse)
