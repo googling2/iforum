@@ -847,7 +847,7 @@ async def follow_user(user_code2: int, db: Session = Depends(get_db), user_info:
     db.commit()
     return {"message": "팔로우 되었습니다"}
 
-@app.post("/unfollow/{user_code2}")
+@app.delete("/unfollow/{user_code2}")
 async def unfollow_user(user_code2: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     user_code = user_info['usercode']
     
