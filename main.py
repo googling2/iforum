@@ -107,6 +107,8 @@ async def search_fairytales(request: Request, keyword: str = Form(...), db: Sess
 async def display_form(request: Request, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
+    user_logged_in = user_info is not None  # user_logged_in 변수 추가
+
     order_by = request.query_params.get("order_by", "latest")
     subscribed_videos = request.query_params.get("subscribed", "false") == "true"
 
@@ -120,7 +122,7 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
     ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
     if subscribed_videos and user_code:
         subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
         query = query.filter(Fairytale.user_code.in_(subscriptions))
@@ -161,7 +163,9 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follower_count": follower_count,
         "total_likes": total_likes,
         "order_by": order_by,
-        "subscribed_videos": subscribed_videos
+        "subscribed_videos": subscribed_videos,
+        "user_logged_in": user_logged_in  # user_logged_in 변수 추가
+
     })
 
 
