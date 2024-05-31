@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request, File, UploadFile
+from fastapi import FastAPI, Form, Request, File, UploadFile, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -25,6 +25,8 @@ from starlette.middleware.sessions import SessionMiddleware
 import time
 import upload
 from moviepy.audio.fx.all import audio_fadeout
+from math import ceil
+
 
 app = FastAPI()
 
@@ -251,28 +253,32 @@ async def get_profile_data(db: Session, user_code: int):
 
 
 @app.get("/my_profile", response_class=HTMLResponse)
-async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def my_profile(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user), page: int = Query(1), per_page: int = Query(6)):
     author_id = user_info['usercode']
-    return await get_profile(request, db, author_id, user_info)
+    return await get_profile(request, db, author_id, user_info, page, per_page)
+
 
 @app.get("/profile/{author_id}", response_class=HTMLResponse)
-async def display_profile(request: Request, author_id: int, db: Session = Depends(get_db)):
+async def display_profile(request: Request, author_id: int, db: Session = Depends(get_db), page: int = Query(1), per_page: int = Query(6)):
     current_user_info = request.session.get('user')
-    return await get_profile(request, db, author_id, current_user_info)
+    return await get_profile(request, db, author_id, current_user_info, page, per_page)
 
-async def get_profile(request: Request, db: Session, author_id: int, current_user_info: dict = None):
+async def get_profile(request: Request, db: Session, author_id: int, current_user_info: dict = None, page: int = 1, per_page: int = 6):
     profile_user_info = db.query(User).filter(User.user_code == author_id).first()
     if not profile_user_info:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == author_id).all()
+    total_fairytales = db.query(Fairytale).filter(Fairytale.user_code == author_id).count()
+    total_pages = ceil(total_fairytales / per_page)
+    user_fairytales = db.query(Fairytale).filter(Fairytale.user_code == author_id).offset((page - 1) * per_page).limit(per_page).all()
+    
     total_likes = sum(fairy.ft_like for fairy in user_fairytales)
     user_voices = db.query(Voice).filter(Voice.user_code == author_id).all()
     profile = db.query(Profile).filter(Profile.user_code == author_id).first()
     
     profile_image = f"/static/uploads/{profile.profile_name}" if profile else "/static/uploads/basic.png"
     is_own_profile = (current_user_info['usercode'] == profile_user_info.user_code) if current_user_info else False
-    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None
+    is_following = db.query(Subscribe).filter_by(user_code=current_user_info['usercode'], user_code2=author_id).first() is not None if current_user_info else False
 
     profile_user_info_dict = {
         "user_code": profile_user_info.user_code,
@@ -281,12 +287,8 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "profile": profile_user_info.profile,
     }
 
-    # 팔로우 및 팔로워 수를 쿼리합니다.
     follow_count = db.query(Subscribe).filter(Subscribe.user_code == author_id).count()
     follower_count = db.query(Subscribe).filter(Subscribe.user_code2 == author_id).count()
-
-    is_own_profile = current_user_info['usercode'] == author_id if current_user_info else False
-    is_following = db.query(Subscribe).filter(Subscribe.user_code == current_user_info['usercode'], Subscribe.user_code2 == author_id).first() if current_user_info else False
 
     print("profile_user_info_dict:", profile_user_info_dict)
     print("current_user_info:", current_user_info)
@@ -302,9 +304,12 @@ async def get_profile(request: Request, db: Session, author_id: int, current_use
         "is_own_profile": is_own_profile,
         "is_following": is_following,
         "follow_count": follow_count,
-        "follower_count": follower_count
-
+        "follower_count": follower_count,
+        "page": page,
+        "total_pages": total_pages,
+        "per_page": per_page
     })
+
 
 @app.get("/upload", response_class=HTMLResponse)
 async def display_form(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
