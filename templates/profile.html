@@ -34,13 +34,17 @@
   }
 
   .video {
+    max-width: 370px;
     transition: transform 0.3s ease;
-    margin: 10px; /* 비디오 간격 설정 */
+    margin: 10px;
+    /* 비디오 간격 설정 */
   }
 
   .video video {
-    width: 100px; /* 비디오가 컨테이너를 꽉 채우도록 설정 */
-    height: 100%; /* 비디오가 컨테이너를 꽉 채우도록 설정 */
+    width: 100px;
+    /* 비디오가 컨테이너를 꽉 채우도록 설정 */
+    height: 100%;
+    /* 비디오가 컨테이너를 꽉 채우도록 설정 */
   }
 
 
@@ -55,8 +59,8 @@
   }
 
   .video-title {
-    margin-left: 69px;
-    width: 114px;
+    margin-left: 26%;
+    width: 50%;
     margin-top: -23px;
     background: black;
     color: white;
@@ -70,7 +74,7 @@
   .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 100px;
   }
 
   .pagination a {
@@ -89,6 +93,10 @@
   .pagination a:hover:not(.active) {
     background-color: #ddd;
     border-radius: 5px;
+  }
+
+  .content {
+    background: white;
   }
 </style>
 
@@ -179,13 +187,18 @@
               <source src="/{{ fairytale.ft_name }}" type="video/mp4">
             </video>
             <div class="video-controls">
-              <button class="like-btn" style="border: none; background: black;" id="like-btn-{{ fairytale.ft_code }}" onclick="toggleLike('{{ fairytale.ft_code }}')">
-                <i class="fa-solid fa-thumbs-up" style="margin-top: 7px; font-size: 20px; margin-left: 20px; color: white; border: none; background: black;"></i>
+              <button class="like-btn" style="border: none; background: black;" id="like-btn-{{ fairytale.ft_code }}"
+                onclick="toggleLike('{{ fairytale.ft_code }}')">
+                <i class="fa-solid fa-thumbs-up"
+                  style="margin-top: 7px; font-size: 20px; margin-left: 20px; color: white; border: none; background: black;"></i>
               </button>
               <div class="video-title">{{ fairytale.ft_title }}</div>
               {% if is_own_profile %}
-              <button class="delete-btn" style="margin-right: 22px; float: right; border: none; background: black; margin-top: 30px;" onclick="confirmDelete('{{ fairytale.ft_code }}')">
-                <i class="fa-solid fa-trash-can" style="margin-top: 7px; font-size: 20px; margin-left: 20px; color: white; border: none; background: black;"></i>
+              <button class="delete-btn"
+                style="margin-right: 22px; float: right; border: none; background: black; margin-top: 30px;"
+                onclick="confirmDelete('{{ fairytale.ft_code }}')">
+                <i class="fa-solid fa-trash-can"
+                  style="margin-top: 7px; font-size: 20px; margin-left: 20px; color: white; border: none; background: black;"></i>
               </button>
               {% endif %}
             </div>
@@ -195,14 +208,13 @@
         <!-- 페이지 네비게이션 -->
         <div class="pagination">
           {% if page > 1 %}
-          <a href="?page={{ page - 1 }}&per_page={{ per_page }}">&laquo; 이전</a>
+          <a href="?page={{ page - 1 }}&per_page={{ per_page }}">&laquo; </a>
           {% endif %}
           {% for p in range(1, total_pages + 1) %}
           <a href="?page={{ p }}&per_page={{ per_page }}" class="{{ 'active' if p == page else '' }}">{{ p }}</a>
           {% endfor %}
-          {% if page < total_pages %}
-          <a href="?page={{ page + 1 }}&per_page={{ per_page }}">다음 &raquo;</a>
-          {% endif %}
+          {% if page < total_pages %} <a href="?page={{ page + 1 }}&per_page={{ per_page }}"> &raquo;</a>
+            {% endif %}
         </div>
       </div>
     </div>
