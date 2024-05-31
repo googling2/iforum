@@ -157,67 +157,62 @@
 
     const userLoggedIn = {{ 'true' if user_logged_in else 'false' }};
 
-  // const userLoggedIn = {user_logged_in} ? 'true' : 'false';
-  // console.log("확인ㅇㅇ",{{user_logged_in}})
-  // const userLoggedIn = {{ user_logged_in | tojson }};
-
-
-  if (userLoggedIn) {
-    document.getElementById('subscribed-chip').addEventListener('click', function () {
-      window.location.href = "/main?subscribed=true";
-    });
-  }
-
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach(button => {
-    if (!userLoggedIn) {
-      button.classList.add('disabled');
-      return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+    if (userLoggedIn) {
+      document.getElementById('subscribed-chip').addEventListener('click', function () {
+        window.location.href = "/main?subscribed=true";
+      });
     }
-    button.addEventListener('click', function () {
-      const videoId = this.getAttribute('data-video-id');
-      const isLiked = this.classList.contains('liked');
 
-      const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            if (isLiked) {
-              this.classList.remove('liked');
-            } else {
-              this.classList.add('liked');
-            }
-            const likeCountElement = this.closest('.video-details').querySelector('.views');
-            likeCountElement.textContent = `${data.likes_count} like`;
-          } else {
-            console.error('Failed to update like status');
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+      }
+      button.addEventListener('click', function () {
+        const videoId = this.getAttribute('data-video-id');
+        const isLiked = this.classList.contains('liked');
+
+        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
           }
         })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (isLiked) {
+                this.classList.remove('liked');
+              } else {
+                this.classList.add('liked');
+              }
+              const likeCountElement = this.closest('.video-details').querySelector('.views');
+              likeCountElement.textContent = `${data.likes_count} like`;
+            } else {
+              console.error('Failed to update like status');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
     });
-  });
 
-  const profileButtons = document.querySelectorAll('.profile-btn');
-  profileButtons.forEach(button => {
-    if (!userLoggedIn) {
-      button.classList.add('disabled');
-      return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-    }
-    button.addEventListener('click', function () {
-      const authorId = this.getAttribute('data-author-id');
-      window.location.href = `/profile/${authorId}`;
+    const profileButtons = document.querySelectorAll('.profile-btn');
+    profileButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+      }
+      button.addEventListener('click', function () {
+        const authorId = this.getAttribute('data-author-id');
+        window.location.href = `/profile/${authorId}`;
+      });
     });
+
   });
-
-
 </script>
 
 {% endblock content %}
