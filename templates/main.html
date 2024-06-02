@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <link rel="stylesheet" href="../static/css/styles.css" />
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
 <style>
@@ -14,14 +15,16 @@
 
   .liked {
     color: red;
+    /* 좋아요를 눌렀을 때 색상 변경 */
   }
 
   .disabled {
     pointer-events: none;
+    /* 클릭 비활성화 */
     opacity: 0.5;
+    /* 비활성화 시 반투명하게 */
   }
 </style>
-
 <div class="search-container">
   <form id="search-form" method="post" action="/search">
     <input type="text" id="search-input" name="keyword" placeholder="Search" />
@@ -29,7 +32,6 @@
   </form>
   <button class="mic" id="mic-button"><i class="ri-mic-fill"></i> </button>
 </div>
-
 <section class="main-page">
   <div class="space"></div>
   <div class="content">
@@ -46,14 +48,47 @@
       </div>
       {% endif %}
     </div>
-    <div class="video-container" id="video-container">
-      <!-- 초기 비디오가 여기에 로드됨 -->
+    <div class="video-container">
+      <!-- 검색 결과가 여기에 표시됨 -->
+      {% if videos %} {% for video in videos %}
+      <div class="video-content-cover">
+        <div class="video-content">
+          <a class="video-box">
+            <video controls class="m-vdo">
+              <source src="{{ video.url }}" type="video/mp4" />
+            </video>
+          </a>
+          <div class="video-details">
+            <div class="channel-logo">
+              <img src="{{ video.img }}" alt="" class="m-img" />
+            </div>
+            <div class="detail">
+              <h3 class="title">{{ video.title }}</h3>
+              <div class="channel-name">{{ video.name }}
+                <i class="fa-solid fa-thumbs-up like-button {{ 'liked' if video.liked else '' }}"
+                  data-video-id="{{ video.id }}"
+                  style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
+                </i>
+              </div>
+              <div class="views-upload">
+                <div class="views">{{ video.ft_like or 0 }} like</div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-content">
+            <div class="btn profile-btn" data-author-id="{{ video.author_id }}">프로필보기</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% endif %}
     </div>
   </div>
 </section>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM fully loaded and parsed');
+
     const micButton = document.getElementById('mic-button');
     const searchInput = document.getElementById('search-input');
     const searchForm = document.getElementById('search-form');
@@ -122,88 +157,64 @@
 
     const userLoggedIn = '{{ 'true' if user_logged_in else 'false' }}' === 'true';
 
+    // const userLoggedIn = context.userLoggedIn === true;
+
     if (userLoggedIn) {
       document.getElementById('subscribed-chip').addEventListener('click', function () {
         window.location.href = "/main?subscribed=true";
       });
     }
 
-    let currentPage = 0; // 초기 페이지를 0으로 설정
-    const perPage = 8;
-    let loading = false;
-    const videoContainer = document.getElementById('video-container');
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
+      }
+      button.addEventListener('click', function () {
+        const videoId = this.getAttribute('data-video-id');
+        const isLiked = this.classList.contains('liked');
 
-    async function fetchVideos(page) {
-      const order_by = '{{ order_by }}';
-      const subscribed = '{{ subscribed_videos }}' === 'true';
-
-      try {
-        const response = await fetch(`/videos?offset=${page * perPage}&limit=${perPage}&order_by=${order_by}&subscribed=${subscribed}`);
-        if (response.ok) {
-          const newVideos = await response.json();
-          renderVideos(newVideos);
-          if (newVideos.length < perPage) {
-            window.removeEventListener('scroll', handleScroll); // 더 이상 로드할 비디오가 없는 경우 스크롤 이벤트 제거
+        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
           }
-        } else {
-          console.error('Failed to fetch videos:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      } finally {
-        loading = false;
-      }
-    }
-
-    function renderVideos(videos) {
-      videos.forEach(video => {
-        const videoContent = document.createElement('div');
-        videoContent.className = 'video-content-cover';
-        videoContent.innerHTML = `
-          <div class="video-content">
-            <a class="video-box">
-              <video controls class="m-vdo">
-                <source src="${video.url}" type="video/mp4" />
-              </video>
-            </a>
-            <div class="video-details">
-              <div class="channel-logo">
-                <img src="${video.img}" alt="" class="m-img" />
-              </div>
-              <div class="detail">
-                <h3 class="title">${video.title}</h3>
-                <div class="channel-name">${video.name}
-                  <i class="fa-solid fa-thumbs-up like-button ${video.liked ? 'liked' : ''}"
-                    data-video-id="${video.id}"
-                    style="font-size: 20px; margin-top: -21px; margin-right: 26px; float: right;">
-                  </i>
-                </div>
-                <div class="views-upload">
-                  <div class="views">${video.ft_like || 0} like</div>
-                </div>
-              </div>
-            </div>
-            <div class="hidden-content">
-              <div class="btn profile-btn" data-author-id="${video.author_id}">프로필보기</div>
-            </div>
-          </div>
-        `;
-        videoContainer.appendChild(videoContent);
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (isLiked) {
+                this.classList.remove('liked');
+              } else {
+                this.classList.add('liked');
+              }
+              const likeCountElement = this.closest('.video-details').querySelector('.views');
+              likeCountElement.textContent = `${data.likes_count} like`;
+            } else {
+              console.error('Failed to update like status');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       });
-    }
+    });
 
-    function handleScroll() {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading) {
-        loading = true;
-        currentPage++;
-        fetchVideos(currentPage);
+    const profileButtons = document.querySelectorAll('.profile-btn');
+    profileButtons.forEach(button => {
+      if (!userLoggedIn) {
+        button.classList.add('disabled');
+        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
       }
-    }
+      button.addEventListener('click', function () {
+        const authorId = this.getAttribute('data-author-id');
+        window.location.href = `/profile/${authorId}`;
+      });
+    });
 
-    window.addEventListener('scroll', handleScroll);
-
-    // 초기 로드
-    fetchVideos(currentPage);
   });
 </script>
+
 {% endblock content %}
