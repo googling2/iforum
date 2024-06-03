@@ -959,17 +959,22 @@ async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict =
 
 
 @app.get("/video/{ft_code}")
-async def get_video(ft_code: str, request: Request, db: Session = Depends(get_db)):
+async def get_video(ft_code: str, request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fairytale = db.query(Fairytale).filter(Fairytale.ft_code == ft_code).first()
+
     if not fairytale:
         return {"error": "Video not found"}
+
+    # 현재 사용자 정보 가져오기
+    profile_user_info = db.query(User).filter(User.user_code == user_info['usercode']).first()
 
     return templates.TemplateResponse("video.html", {
         "request": request,
         "video_url": f"/static/{fairytale.ft_name}",
         "story_title": fairytale.ft_title,
-        "story_content": fairytale.story_content  # Assuming story_content exists
+        "profile_user_info": profile_user_info,  # 추가된 부분
     })
+
 
 if __name__ == "__main__":
     # 클라이언트에서 인터넷으로 다이렉트 요청할 때
