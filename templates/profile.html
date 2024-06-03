@@ -56,9 +56,12 @@
     height: 34px;
     margin-top: -8px;
     background: black;
+      display: flex;
+  justify-content: space-between;
+  align-items: center;
   }
 
-  .video-title {
+  /* .video-title {
     margin-left: 26%;
     width: 50%;
     margin-top: -23px;
@@ -69,7 +72,24 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+  } */
+
+  .video-title {
+  flex-grow: 1;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon-button {
+  border: none;
+  background: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+}
 
   .pagination {
     display: flex;
@@ -194,12 +214,16 @@
               </button>
               <div class="video-title">{{ fairytale.ft_title }}</div>
               {% if is_own_profile %}
-              <button class="delete-btn"
-                style="margin-right: 22px; float: right; border: none; background: black; margin-top: 30px;"
-                onclick="confirmDelete('{{ fairytale.ft_code }}')">
-                <i class="fa-solid fa-trash-can"
-                  style="margin-top: 7px; font-size: 20px; margin-left: 20px; color: white; border: none; background: black;"></i>
-              </button>
+              <div style="display: flex; align-items: center;">
+                <form action="/video/{{ fairytale.ft_code }}" method="get" style="margin-right: 10px;">
+                  <button type="submit" class="icon-button" style="border: none; background: black;">
+                    <i class="fa-solid fa-upload" style="font-size: 20px; color: white;"></i>
+                  </button>
+                </form>
+                <button class="icon-button" style="border: none; background: black;" onclick="confirmDelete('{{ fairytale.ft_code }}')">
+                  <i class="fa-solid fa-trash-can" style="font-size: 20px; color: white;"></i>
+                </button>
+              </div>
               {% endif %}
             </div>
           </div>

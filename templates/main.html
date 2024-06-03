@@ -167,6 +167,7 @@
     async function fetchVideos(page) {
       const order_by = '{{ order_by }}';
       const subscribed = '{{ subscribed_videos }}' === 'true';
+      const keyword = '{{ keyword }}'; // 추가된 키워드
 
       try {
         const response = await fetch(`/videos?offset=${page * perPage}&limit=${perPage}&order_by=${order_by}&subscribed=${subscribed}`);
