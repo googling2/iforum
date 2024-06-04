@@ -371,6 +371,7 @@ async def display_form(request: Request, db: Session = Depends(get_db), user_inf
     except Exception as e:
         print(f"Error rendering template: {e}")
         raise
+
 # 비디오 업로드 엔드포인트
 @app.post("/upload_video")
 async def upload_video(request: Request, db: Session = Depends(get_db)):
