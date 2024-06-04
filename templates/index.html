@@ -4,36 +4,31 @@
 <div class="videos"></div>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const userCode = "{{ user_code }}";  // 사용자 코드를 템플릿에서 가져옴
-
+    const userCode = "{{ user_code }}";
     const videosWrapper = document.querySelector(".videos");
+    let offset = 8;  // 첫 페이지 로드 시작점
+    const limit = 8;
+    let loading = false;
 
-    // JSON 데이터 디버깅을 위해 콘솔에 출력
-    const videoDataJson = '{{ videos | tojson | safe }}';
-    console.log('videoData JSON:', videoDataJson);
+    const initialVideoData = {{ videos | tojson | safe }};
 
-    const videoData = JSON.parse(videoDataJson);
-    console.log('Parsed video data:', videoData);
-
-    const vPlayer = (video) => {
-      console.log('Video Data:', video);  // 각 비디오 데이터 확인
-
+    // 비디오 플레이어 HTML 생성
+    function vPlayer(video) {
       const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
       const likedClass = video.liked ? 'color-switch' : '';
-      const imgSrc = video.img ? video.img : "/static/uploads/basic.png";  // 각 비디오의 프로필 이미지 사용
-      console.log('Image Source:', imgSrc);  // 이미지 경로 확인
+      const imgSrc = video.img ? video.img : "/static/uploads/basic.png";
 
       return `
         <div class="vdo-wrapper">
-          <!-- video -->
+          <!-- 비디오 -->
           <video src="${videoUrl}" preload="none" loop class="vdo"></video>
 
-          <!-- pause play btn -->
+          <!-- 재생/일시정지 버튼 -->
           <button id="pause-play-btn">
             <i class="fa-solid fa-pause"></i>
           </button>
 
-          <!-- side btn -->
+          <!-- 사이드 버튼 -->
           <div class="side-btns-wrapper">
             <button class="control-btn like-btn ${likedClass}" data-video-id="${video.id}" data-liked="${video.liked}">
               <i class="fa-solid fa-thumbs-up"></i>
@@ -44,7 +39,7 @@
             </button>
           </div>
 
-          <!-- video info -->
+          <!-- 비디오 정보 -->
           <div class="info-wrapper">
             <a href="/profile/${video.author_id}"><img src="${imgSrc}" alt="profile" /></a>
             <div>
@@ -53,52 +48,49 @@
             </div>
           </div>
 
-          <!-- blury background -->
+          <!-- 블러리 배경 -->
           <div class="blury"></div>
 
-          <!-- comments -->
+          <!-- 댓글 -->
           <div class="comments">
             <p>Comments</p>
           </div>
         </div>
       `;
-    };
+    }
 
-    function injectVideos() {
-      videoData.forEach((video) => {
-        console.log('Processing video:', video);  // 각 비디오 데이터 확인
+    // 비디오를 페이지에 삽입
+    function injectVideos(videos) {
+      videos.forEach(video => {
         const videoElement = vPlayer(video);
-        if (videoElement) {
-          videosWrapper.innerHTML += videoElement;
-        }
+        videosWrapper.innerHTML += videoElement;
       });
 
-      const vids = document.querySelectorAll(".vdo-wrapper");
-      vids.forEach((vid) => {
+      document.querySelectorAll(".vdo-wrapper").forEach(vid => {
         const vdo = vid.querySelector(".vdo");
+        const pausePlayBtn = vid.querySelector("#pause-play-btn");
+        const likeBtn = vid.querySelector(".like-btn");
+        const likeCountElement = likeBtn.querySelector(".like-count");
 
+        // 비디오가 화면에 보일 때 자동 재생
         if (vdo) {
-          // 화면 내 비디오가 보일 때만 자동 재생
           const intersectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
+            entries.forEach(entry => {
               if (entry.intersectionRatio > 0) {
-                vdo.play().catch((error) => {
-                  console.log("자동 재생 오류: ", error);
-                });
+                vdo.play().catch(error => console.log("자동 재생 오류: ", error));
               } else {
                 vdo.pause();
               }
             });
           });
-
           intersectionObserver.observe(vdo);
+        }
 
-          const pausePlayBtn = vid.querySelector("#pause-play-btn");
+        // 재생/일시정지 버튼 클릭 이벤트
+        if (pausePlayBtn) {
           pausePlayBtn.addEventListener("click", () => {
             if (vdo.paused) {
-              vdo.play().catch((error) => {
-                console.log("수동 재생 오류: ", error);
-              });
+              vdo.play().catch(error => console.log("수동 재생 오류: ", error));
               pausePlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
             } else {
               vdo.pause();
@@ -107,85 +99,79 @@
           });
         }
 
-        const likeBtn = vid.querySelector(".like-btn");
-        const likeCountElement = likeBtn.querySelector(".like-count");
-
+        // 좋아요 버튼 클릭 이벤트
         likeBtn.addEventListener("click", () => {
           const videoId = likeBtn.getAttribute("data-video-id");
           const liked = likeBtn.getAttribute("data-liked") === "true";
-
-          console.log(`Like button clicked: videoId=${videoId}, liked=${liked}`);
-          console.log('Current like count element:', likeCountElement);
-
-          if (liked) {
-            console.log('Sending unlike request...');
-            fetch(`/unlike/${videoId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({ user_code: userCode })
-            })
-              .then(response => response.json())
-              .then(data => {
-                console.log('Unlike response:', data);
-                if (data.success) {
-                  console.log('Before update (unlike):', likeCountElement.textContent);
-                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
-                  console.log('Updated like count (unlike):', likeCountElement.textContent);
-                  likeBtn.setAttribute("data-liked", "false");
-                  likeBtn.classList.remove("color-switch");
-                }
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
-          } else {
-            console.log('Sending like request...');
-            fetch(`/like/${videoId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({ user_code: userCode })
-            })
-              .then(response => {
-                console.log('Like request sent:', response);
-                return response.json();
-              })
-              .then(data => {
-                console.log('Like response:', data);
-                if (data.success) {
-                  console.log('Before update (like):', likeCountElement.textContent);
-                  likeCountElement.textContent = data.likes_count;  // 서버 응답으로 좋아요 수 업데이트
-                  console.log('Updated like count (like):', likeCountElement.textContent);
-                  likeBtn.setAttribute("data-liked", "true");
-                  likeBtn.classList.add("color-switch");
-                } else {
-                  console.log('Like request failed:', data.message);
-                }
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
-          }
+          const url = liked ? `/unlike/${videoId}` : `/like/${videoId}`;
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ user_code: userCode })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              likeCountElement.textContent = data.likes_count;
+              likeBtn.setAttribute("data-liked", liked ? "false" : "true");
+              likeBtn.classList.toggle("color-switch");
+            }
+          })
+          .catch(error => console.error('Error:', error));
         });
 
+        // 공유 버튼 클릭 이벤트
         const shareBtn = vid.querySelector("#share-btn");
         const vidTitle = vid.querySelector(".info-wrapper h3");
-        shareBtn.addEventListener("click", () => {
-          navigator.share({
-            title: vidTitle.textContent,
-            text: "Check out this video!",
-            url: vdo.src,
+        if (shareBtn && vidTitle) {
+          shareBtn.addEventListener("click", () => {
+            navigator.share({
+              title: vidTitle.textContent,
+              text: "Check out this video!",
+              url: vdo.src,
+            });
           });
-        });
+        }
       });
     }
 
-    injectVideos();
+    // 더 많은 비디오를 로드
+    function loadMoreVideos() {
+      if (loading) return;
+      loading = true;
+
+      fetch(`/?offset=${offset}&limit=${limit}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            injectVideos(data);
+            offset += limit;
+            loading = false;
+          } else {
+            loading = false;
+            window.removeEventListener('scroll', handleScroll);
+          }
+        })
+        .catch(error => {
+          console.error('Error loading more videos:', error);
+          loading = false;
+        });
+    }
+
+    // 스크롤 이벤트 핸들러
+    function handleScroll() {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 5) {
+        loadMoreVideos();
+      }
+    }
+
+    // 초기 비디오 데이터를 삽입하고 스크롤 이벤트 등록
+    injectVideos(initialVideoData);
+    window.addEventListener('scroll', handleScroll);
   });
 </script>
 {% endblock content %}

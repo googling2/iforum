@@ -26,7 +26,9 @@ import time
 import upload
 from moviepy.audio.fx.all import audio_fadeout
 from math import ceil
-
+from typing import List
+from schemas import VideoResponse
+from sqlalchemy.dialects import postgresql
 
 app = FastAPI()
 
@@ -71,86 +73,44 @@ def get_current_user(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return user_info 
 
-
 @app.post("/search", response_class=HTMLResponse)
 async def search_fairytales(request: Request, keyword: str = Form(...), db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
+    user_logged_in = user_info is not None
 
-    results = db.query(Fairytale).filter(Fairytale.ft_title.ilike(f'%{keyword}%')).all()
-    video_data = [
-        {
-            "id": result.ft_code,
-            "url": result.ft_name if result.ft_name else None,
-            "title": result.ft_title if result.ft_title else "",
-            "ft_like": result.ft_like,
-            "img": f"/static/uploads/{result.user.profile}" if result.user.profile else "/static/uploads/basic.png",
-            "name": result.user.user_name if result.user.user_name else "",
-        }
-        for result in results
-        
-    ]
-
-    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
-    if user_info:
-        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
-
-    return templates.TemplateResponse("main.html", {
-        "request": request,
-        "videos": video_data,
-        "profile_user_info": profile_user_info,
-        "profile_image": profile_image,
-        "follow_count": follow_count,
-        "follower_count": follower_count,
-        "total_likes": total_likes
-    })
-
-
-@app.get("/main", response_class=HTMLResponse)
-async def display_form(request: Request, db: Session = Depends(get_db)):
-    user_info = request.session.get('user')
-    user_code = user_info['usercode'] if user_info else None
-    user_logged_in = user_info is not None  # user_logged_in 변수 추가
-
-    order_by = request.query_params.get("order_by", "latest")
-    subscribed_videos = request.query_params.get("subscribed", "false") == "true"
-
+    # 기본 쿼리 설정
     query = db.query(
         Fairytale.ft_code.label("id"),
         Fairytale.ft_name.label("url"),
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        Profile.profile_name.label("img"),  # User.profile -> Profile.profile_name으로 수정
+        Profile.profile_name.label("img"),
         User.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code)
+    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).filter(Fairytale.ft_title.ilike(f'%{keyword}%'))
 
-    if subscribed_videos and user_code:
-        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
-        query = query.filter(Fairytale.user_code.in_(subscriptions))
-    
-    if order_by == "popular":
-        query = query.order_by(Fairytale.ft_like.desc())
-    else:
-        query = query.order_by(Fairytale.ft_code.desc())
+    # 정렬 기준 설정
+    query = query.order_by(Fairytale.ft_code.desc())
 
-    videos = query.limit(16).all()
+    # 최대 12개의 결과만 가져오기
+    results = query.limit(12).all()
 
+    # 결과를 JSON 형태로 변환
     video_data = [
         {
-            "id": video.id,
-            "url": video.url if video.url else None,
-            "name": video.name if video.name else "",
-            "title": video.title if video.title else "",
-            "ft_like": video.ft_like,
-            "img": f"static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
-            "liked": video.liked,
-            "author_id": video.author_id
+            "id": result.id,
+            "url": result.url if result.url else None,
+            "title": result.title if result.title else "",
+            "ft_like": result.ft_like,
+            "img": f"/static/uploads/{result.img}" if result.img else "/static/uploads/basic.png",
+            "name": result.name if result.name else "",
+            "liked": result.liked,
+            "author_id": result.author_id
         }
-        for video in videos
+        for result in results
     ]
-
 
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
@@ -165,51 +125,72 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "follow_count": follow_count,
         "follower_count": follower_count,
         "total_likes": total_likes,
-        "order_by": order_by,
-        "subscribed_videos": subscribed_videos,
-        "user_logged_in": user_logged_in  # user_logged_in 변수 추가
-
+        "order_by": "latest",
+        "subscribed_videos": False,
+        "user_logged_in": user_logged_in,
+        "keyword": keyword
     })
 
-
-@app.get("/", response_class=HTMLResponse)
-async def display_form(request: Request, db: Session = Depends(get_db)):
+# 메인 페이지 엔드포인트
+@app.get("/main", response_class=HTMLResponse)
+async def main(request: Request, order_by: str = "latest", subscribed: bool = False, keyword: str = None, offset: int = 0, limit: int = 12, db: Session = Depends(get_db)):
     user_info = request.session.get('user')
     user_code = user_info['usercode'] if user_info else None
+    user_logged_in = user_info is not None
 
-    videos = db.query(
+    # 비디오를 최신순으로 가져오기 위한 기본 쿼리 생성
+    query = db.query(
         Fairytale.ft_code.label("id"),
         Fairytale.ft_name.label("url"),
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        Profile.profile_name.label("img"),
-        User.user_code.label("author_id"),
+        Fairytale.user_code.label("author_id"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code).join(Profile, User.user_code == Profile.user_code).order_by(Fairytale.ft_code.desc()).limit(10).all()
+    ).join(User, Fairytale.user_code == User.user_code)
 
-    
+    # 키워드로 필터링
+    if keyword:
+        query = query.filter(Fairytale.ft_title.ilike(f"%{keyword}%"))
+
+    # 구독한 사용자의 동영상으로 필터링
+    if subscribed and user_code:
+        subscriptions = db.query(Subscribe.user_code2).filter(Subscribe.user_code == user_code).subquery()
+        query = query.filter(Fairytale.user_code.in_(subscriptions))
+
+    # 정렬 기준 설정
+    if order_by == "popular":
+        query = query.order_by(Fairytale.ft_like.desc())
+    else:
+        query = query.order_by(Fairytale.ft_code.desc())
+
+    # 페이지네이션을 적용하여 쿼리 실행
+    results = query.offset(offset).limit(limit).all()
+
+    # 디버깅: 가져온 비디오 출력
+    print(f"Fetched videos: {results}")
+
+    # 쿼리 결과를 사전 형식으로 변환
     video_data = [
         {
             "id": video.id,
-            "url": video.url if video.url else None,
-            "name": video.name if video.name else "",
-            "title": video.title if video.title else "",
+            "url": video.url,
+            "name": video.name,
+            "title": video.title,
             "ft_like": video.ft_like,
-            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png",
-            "liked": video.liked,
             "author_id": video.author_id,
+            "liked": video.liked
         }
-        for video in videos
-        
+        for video in results
     ]
 
+    # 현재 사용자의 프로필 정보를 가져오는 부분을 유지
     profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
     if user_info:
-        user_code = user_info['usercode']
         profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
 
-    return templates.TemplateResponse("index.html", {
+    # 초기 비디오 데이터를 포함한 응답 반환
+    return templates.TemplateResponse("main.html", {
         "request": request,
         "videos": video_data,
         "user_code": user_code,
@@ -217,9 +198,67 @@ async def display_form(request: Request, db: Session = Depends(get_db)):
         "profile_image": profile_image,
         "follow_count": follow_count,
         "follower_count": follower_count,
-        "total_likes": total_likes
+        "total_likes": total_likes,
+        "order_by": order_by,
+        "subscribed_videos": subscribed,
+        "user_logged_in": user_logged_in,
+        "keyword": keyword
     })
 
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request, db: Session = Depends(get_db), offset: int = 0, limit: int = 8):
+    # 비디오를 최신순으로 가져오기 위한 기본 쿼리 생성
+    query = db.query(
+        Fairytale.ft_code.label("id"),
+        Fairytale.ft_name.label("url"),
+        Fairytale.ft_title.label("title"),
+        Fairytale.ft_like.label("ft_like"),
+        User.user_name.label("name"),
+        Fairytale.user_code.label("author_id")
+    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc())
+
+    print(query, "")
+    # 페이지네이션을 적용하여 쿼리 실행
+    videos = query.offset(offset).limit(limit).all()
+
+    # 디버깅: 가져온 비디오 출력
+    print(f"Fetched videos: {videos}")
+
+    # 쿼리 결과를 사전 형식으로 변환
+    video_data = [
+        {
+            "id": video.id,
+            "url": video.url,
+            "name": video.name,
+            "title": video.title,
+            "ft_like": video.ft_like,
+            "author_id": video.author_id,
+        }
+        for video in videos
+    ]
+
+    # 현재 사용자의 프로필 정보를 가져오는 부분을 유지
+    user_info = request.session.get('user')
+    user_code = user_info['usercode'] if user_info else None
+    profile_user_info, profile_image, follow_count, follower_count, total_likes = (None, "/static/uploads/basic.png", 0, 0, 0)
+    if user_info:
+        user_code = user_info['usercode']
+        profile_user_info, profile_image, follow_count, follower_count, total_likes = await get_profile_data(db, user_code)
+
+    # 초기 비디오 데이터를 포함한 응답 반환
+    if offset == 0:
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "videos": video_data,
+            "user_code": user_code,
+            "profile_user_info": profile_user_info,
+            "profile_image": profile_image,
+            "follow_count": follow_count,
+            "follower_count": follower_count,
+            "total_likes": total_likes
+        })
+    else:
+        return JSONResponse(content=video_data)
 
 async def get_profile_data(db: Session, user_code: int):
     profile_user = db.query(User).filter(User.user_code == user_code).first()
