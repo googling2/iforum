@@ -21,9 +21,12 @@ def split_audio_whisper(audio_path, audio_name, target_dir='processed'):
     if model is None:
         model_path = "model_cache/faster-whisper-medium"  # cached from "guillaumekln/faster-whisper-medium"
         try:
-            model = WhisperModel(model_path, device="cuda", compute_type="float16", local_files_only=True)
+            # model = WhisperModel(model_path, device="cuda", compute_type="float16", local_files_only=True)
+            model = WhisperModel(model_path, device="cpu", compute_type="float16", local_files_only=True)
         except:
-            model = WhisperModel(model_size, device="cuda", compute_type="float16")
+            # model = WhisperModel(model_size, device="cuda", compute_type="float16")
+            model = WhisperModel(model_size, device="cpu", compute_type="float16")
+
     audio = AudioSegment.from_file(audio_path)
     max_len = len(audio)
 
@@ -121,11 +124,17 @@ def split_audio_vad(audio_path, audio_name, target_dir, split_seconds=10.0):
 
 def hash_numpy_array(audio_path):
     array, _ = librosa.load(audio_path, sr=None, mono=True)
+    print("ccccccccccccccccccccccccc")
     # Convert the array to bytes
     array_bytes = array.tobytes()
+    print("dddddddddddddddddddddddddd")
     # Calculate the hash of the array bytes
     hash_object = hashlib.sha256(array_bytes)
+    print("eeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+
     hash_value = hash_object.digest()
+    print("fffffffffffffffffffffff")
+
     # Convert the hash value to base64
     base64_value = base64.b64encode(hash_value)
     return base64_value.decode('utf-8')[:16].replace('/', '_^')
@@ -135,9 +144,20 @@ def get_se(audio_path, vc_model, target_dir='processed', vad=True):
     version = vc_model.version
     print("OpenVoice version:", version)
 
-    audio_name = f"{os.path.basename(audio_path).rsplit('.', 1)[0]}_{version}_{hash_numpy_array(audio_path)}"
+    print(audio_path, "audio_path")
+    audio_name = f"{os.path.basename(audio_path).rsplit('.', 1)[0]}"
+    print(audio_name, "audio_name")
+    audio_name2 = f"{version}"
+    print(audio_name2, "audio_name2")
+
+    # audio_name3 = f"{hash_numpy_array(audio_path)}"
+    # print(audio_name3, "audio_name3")
+
+    audio_name = audio_name + "_" + audio_name2
+
     se_path = os.path.join(target_dir, audio_name, 'se.pth')
 
+    print(se_path, "se_path")
     # if os.path.isfile(se_path):
     #     se = torch.load(se_path).to(device)
     #     return se, audio_name
@@ -145,13 +165,15 @@ def get_se(audio_path, vc_model, target_dir='processed', vad=True):
     #     wavs_folder = audio_path
     
     if vad:
+        print("wavs_folder")
         wavs_folder = split_audio_vad(audio_path, target_dir=target_dir, audio_name=audio_name)
     else:
+        print("wavs_folder222222")
         wavs_folder = split_audio_whisper(audio_path, target_dir=target_dir, audio_name=audio_name)
-    
+
     audio_segs = glob(f'{wavs_folder}/*.wav')
     if len(audio_segs) == 0:
         raise NotImplementedError('No audio segments found!')
-    
+    print("bbbbbbbbbbbbbbbbbbbbbbbbbbb")
     return vc_model.extract_se(audio_segs, se_save_path=se_path), audio_name
 

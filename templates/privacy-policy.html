@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .privacy-policy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+  }
+
+  .privacy-policy-container h1,
+  .privacy-policy-container h2,
+  .privacy-policy-container h3 {
+    text-align: center;
+  }
+
+  .privacy-policy-container p,
+  .privacy-policy-container ul {
+    margin: 10px 0;
+    line-height: 1.6;
+  }
+
+  .privacy-policy-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+</style>
+
+<section class="privacy-policy-container">
+  <h1>Privacy Policy</h1>
+  <p>
+    This Privacy Policy explains how our application collects, uses, and discloses your personal information.
+  </p>
+
+  <h2>1. Information We Collect</h2>
+  <p>We collect the following information:</p>
+  <ul>
+    <li>Personal Identification Information (Name, email address, phone number, etc.)</li>
+    <li>Usage Data (IP address, browser type, pages visited, etc.)</li>
+  </ul>
+
+  <h2>2. How We Use Your Information</h2>
+  <p>We use the information we collect for the following purposes:</p>
+  <ul>
+    <li>To provide and maintain our service</li>
+    <li>To notify you about changes to our service</li>
+    <li>To allow you to participate in interactive features of our service</li>
+    <li>To provide customer support</li>
+    <li>To gather analysis or valuable information so that we can improve our service</li>
+    <li>To monitor the usage of our service</li>
+    <li>To detect, prevent and address technical issues</li>
+  </ul>
+
+  <h2>3. Information Sharing</h2>
+  <p>We may share your information with third parties as follows:</p>
+  <ul>
+    <li>With service providers to monitor and analyze the use of our service</li>
+    <li>With business partners to offer you certain products, services, or promotions</li>
+  </ul>
+
+  <h2>4. Data Security</h2>
+  <p>We implement measures to protect your information:</p>
+  <ul>
+    <li>By using secure servers</li>
+    <li>By encrypting data during transmission</li>
+    <li>By maintaining physical, electronic, and procedural safeguards</li>
+  </ul>
+
+  <h2>5. Your Rights</h2>
+  <p>You have the following rights regarding your information:</p>
+  <ul>
+    <li>The right to access - You have the right to request copies of your personal data.</li>
+    <li>The right to rectification - You have the right to request that we correct any information you believe is
+      inaccurate or incomplete.</li>
+    <li>The right to erasure - You have the right to request that we erase your personal data, under certain conditions.
+    </li>
+  </ul>
+
+  <h2>6. Contact Us</h2>
+  <p>If you have any questions, please contact us at:</p>
+  <ul>
+    <li>Email: support@iforum.shop</li>
+  </ul>
+</section>
+{% endblock %}

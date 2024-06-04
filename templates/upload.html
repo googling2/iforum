@@ -713,11 +713,13 @@
             throw new Error("Network response was not ok");
           }
           console.log(response.url, "response.url")
+          console.log("response.url: ", response.url)
           return response.url; // 리디렉션된 URL을 받음
+
         })
         .then((redirectedUrl) => {
           // 페이지를 리디렉션된 URL로 이동
-          console.log(redirectedUrl, "response.url")
+
           window.location.href = redirectedUrl;
         })
         .catch((error) => {

@@ -67,9 +67,9 @@ async def upload_video(request, db):
         options = Namespace(
             file=video_url,
             title=f"[IFORUM] AI창작 부업 - {ft_title}",
-            description="AI 동화 만들기\n누구나 쉽게 AI동화를 창작합니다.\n유튜브에 직접 업로드 하지 않고 자동으로 업로드가 됩니다!\n\n기발한 아이디어? 편집? 직접 업로드?\n이제 단 한 줄을 작성하면 이 모든 것을 손쉽게 할 수 있습니다!\nAI 부업 시대, 여러분을 기다립니다.",
+            description="AI 동화 만들기\n누구나 쉽게 AI동화를 창작합니다.\n유튜브에 직접 업로드 하지 않고 자동으로 업로드가 됩니다!\n\n기발한 아이디어? 편집? 직접 업로드?\n이제 단 한 줄을 작성하면 이 모든 것을 손쉽게 할 수 있습니다!\nAI 부업 시대, 여러분을 기다립니다.\n www.iforum.shop",
             category="24",
-            keywords="부업,동화,어린이,교육,창작,이야기,동화책,판타지",
+            keywords="side hustle,fairytale,부업,side job,동화,어린이,교육,창작,이야기,동화책,판타지",
             privacyStatus="public"
         )
 
