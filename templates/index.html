@@ -12,6 +12,7 @@
 
     const initialVideoData = {{ videos | tojson | safe }};
 
+    // 비디오 플레이어 HTML 생성
     function vPlayer(video) {
       const videoUrl = video.url ? (video.url.startsWith('/') ? video.url : '/' + video.url) : null;
       const likedClass = video.liked ? 'color-switch' : '';
@@ -19,15 +20,15 @@
 
       return `
         <div class="vdo-wrapper">
-          <!-- video -->
+          <!-- 비디오 -->
           <video src="${videoUrl}" preload="none" loop class="vdo"></video>
 
-          <!-- pause play btn -->
+          <!-- 재생/일시정지 버튼 -->
           <button id="pause-play-btn">
             <i class="fa-solid fa-pause"></i>
           </button>
 
-          <!-- side btn -->
+          <!-- 사이드 버튼 -->
           <div class="side-btns-wrapper">
             <button class="control-btn like-btn ${likedClass}" data-video-id="${video.id}" data-liked="${video.liked}">
               <i class="fa-solid fa-thumbs-up"></i>
@@ -38,7 +39,7 @@
             </button>
           </div>
 
-          <!-- video info -->
+          <!-- 비디오 정보 -->
           <div class="info-wrapper">
             <a href="/profile/${video.author_id}"><img src="${imgSrc}" alt="profile" /></a>
             <div>
@@ -47,10 +48,10 @@
             </div>
           </div>
 
-          <!-- blury background -->
+          <!-- 블러리 배경 -->
           <div class="blury"></div>
 
-          <!-- comments -->
+          <!-- 댓글 -->
           <div class="comments">
             <p>Comments</p>
           </div>
@@ -58,6 +59,7 @@
       `;
     }
 
+    // 비디오를 페이지에 삽입
     function injectVideos(videos) {
       videos.forEach(video => {
         const videoElement = vPlayer(video);
@@ -70,6 +72,7 @@
         const likeBtn = vid.querySelector(".like-btn");
         const likeCountElement = likeBtn.querySelector(".like-count");
 
+        // 비디오가 화면에 보일 때 자동 재생
         if (vdo) {
           const intersectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -83,6 +86,7 @@
           intersectionObserver.observe(vdo);
         }
 
+        // 재생/일시정지 버튼 클릭 이벤트
         if (pausePlayBtn) {
           pausePlayBtn.addEventListener("click", () => {
             if (vdo.paused) {
@@ -95,6 +99,7 @@
           });
         }
 
+        // 좋아요 버튼 클릭 이벤트
         likeBtn.addEventListener("click", () => {
           const videoId = likeBtn.getAttribute("data-video-id");
           const liked = likeBtn.getAttribute("data-liked") === "true";
@@ -118,6 +123,7 @@
           .catch(error => console.error('Error:', error));
         });
 
+        // 공유 버튼 클릭 이벤트
         const shareBtn = vid.querySelector("#share-btn");
         const vidTitle = vid.querySelector(".info-wrapper h3");
         if (shareBtn && vidTitle) {
@@ -132,11 +138,12 @@
       });
     }
 
+    // 더 많은 비디오를 로드
     function loadMoreVideos() {
       if (loading) return;
       loading = true;
 
-      fetch(`/videos?offset=${offset}&limit=${limit}&user_code=${userCode}`)
+      fetch(`/?offset=${offset}&limit=${limit}`)
         .then(response => response.json())
         .then(data => {
           if (data.length > 0) {
@@ -154,6 +161,7 @@
         });
     }
 
+    // 스크롤 이벤트 핸들러
     function handleScroll() {
       const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight - 5) {
@@ -161,6 +169,7 @@
       }
     }
 
+    // 초기 비디오 데이터를 삽입하고 스크롤 이벤트 등록
     injectVideos(initialVideoData);
     window.addEventListener('scroll', handleScroll);
   });
