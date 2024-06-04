@@ -456,6 +456,13 @@ async def auth(request: Request, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == email).first()
     
     if existing_user:
+
+         # 기존 사용자의 토큰 값 업데이트
+        existing_user.accessToken = token['access_token']
+        existing_user.refreshToken = token.get('refresh_token', '')
+        existing_user.profile = user_info.get('picture', '')
+        db.commit()
+        
         request.session['user'] = {
             "usercode": existing_user.user_code,
             "name": existing_user.user_name,
