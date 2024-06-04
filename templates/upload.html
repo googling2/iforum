@@ -652,7 +652,8 @@
     }
     animateLoading();
   });
-
+</script>
+<script>
   window.onload = function () {
     const selectElement = document.getElementById("selected_voice");
     const selectedImage = document.getElementById("selected_image");
@@ -694,11 +695,11 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault(); // 폼의 기본 제출 동작 방지
-      loadingContainer.style.display = "block";
+      loadingContainer.style.display = "flex"; // 'block'에서 'flex'로 변경하여 가운데 정렬
       form.style.display = "none";
-      document.querySelectorAll(".hbody").forEach((element) => {
-        element.style.display = "none";
-      });
+      // document.querySelectorAll(".hbody").forEach((element) => {
+      //   element.style.display = "none";
+      // });
 
       // 폼 데이터를 수집합니다.
       const formData = new FormData(form);
@@ -712,13 +713,14 @@
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
+          console.log(response.url, "response.url")
           console.log("response.url: ", response.url)
           return response.url; // 리디렉션된 URL을 받음
 
         })
         .then((redirectedUrl) => {
           // 페이지를 리디렉션된 URL로 이동
-          console.log("response.url: ", redirectedUrl)
+
           window.location.href = redirectedUrl;
         })
         .catch((error) => {

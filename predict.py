@@ -30,25 +30,32 @@ tone_color_converter.load_ckpt(f"{ckpt_converter}/checkpoint.pth")
 def predict(audio, text, language="KR", speed=1.2):
     print(language, "languagelanguagelanguagelanguage")
     print(audio, "audioaudioaudioaudioaudioaudioaudioaudioaudioaudio")
+    print("11111111111111111111111")
+    
     target_dir = "static/audio"
     if not os.path.exists(target_dir):
         os.makedirs(target_dir, exist_ok=True)
 
+    print(tone_color_converter, "tone_color_converter")
+    print(target_dir,"target_dir")
     target_se, audio_name = se_extractor.get_se(
         audio,
         tone_color_converter,
         target_dir=target_dir,
         vad=False,
     )
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
 
     model = TTS(language=language, device=device)
     speaker_ids = model.hps.data.spk2id
+    print("222222222222222222222")
 
     # 고유한 파일 이름 생성
     unique_id = str(uuid.uuid4())
     src_path = os.path.join(target_dir, f"tmp_{unique_id}.wav")
     out_path = os.path.join(tempfile.gettempdir(), f"out_{unique_id}.wav")
-
+    print("333333333333333333333333333333333")
     for speaker_key in speaker_ids.keys():
         speaker_id = speaker_ids[speaker_key]
         speaker_key = speaker_key.lower().replace("_", "-")
@@ -72,7 +79,7 @@ def predict(audio, text, language="KR", speed=1.2):
     # 변환된 파일을 고유한 이름으로 저장
     final_path = os.path.join(target_dir, f"m1_{unique_id}.mp3")
     shutil.copyfile(out_path, final_path)
-    
+    print("44444444444444444444444444444444444")
     
     print(audio_name, "audio_name")
     print(src_path, "src_path")
