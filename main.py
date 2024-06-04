@@ -145,8 +145,10 @@ async def main(request: Request, order_by: str = "latest", subscribed: bool = Fa
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
         Fairytale.user_code.label("author_id"),
+        Profile.profile_name.label("img"),
         (db.query(Like).filter(Like.user_code == user_code, Like.ft_code == Fairytale.ft_code).exists()).label("liked")
-    ).join(User, Fairytale.user_code == User.user_code)
+    ).join(User, Fairytale.user_code == User.user_code) \
+     .outerjoin(Profile, User.user_code == Profile.user_code)
 
     # 키워드로 필터링
     if keyword:
@@ -178,7 +180,8 @@ async def main(request: Request, order_by: str = "latest", subscribed: bool = Fa
             "title": video.title,
             "ft_like": video.ft_like,
             "author_id": video.author_id,
-            "liked": video.liked
+            "liked": video.liked,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png"
         }
         for video in results
     ]
@@ -204,6 +207,7 @@ async def main(request: Request, order_by: str = "latest", subscribed: bool = Fa
         "keyword": keyword
     })
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request, db: Session = Depends(get_db), offset: int = 0, limit: int = 8):
     # 비디오를 최신순으로 가져오기 위한 기본 쿼리 생성
@@ -213,10 +217,12 @@ async def index(request: Request, db: Session = Depends(get_db), offset: int = 0
         Fairytale.ft_title.label("title"),
         Fairytale.ft_like.label("ft_like"),
         User.user_name.label("name"),
-        Fairytale.user_code.label("author_id")
-    ).join(User, Fairytale.user_code == User.user_code).order_by(Fairytale.ft_code.desc())
+        Fairytale.user_code.label("author_id"),
+        Profile.profile_name.label("img")
+    ).join(User, Fairytale.user_code == User.user_code) \
+     .outerjoin(Profile, User.user_code == Profile.user_code) \
+     .order_by(Fairytale.ft_code.desc())
 
-    print(query, "")
     # 페이지네이션을 적용하여 쿼리 실행
     videos = query.offset(offset).limit(limit).all()
 
@@ -232,6 +238,7 @@ async def index(request: Request, db: Session = Depends(get_db), offset: int = 0
             "title": video.title,
             "ft_like": video.ft_like,
             "author_id": video.author_id,
+            "img": f"/static/uploads/{video.img}" if video.img else "/static/uploads/basic.png"
         }
         for video in videos
     ]
@@ -258,6 +265,7 @@ async def index(request: Request, db: Session = Depends(get_db), offset: int = 0
         })
     else:
         return JSONResponse(content=video_data)
+
 
 async def get_profile_data(db: Session, user_code: int):
     profile_user = db.query(User).filter(User.user_code == user_code).first()
@@ -955,11 +963,11 @@ async def delete_existing_voice(db: Session = Depends(get_db), user_info: dict =
 
     return {"message": "기존 목소리가 삭제되었습니다."}
 
-# if __name__ == "__main__":
-#     # 클라이언트에서 인터넷으로 다이렉트 요청할 때
-#     import uvicorn
-#     uvicorn.run(app, host='127.0.0.1', port=8000
-#     )
+if __name__ == "__main__":
+    # 클라이언트에서 인터넷으로 다이렉트 요청할 때
+    import uvicorn
+    uvicorn.run(app, host='127.0.0.1', port=8000
+    )
     # nginx가 앞단에 있으면
     import uvicorn
     uvicorn.run(app, port=8000
