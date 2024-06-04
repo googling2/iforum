@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends, Request, Form, UploadFile, File
+import json
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 import os
@@ -15,37 +16,29 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from argparse import Namespace
 from requests.exceptions import ConnectionError, Timeout
 from google.auth.transport.requests import Request as GoogleRequest
-from sqlalchemy.orm import Session
-from models import User
 
-app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
+# app = FastAPI()
+# app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
 RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 RETRIABLE_EXCEPTIONS = (HttpError, ConnectionError, Timeout)
 MAX_RETRIES = 5
 
-
-def get_user_access_token(db: Session, usercode: int):
-    user = db.query(User).filter(User.user_code == usercode).first()
-    return user.accessToken if user else None
-
-def get_user_refresh_token(db: Session, usercode: int):
-    user = db.query(User).filter(User.user_code == usercode).first()
-    return user.refreshToken if user else None
-
-
-@app.post("/upload_to_youtube")
-async def upload_to_youtube(request: Request, title: str = Form(...), file: UploadFile = File(...), db: Session = Depends(get_db)):
+# @app.post("/upload_video")
+# async def upload_video(request: Request, db: Session = Depends(get_db)):
+async def upload_video(request, db):
+    print("video_url:")
     user = request.session.get("user")
     usercode = user.get("usercode") if user else None
     if not usercode:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="User not logged in")
 
     user_access_token = get_user_access_token(db, usercode)
+    print(user_access_token)
     user_refresh_token = get_user_refresh_token(db, usercode)
+    print(user_refresh_token)
     if not user_access_token or not user_refresh_token:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid user credentials")
-
+    print("video_url:")
     user_credentials = Credentials(
         token=user_access_token,
         refresh_token=user_refresh_token,
@@ -55,16 +48,25 @@ async def upload_to_youtube(request: Request, title: str = Form(...), file: Uplo
         scopes=['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.force-ssl']
     )
 
+    print("video_url:")
+    with open('video_url.json', 'r') as f:
+        data = json.load(f)
+
+    video_url = data['video_url']
+    story_title = data['story_title']
+    print("video_url:",video_url)
+
+
+    ft_title = get_ft_title_by_video_url(db, video_url)
+    if not ft_title:
+            raise HTTPException(status_code=404, detail="Fairytale not found")
+
     try:
         youtube = get_authenticated_service(user_credentials, db, usercode)
 
-        file_location = f"temp_{file.filename}"
-        with open(file_location, "wb") as buffer:
-            buffer.write(await file.read())
-
         options = Namespace(
-            file=file_location,
-            title=f"[IFORUM] AI창작 부업 - {title}",
+            file=video_url,
+            title=f"[IFORUM] AI창작 부업 - {ft_title}",
             description="AI 동화 만들기\n누구나 쉽게 AI동화를 창작합니다.\n유튜브에 직접 업로드 하지 않고 자동으로 업로드가 됩니다!\n\n기발한 아이디어? 편집? 직접 업로드?\n이제 단 한 줄을 작성하면 이 모든 것을 손쉽게 할 수 있습니다!\nAI 부업 시대, 여러분을 기다립니다.",
             category="24",
             keywords="부업,동화,어린이,교육,창작,이야기,동화책,판타지",
@@ -72,8 +74,7 @@ async def upload_to_youtube(request: Request, title: str = Form(...), file: Uplo
         )
 
         initialize_upload(youtube, options)
-        os.remove(file_location)  # 업로드 후 파일 삭제
-        return JSONResponse(status_code=200, content={"message": "Upload successful"})
+        return RedirectResponse(url="/my_profile", status_code=302)
     except HttpError as e:
         if e.resp.status == 400 and "uploadLimitExceeded" in e.content.decode():
             return JSONResponse(status_code=400, content={"message": "The user has exceeded the number of videos they may upload."})
@@ -102,6 +103,25 @@ def get_authenticated_service(credentials: Credentials, db: Session, usercode: i
         print(f"Error creating YouTube service: {e}")
         raise
 
+def get_ft_title_by_video_url(db: Session, video_url: str):
+    print(f"Looking for Fairytale with ft_name: {video_url}")
+    fairytale = db.query(Fairytale).filter(Fairytale.ft_name == video_url).first()
+    if fairytale:
+        print(f"Found Fairytale: {fairytale.ft_title}")
+        return fairytale.ft_title
+    else:
+        print("Fairytale not found")
+        print(f"Found Fairytale: {fairytale.ft_title}")
+        return None
+
+def get_user_access_token(db: Session, usercode: int):
+    user = db.query(User).filter(User.user_code == usercode).first()
+    return user.accessToken if user else None
+
+def get_user_refresh_token(db: Session, usercode: int):
+    user = db.query(User).filter(User.user_code == usercode).first()
+    return user.refreshToken if user else None
+
 def initialize_upload(youtube, options):
     body = {
         "snippet": {
@@ -113,7 +133,7 @@ def initialize_upload(youtube, options):
         "status": {
             "privacyStatus": options.privacyStatus,
             "madeForKids": True,
-            "selfDeclaredMadeForKids": True
+            "selfDeclaredMadeForKids": True  
         }
     }
 
@@ -130,6 +150,7 @@ def resumable_upload(insert_request):
     response = None
     error = None
     retry = 0
+    print("insert++++",type(insert_request))
     while response is None:
         try:
             print("Uploading file...")
