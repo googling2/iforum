@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-
 <link rel="stylesheet" href="../static/css/styles.css" />
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
 <style>
@@ -15,23 +14,22 @@
 
   .liked {
     color: red;
-    /* 좋아요를 눌렀을 때 색상 변경 */
   }
 
   .disabled {
     pointer-events: none;
-    /* 클릭 비활성화 */
     opacity: 0.5;
-    /* 비활성화 시 반투명하게 */
   }
 </style>
+
 <div class="search-container">
-  <form id="search-form" method="post" action="/search">
-    <input type="text" id="search-input" name="keyword" placeholder="Search" />
+  <form id="search-form" method="get" action="/main">
+    <input type="text" id="search-input" name="keyword" placeholder="Search" value="{{ keyword or '' }}" />
     <button type="submit" class="search"><i class="ri-search-line"></i></button>
   </form>
   <button class="mic" id="mic-button"><i class="ri-mic-fill"></i> </button>
 </div>
+
 <section class="main-page">
   <div class="space"></div>
   <div class="content">
@@ -48,9 +46,9 @@
       </div>
       {% endif %}
     </div>
-    <div class="video-container">
-      <!-- 검색 결과가 여기에 표시됨 -->
-      {% if videos %} {% for video in videos %}
+    <div class="video-container" id="video-container">
+      <!-- 초기 비디오가 여기에 로드됨 -->
+      {% for video in videos %}
       <div class="video-content-cover">
         <div class="video-content">
           <a class="video-box">
@@ -60,7 +58,7 @@
           </a>
           <div class="video-details">
             <div class="channel-logo">
-              <img src="{{ video.img }}" alt="" class="m-img" />
+              <a href="/profile/{{ video.author_id }}"><img src="{{ video.img }}" alt="" class="m-img" /></a>
             </div>
             <div class="detail">
               <h3 class="title">{{ video.title }}</h3>
@@ -71,7 +69,7 @@
                 </i>
               </div>
               <div class="views-upload">
-                <div class="views">{{ video.ft_like or 0 }} like</div>
+                <div class="views">{{ video.ft_like or 0 }} 좋아요</div>
               </div>
             </div>
           </div>
@@ -80,141 +78,89 @@
           </div>
         </div>
       </div>
-      {% endfor %} {% endif %}
+      {% endfor %}
     </div>
   </div>
 </section>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM fully loaded and parsed');
-
     const micButton = document.getElementById('mic-button');
     const searchInput = document.getElementById('search-input');
     const searchForm = document.getElementById('search-form');
 
     if (micButton) {
-      console.log('Mic button found:', micButton);
+        console.log('Mic button found:', micButton);
     } else {
-      console.error('Mic button not found');
+        console.error('Mic button not found');
     }
 
     if (searchInput) {
-      console.log('Search input found:', searchInput);
+        console.log('Search input found:', searchInput);
     } else {
-      console.error('Search input not found');
+        console.error('Search input not found');
     }
 
     if (searchForm) {
-      console.log('Search form found:', searchForm);
+        console.log('Search form found:', searchForm);
     } else {
-      console.error('Search form not found');
+        console.error('Search form not found');
     }
 
     if ('webkitSpeechRecognition' in window) {
-      console.log('webkitSpeechRecognition is supported');
+        console.log('webkitSpeechRecognition is supported');
 
-      const recognition = new webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'ko-KR';
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'ko-KR';
 
-      micButton.addEventListener('click', () => {
-        console.log('Mic button clicked');
-        recognition.start();
-        micButton.classList.add('active');
-        console.log('Speech recognition started');
-      });
+        micButton.addEventListener('click', () => {
+            console.log('Mic button clicked');
+            recognition.start();
+            micButton.classList.add('active');
+            console.log('Speech recognition started');
+        });
 
-      recognition.onresult = (event) => {
-        const speechResult = event.results[0][0].transcript;
-        searchInput.value = speechResult;
-        console.log('Recognized text:', speechResult);
-        micButton.classList.remove('active');
-        searchForm.submit(); // 폼 자동 제출
-      };
+        recognition.onresult = (event) => {
+            const speechResult = event.results[0][0].transcript;
+            searchInput.value = speechResult;
+            console.log('Recognized text:', speechResult);
+            micButton.classList.remove('active');
+            searchForm.submit(); // 폼 자동 제출
+        };
 
-      recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        micButton.classList.remove('active');
-      };
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            micButton.classList.remove('active');
+        };
 
-      recognition.onend = () => {
-        micButton.classList.remove('active');
-        console.log('Speech recognition ended');
-      };
+        recognition.onend = () => {
+            micButton.classList.remove('active');
+            console.log('Speech recognition ended');
+        };
     } else {
-      console.log('webkitSpeechRecognition is not supported in this browser.');
+        console.log('webkitSpeechRecognition is not supported in this browser.');
     }
 
+    // 필터 버튼 클릭 이벤트
     document.getElementById('latest-chip').addEventListener('click', function () {
-      window.location.href = "/main?order_by=latest";
+        window.location.href = "/main?order_by=latest";
     });
 
     document.getElementById('popular-chip').addEventListener('click', function () {
-      window.location.href = "/main?order_by=popular";
+        window.location.href = "/main?order_by=popular";
     });
 
     const userLoggedIn = '{{ 'true' if user_logged_in else 'false' }}' === 'true';
 
-    // const userLoggedIn = context.userLoggedIn === true;
-
     if (userLoggedIn) {
-      document.getElementById('subscribed-chip').addEventListener('click', function () {
-        window.location.href = "/main?subscribed=true";
-      });
+        document.getElementById('subscribed-chip').addEventListener('click', function () {
+            window.location.href = "/main?subscribed=true";
+        });
     }
+});
 
-    const likeButtons = document.querySelectorAll('.like-button');
-    likeButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const videoId = this.getAttribute('data-video-id');
-        const isLiked = this.classList.contains('liked');
-
-        const url = isLiked ? `/unlike/${videoId}` : `/like/${videoId}`;
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              if (isLiked) {
-                this.classList.remove('liked');
-              } else {
-                this.classList.add('liked');
-              }
-              const likeCountElement = this.closest('.video-details').querySelector('.views');
-              likeCountElement.textContent = `${data.likes_count} like`;
-            } else {
-              console.error('Failed to update like status');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-      });
-    });
-
-    const profileButtons = document.querySelectorAll('.profile-btn');
-    profileButtons.forEach(button => {
-      if (!userLoggedIn) {
-        button.classList.add('disabled');
-        return;  // 로그인하지 않은 경우 클릭 이벤트를 추가하지 않음
-      }
-      button.addEventListener('click', function () {
-        const authorId = this.getAttribute('data-author-id');
-        window.location.href = `/profile/${authorId}`;
-      });
-    });
-
-  });
 </script>
 
-{% endblock content %}
+{% endblock %}

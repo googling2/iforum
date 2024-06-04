@@ -14073,3 +14073,7 @@ INFO:     59.10.8.230:0 - "GET /static/sample_img/albert-cartoon-dalle3.webp HTT
 INFO:     59.10.8.230:0 - "GET /static/sample_img/bg.png HTTP/1.0" 304 Not Modified
 INFO:     59.10.8.230:0 - "GET /static/sample_img/anime.png HTTP/1.0" 304 Not Modified
 INFO:     138.246.253.24:0 - "GET /robots.txt HTTP/1.0" 404 Not Found
+INFO:     Started server process [79763]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
