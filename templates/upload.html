@@ -652,7 +652,8 @@
     }
     animateLoading();
   });
-
+</script>
+<script>
   window.onload = function () {
     const selectElement = document.getElementById("selected_voice");
     const selectedImage = document.getElementById("selected_image");
@@ -694,7 +695,7 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault(); // 폼의 기본 제출 동작 방지
-      loadingContainer.style.display = "block";
+      loadingContainer.style.display = "flex"; // 'block'에서 'flex'로 변경하여 가운데 정렬
       form.style.display = "none";
       document.querySelectorAll(".hbody").forEach((element) => {
         element.style.display = "none";
