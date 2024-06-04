@@ -34,7 +34,7 @@ app = FastAPI()
 
 # SECRET_KEY: 이전에 생성했던 안전한 키 사용
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('SECRET_KEY'))
-
+## 2
 class CustomJinja2Templates(Jinja2Templates):
     def TemplateResponse(self, name: str, context: dict, **kwargs):
         request: Request = context.get("request")
