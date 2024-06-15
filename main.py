@@ -687,7 +687,7 @@ async def create_video(timestamp, selected_mood, audio_file_path, image_files):
                 video_clip = VideoFileClip(video_file)
                 audio_clip = AudioFileClip(audio_file)
 
-                bgm_clip = AudioFileClip(bgm_file).volumex(0.4)
+                bgm_clip = AudioFileClip(bgm_file).volumex(0.2)
                 bgm_duration = video_clip.duration
                 bgm_clip = bgm_clip.subclip(0, bgm_duration)
                 bgm_clip = bgm_clip.fx(audio_fadeout, fadeout_duration)
