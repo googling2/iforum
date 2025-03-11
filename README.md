@@ -74,7 +74,3 @@ i-forum은 AI 기반 동화 제작 플랫폼으로, 사용자가 창의적이고
 ## 프로젝트 목표 및 성과
 - **접근성 향상**: 부모님의 목소리로 동화를 들을 수 있어, 아이들에게 더 친숙한 환경 제공.
 - **쉬운 조작**: 직관적인 UI와 AI 기반 동화 생성으로 아이들이 쉽게 창작할 수 있는 플랫폼 제공.
-
-## 프로젝트 문서
-- [Notion 프로젝트 페이지](https://www.notion.so/project-link)
-- [GitHub 저장소](https://github.com/your-repo-link)
