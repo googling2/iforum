@@ -59,3 +59,6 @@
 
 ![image](https://github.com/user-attachments/assets/32155d01-8fba-4a3a-aa04-8a53a323e35d)
 1. 사용자들이  만든 영상을 최신순, 인기순, 구독한 사람의 영상 3가지로 나누어 볼 수 있습니다
+
+## 자동생성된 영상
+https://youtube.com/shorts/s57IJtexHsM?si=0JVbr7bg1I6o1wPE
