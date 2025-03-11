@@ -68,7 +68,8 @@ i-forum은 AI 기반 동화 제작 플랫폼으로, 사용자가 창의적이고
 ![동화 목록](https://github.com/user-attachments/assets/32155d01-8fba-4a3a-aa04-8a53a323e35d)
 
 ## 자동 생성된 영상
--[![YouTube 영상 예시](https://img.youtube.com/vi/s57IJtexHsM/maxresdefault.jpg)](https://youtube.com/shorts/s57IJtexHsM?si=0JVbr7bg1I6o1wPE)
+[YouTube 영상 예시](https://youtube.com/shorts/s57IJtexHsM?si=0JVbr7bg1I6o1wPE)
+
 
 
 ## 맡은 역할
