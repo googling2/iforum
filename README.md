@@ -71,7 +71,6 @@ i-forum은 AI 기반 동화 제작 플랫폼으로, 사용자가 창의적이고
 [YouTube 영상 예시](https://youtube.com/shorts/s57IJtexHsM?si=0JVbr7bg1I6o1wPE)
 
 
-
 ## 맡은 역할
 - **GPT 3.5 API**를 사용하여 동화 생성 및 프롬프트 제작
 - **DALL-e-3 API**를 사용하여 동화 사진 생성
