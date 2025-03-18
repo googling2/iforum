@@ -1,5 +1,6 @@
 # i-forum 프로젝트
-![image](https://github.com/user-attachments/assets/f4fb402e-1a29-4823-8fd6-0b9988eb7db5)
+![image](https://github.com/user-attachments/assets/5eeacf62-22c5-4f8f-9e9d-8f20b7c68303)
+
 
 ## 프로젝트 개요
 i-forum은 AI 기반 동화 제작 플랫폼으로, 사용자가 창의적이고 재미있는 동화를 쉽게 생성할 수 있도록 돕습니다. 
